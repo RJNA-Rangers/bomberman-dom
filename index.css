@@ -1,0 +1,166 @@
+@import url('https://fonts.cdnfonts.com/css/common-pixel');
+
+html,
+body {
+    /* background-color: #88888818 !important; */
+    align-items: center;
+    margin: 0;
+    height: 100%;
+    overflow: hidden;
+}
+
+.app {
+    margin: 0;
+    height: 100%;
+    width: 100%;
+    background-color: rgb(29, 29, 29);
+    display: flex;
+    justify-content: center;
+}
+
+.container {
+    display: grid;
+    margin: 0;
+    width: 100%;
+    height: 100vh;
+    margin-left: 5px;
+    grid-template-columns: 17% 60% 20%;
+    grid-template-rows: 60px 60px 1fr 1fr 15px;
+    grid-gap: 10px;
+    grid-template-areas:
+        "title title title"
+        "... info ..."
+        "other-lives game chatroom"
+        "game-updates game chatroom"
+    ;
+}
+
+.game-title {
+    grid-area: title;
+    margin: 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-family: 'Common Pixel', sans-serif;
+    width: 100%;
+    height: 100%;
+    color: lightgray;
+    border: 3px aqua solid;
+}
+
+.lives-container {
+    grid-area: info;
+    margin: 0;
+    height: 100%;
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: start;
+    font-family: 'Common Pixel', sans-serif;
+    color: lightgray;
+    font-size: x-large;
+    border: 3px pink solid;
+}
+
+.lives-heart-container {
+    display: flex;
+    margin: 0;
+    height: 100%;
+}
+
+.lives-hearts {
+    margin: 0;
+}
+
+.power-up-container {
+    grid-area: info;
+    margin: 0;
+    height: 100%;
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: End;
+    font-size: xx-large;
+}
+
+.other-lives-container {
+    grid-area: other-lives;
+    margin: 0;
+    height: 100%;
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    justify-content: space-between;
+    font-family: 'Common Pixel', sans-serif;
+    color: lightgray;
+    font-size: larger;
+    border: 3px blue solid;
+}
+
+.other-lives {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.other-lives>.lives-heart-container>img {
+    width: 40px;
+    height: 40px;
+    margin: 0;
+}
+
+.game-updates-container {
+    grid-area: game-updates;
+    font-family: 'Common Pixel', sans-serif;
+    color: lightgray;
+    font-size: larger;
+    margin: 0;
+    height: 100%;
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    overflow-y: auto;
+    border: 3px green solid;
+}
+
+.chatroom-container {
+    grid-area: chatroom;
+    font-family: 'Common Pixel', sans-serif;
+    color: lightgray;
+    font-size: larger;
+    margin: 0;
+    height: 100%;
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    overflow-y: auto;
+    border: 3px yellow solid;
+}
+
+.game-container {
+    grid-area: game;
+    width: 100%;
+    height: 100%;
+    border: 3px red solid;
+}
+
+.game-wrapper {
+    width: 100%;
+    height: 100%;
+    margin: 0;
+    object-fit: contain;
+    position: relative;
+}
+
+.hard-wall,
+.soft-wall,
+.dirt-patch {
+    position: absolute;
+    width: 54.5px;
+    height: 37.5px;
+    margin: 0;
+}
