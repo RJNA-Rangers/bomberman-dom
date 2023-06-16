@@ -158,9 +158,19 @@ body {
 
 .hard-wall,
 .soft-wall,
-.dirt-patch {
+.dirt-patch,
+.loading-1,
+.loading-2,
+.loading-3,
+.loading-4 {
     position: absolute;
-    width: 54.5px;
-    height: 37.5px;
     margin: 0;
+}
+
+.player-1,
+.player-2,
+.player-3,
+.player-4 {
+    position: absolute;
+    z-index: 999;
 }

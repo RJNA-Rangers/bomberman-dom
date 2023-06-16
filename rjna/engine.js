@@ -41,8 +41,12 @@ function createVirtualDOM(
   element.removeAttr = function (key, val, replaceVal) {
     const oldVDOM = JSON.parse(JSON.stringify(element));
     if (val !== undefined) {
-      if (element.attrs.hasOwnProperty(key)) {
-        element.attrs[key] = element.attrs[key].replace(val, replaceVal);
+      if (key === "style") {
+        element.attrs[key] = replaceVal
+      } else {
+        if (element.attrs.hasOwnProperty(key)) {
+          element.attrs[key] = element.attrs[key].replace(val, replaceVal);
+        }
       }
     } else {
       if (element.attrs.hasOwnProperty(key)) {

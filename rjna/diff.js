@@ -13,31 +13,47 @@ const zip = (a, b) => {
 // returns array of function to apply to the attributes of DOM,
 // in accordance to the new attribute object
 const diffAttrs = (oldAttrs, newAttrs) => {
-    const patches = []
-    // set new attributes
+    const patches = [];
+
+    // Set new attributes
     for (const [k, v] of Object.entries(newAttrs)) {
-        patches.push(node => {
-            if (node.nodeType != Node.TEXT_NODE)
-                node.setAttribute(k, v)
-            return node
-        })
+        if (k === 'style') {
+            // Handle style attribute
+            patches.push(node => {
+                if (node.nodeType !== Node.TEXT_NODE) {
+                    Object.assign(node.style, v);
+                }
+                return node;
+            });
+        } else {
+            // Handle other attributes
+            patches.push(node => {
+                if (node.nodeType !== Node.TEXT_NODE) {
+                    node.setAttribute(k, v);
+                }
+                return node;
+            });
+        }
     }
-    // remove old atrributes
+
+    // Remove old attributes
     for (const [k] of Object.entries(oldAttrs)) {
         if (!(k in newAttrs)) {
             patches.push(node => {
-                if (node.nodeType != Node.TEXT_NODE)
-                    node.removeAttribute(k)
-                return node
-            })
+                if (node.nodeType !== Node.TEXT_NODE) {
+                    node.removeAttribute(k);
+                }
+                return node;
+            });
         }
     }
+
     return node => {
         for (const patch of patches) {
-            patch(node)
+            patch(node);
         }
-    }
-}
+    };
+};
 
 // returns array of function to apply to the properties of DOM,
 // in accordance to the new property object
