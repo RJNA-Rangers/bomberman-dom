@@ -1,3 +1,4 @@
+import { globalSettings } from "./gameSetting.js";
 import { hearts, otherLivesContainer } from "./gameState.js";
 import RJNA from "./rjna/engine.js";
 // -- Live updates of current game events -- //
@@ -60,7 +61,13 @@ const gameContainer = RJNA.tag.div(
 
 export const layoutContainer = () => {
     return RJNA.tag.div(
-        { class: "container" },
+        {
+            class: "container",
+            style: {
+                "grid-template-columns": `${globalSettings.gridColumn1}px ${globalSettings.gridColumn2}px ${globalSettings.gridColumn3}px`,
+                "grid-template-rows": `60px 60px ${globalSettings.gridFr}px ${globalSettings.gridFr}px 15px`
+            }
+        },
         {},
         {},
         gameTitle,
