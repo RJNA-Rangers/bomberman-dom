@@ -3,17 +3,18 @@ import { layoutContainer } from "./gameContainer.js";
 import { createMap, generateLevel } from "./mapTemplate.js";
 import { changeGameSettingValue, globalSettings, browserHeight } from "./gameSetting.js";
 import { placePlayer } from "./players.js";
+import { runChatroom } from "./public/code.js";
 
 // Debounce function
-function debounce(func, delay) {
-    let timeoutId;
-    return function (...args) {
-        clearTimeout(timeoutId);
-        timeoutId = setTimeout(() => {
-            func.apply(this, args);
-        }, delay);
-    };
-}
+// function debounce(func, delay) {
+//     let timeoutId;
+//     return function (...args) {
+//         clearTimeout(timeoutId);
+//         timeoutId = setTimeout(() => {
+//             func.apply(this, args);
+//         }, delay);
+//     };
+// }
 
 // Resize event handler with debounce
 // window.onresize = debounce(() => {
@@ -59,15 +60,20 @@ console.log(rootEl);
 
 // cells will go inside orbital, it is the representation of the map.
 function openGame() {
-    orbital.cells = generateLevel()
-    let map = createMap(orbital.cells)
-    let gameContainer = RJNA.getObjByAttrsAndPropsVal(orbital.obj, "game-container");
-    gameContainer.setChild(map);
-    const gameWrapper = gameContainer.children[0];
-    gameWrapper.setChild(placePlayer(1, "one"))
-    gameWrapper.setChild(placePlayer(2, "ghost"))
-    gameWrapper.setChild(placePlayer(3, "lad"))
-    gameWrapper.setChild(placePlayer(4, "wario"))
+    return new Promise((resolve) => {
+        orbital.cells = generateLevel()
+        let map = createMap(orbital.cells)
+        let gameContainer = RJNA.getObjByAttrsAndPropsVal(orbital.obj, "game-container");
+        gameContainer.setChild(map);
+        const gameWrapper = gameContainer.children[0];
+        gameWrapper.setChild(placePlayer(1, "one"))
+        gameWrapper.setChild(placePlayer(2, "ghost"))
+        gameWrapper.setChild(placePlayer(3, "lad"))
+        gameWrapper.setChild(placePlayer(4, "wario"))
+        resolve("done")
+    })
 }
 
-openGame()
+openGame().then(
+    (response) => response == "done" ? runChatroom() : console.log("failed to open chatroom. Please Try Again later")
+)

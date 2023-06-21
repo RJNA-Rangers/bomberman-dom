@@ -1,4 +1,4 @@
-(function () {
+export function runChatroom() {
 
 	const app = document.querySelector(".main-app");
 	const socket = io();
@@ -79,4 +79,4 @@
 	let hello = "Hello"
 	console.log("🚀 ~ file: code.js:80 ~ hello:", hello)
 
-})();
+};

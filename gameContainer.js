@@ -1,3 +1,4 @@
+import { chatroom } from "./chatroom.js";
 import { globalSettings } from "./gameSetting.js";
 import { hearts, otherLivesContainer } from "./gameState.js";
 import RJNA from "./rjna/engine.js";
@@ -31,7 +32,8 @@ export const chatroomContainer = RJNA.tag.div(
         {},
         {},
         "Live Chat:"
-    )
+    ),
+    chatroom
 )
 // -- //
 
