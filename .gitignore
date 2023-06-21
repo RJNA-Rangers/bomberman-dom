@@ -1,0 +1,21 @@
+# Ignore Node.js build output
+node_modules
+
+# Ignore macOS system files
+.DS_Store
+
+# Ignore logs
+*.log
+npm-debug.log*
+
+# Ignore environment settings
+.env
+.env.local
+
+# Ignore IDE settings
+.idea
+.vscode
+
+# Ignore local SQLite database files
+*.sqlite
+*.sqlite-journal
