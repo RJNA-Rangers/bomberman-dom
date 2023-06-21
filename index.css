@@ -32,7 +32,8 @@ body {
         "game-updates game chatroom"
     ;
     position: fixed;
-    overflow-y: hidden;
+    /* overflow-y: hidden; */
+    overflow: auto;
 }
 
 .game-title {

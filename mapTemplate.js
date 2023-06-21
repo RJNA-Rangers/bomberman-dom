@@ -16,6 +16,7 @@ const template = [
   ['▉', '▉', '▉', '▉', '▉', '▉', '▉', '▉', '▉', '▉', '▉', '▉', '▉', '▉', '▉']
 ];
 
+// -- creates an 2d array of map with randomly generated soft walls and empty spaces --// 
 export function generateLevel() {
   let cells = [];
 
@@ -38,6 +39,7 @@ export function generateLevel() {
   return cells
 }
 
+// -- add corresponding image VDOMs to empty spaces, soft/hard walls accordingly t --// 
 export function createMap(map) {
   const gameWrapper = RJNA.tag.div(
     { class: "game-wrapper" },

@@ -1,22 +1,25 @@
-var screenHeight = window.screen.height;
-var windowTabHeight = window.outerHeight - window.innerHeight;
-var tabBarsHeight = window.innerHeight - document.documentElement.clientHeight;
-var searchBarHeight = 50; // Approximate value for the Google search bar height
-var scrollbarHeight = window.innerHeight < document.documentElement.clientHeight ? scrollbarWidth : 0;
+export function browserHeight() {
+    var screenHeight = window.screen.height;
+    var windowTabHeight = window.outerHeight - window.innerHeight;
+    var tabBarsHeight = window.innerHeight - document.documentElement.clientHeight;
+    var searchBarHeight = 50; // Approximate value for the Google search bar height
+    var scrollbarHeight = window.innerHeight < document.documentElement.clientHeight ? scrollbarWidth : 0;
 
-var maxHeight = screenHeight - windowTabHeight - tabBarsHeight - searchBarHeight - scrollbarHeight;
+    var maxHeight = screenHeight - windowTabHeight - tabBarsHeight - searchBarHeight - scrollbarHeight;
+    return maxHeight
+}
 
 export const globalSettings = {
     gridColumn1: ((window.screen.width) * 0.17),
     gridColumn2: ((window.screen.width - 10) * 0.6),
     gridColumn3: ((window.screen.width - 20) * 0.2),
-    gridFr: (maxHeight - 60 - 60 - 15 - 20) / 2,
+    gridFr: (browserHeight() - 60 - 60 - 15 - 20) / 2,
     gap: 10,
     gridRowGaps: 3,
     numOfRows: 13,
     numOfCols: 15,
     wallWidth: ((window.screen.width - 10) * 0.6) / 15,
-    wallHeight: (maxHeight - 60 - 60 - 15 - 10) / 13,
+    wallHeight: (browserHeight() - 60 - 60 - 15 - 10) / 13,
     wallTypes: {
         wall: '▉',
         softWall: 1,
@@ -29,7 +32,7 @@ export const globalSettings = {
     },
     players: {
         width: ((window.screen.width - 10) * 0.6) / 15,
-        height: (maxHeight - 60 - 60 - 15 - 10) / 13,
+        height: (browserHeight() - 60 - 60 - 15 - 10) / 13,
         lad: "https://art.ngfiles.com/images/1228000/1228660_sinlessshadow_character-walk-forward-animation.gif?f1586400389",
         ghost: "https://66.media.tumblr.com/536ff61c1beb4b95a8125dd3d9b61b2f/tumblr_mqq8rk5J7s1rfjowdo1_500.gif",
         vegeta: "https://e7.pngegg.com/pngimages/465/541/png-clipart-vegeta-goku-cell-dragon-ball-bead-pixel-gun-text-fictional-character-thumbnail.png",
