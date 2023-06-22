@@ -1,5 +1,5 @@
 import RJNA from "./rjna/engine.js";
-import { layoutContainer } from "./gameContainer.js";
+import { layoutContainer, waitingRoom } from "./gameContainer.js";
 import { createMap, generateLevel } from "./mapTemplate.js";
 import { changeGameSettingValue, globalSettings, browserHeight } from "./gameSetting.js";
 import { placePlayer } from "./players.js";
@@ -55,6 +55,7 @@ orbital.obj = rootObj;
 orbital.rootEl = rootEl;
 document.body.appendChild(orbital.rootEl);
 const container = layoutContainer();
+// rootObj.setChild(waitingRoom);
 rootObj.setChild(container);
 console.log(rootEl);
 

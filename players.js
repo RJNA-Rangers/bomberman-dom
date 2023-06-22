@@ -2,16 +2,17 @@ import { globalSettings } from "./gameSetting.js";
 import RJNA from "./rjna/engine.js"
 export function placePlayer(number, character) {
     // 
-    const loadingArea = document.querySelector(`.loading-${number}`).getBoundingClientRect()
+    const loadingArea =  document.querySelector(`.loading-${number}`).style
+    console.log( loadingArea.top)
     // the starting central position of player:
-    // -- top position of loading box - height of title and lives container (60px each)- half of box height + half of the gap in game-container
-    const playerTop = loadingArea.top - 120 - (globalSettings.wallHeight / 2) + 5;
-    // -- left position of loading box - width first grid column- a quater of box width (the player is the size width as the box) + half of gap width
-    const playerLeft = loadingArea.left - globalSettings.gridColumn1 - (globalSettings.players.width / 4) + 5;
+    // -- top position of loading box
+    const playerTop = loadingArea.top;
+    // -- left position of loading box
+    const playerLeft = loadingArea.left;
     return RJNA.tag.img({
         class: `player-${number}`, style: {
-            top: `${playerTop}px`, left: `${playerLeft}px`, width: `${globalSettings.wallWidth}px`,
-            height: `${globalSettings.wallHeight}px`
+            top: `${playerTop}`, left: `${playerLeft}`, width: `${globalSettings.players.width}px`,
+            height: `${globalSettings.players.height}px`
         }
     }, {}, { src: globalSettings.players[character] });
 }

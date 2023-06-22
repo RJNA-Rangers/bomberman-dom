@@ -18,6 +18,60 @@ body {
   justify-content: center;
 }
 
+.waiting-rooms-container{
+      width: 100%;
+      height: 100%;
+      background-color: whitesmoke;
+      position: absolute;
+      display: block;
+      z-index: 999;
+}
+
+.waiting-rooms-grid{
+  display: grid;
+  margin: 0;
+  width: 100%;
+  height: 100vh;
+  margin-left: 5px;
+  grid-gap: 10px;
+  grid-template-areas:
+    "title title title"
+    "countdown countdown countdown"
+    "info info players"
+    "info info players"
+  ;
+  position: fixed;
+  overflow-y: auto;
+}
+
+.waiting-rooms-title{
+  grid-area: title;
+  margin: 0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-family: "Common Pixel", sans-serif;
+  width: 100%;
+  height: 100%;
+  color: black;
+  font-size: xxx-large;
+  border: 3px rgb(0, 255, 76) solid;
+}
+
+.countdown{
+  grid-area: countdown;
+  margin: 0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-family: "Common Pixel", sans-serif;
+  width: 100%;
+  height: 100%;
+  color: black;
+  font-size: xx-large;
+  border: 3px rgb(187, 0, 255) solid;
+}
+
 .container {
   display: grid;
   margin: 0;
@@ -27,7 +81,7 @@ body {
   grid-gap: 10px;
   grid-template-areas:
     "title title title"
-    "other-lives info ..."
+    "other-lives info chatroom"
     "other-lives game chatroom"
     "game-updates game chatroom"
   ;
@@ -45,6 +99,7 @@ body {
   width: 100%;
   height: 100%;
   color: lightgray;
+  font-size: xxx-large;
   border: 3px aqua solid;
 }
 

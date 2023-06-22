@@ -13,7 +13,6 @@ app.use(express.static(__dirname));
 // Serve index.html for all routes
 app.get('/', (req, res) => {
 	res.sendFile(__dirname, 'index.html');
-
 });
 
 io.on("connection", function (socket) {
