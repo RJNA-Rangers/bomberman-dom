@@ -1,11 +1,12 @@
 export function runChatroom() {
 
-	const app = document.querySelector(".main-app");
+	const app = document.querySelector(".app");
 	const socket = io();
 
 	let uname;
 
 	app.querySelector(".join-screen #join-user").addEventListener("click", function () {
+		console.log("join click here", socket)
 		let username = app.querySelector(".join-screen #username").value;
 		if (username.length == 0) {
 			return;
@@ -32,9 +33,10 @@ export function runChatroom() {
 		app.querySelector(".chat-screen #message-input").value = "";
 	});
 
-	app.querySelector(".chat-screen #exit-chat").addEventListener("click", function () {
+	app.querySelector(".chat-screen #exit-chat").addEventListener("click", function (evt) {
+		evt.preventDefault()
 		socket.emit("exituser", uname);
-		window.location.href = window.location.href;
+		// window.location.href = window.location.href;
 	});
 
 	socket.on("update", function (update) {

@@ -55,7 +55,8 @@ orbital.obj = rootObj;
 orbital.rootEl = rootEl;
 document.body.appendChild(orbital.rootEl);
 const container = layoutContainer();
-// rootObj.setChild(waitingRoom);
+console.log(waitingRoom)
+rootObj.setChild(waitingRoom);
 rootObj.setChild(container);
 console.log(rootEl);
 

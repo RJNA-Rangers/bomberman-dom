@@ -23,7 +23,7 @@ export const chatroomContainer = RJNA.tag.div(
   { class: "chatroom-container" },
   {},
   {},
-  RJNA.tag.h3({ class: "chatroom-title" }, {}, {}, "Live Chat:"),
+  // RJNA.tag.h3({ class: "chatroom-title" }, {}, {}, "Live Chat:"),
   chatroom
 );
 // -- //

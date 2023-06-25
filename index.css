@@ -18,16 +18,16 @@ body {
   justify-content: center;
 }
 
-.waiting-rooms-container{
-      width: 100%;
-      height: 100%;
-      background-color: whitesmoke;
-      position: absolute;
-      display: block;
-      z-index: 999;
+.waiting-rooms-container {
+  width: 100%;
+  height: 100%;
+  background-color: whitesmoke;
+  position: absolute;
+  display: block;
+  z-index: 999;
 }
 
-.waiting-rooms-grid{
+.waiting-rooms-grid {
   display: grid;
   margin: 0;
   width: 100%;
@@ -41,10 +41,11 @@ body {
     "info info players"
   ;
   position: fixed;
+  justify-content: center;
   overflow-y: auto;
 }
 
-.waiting-rooms-title{
+.waiting-rooms-title {
   grid-area: title;
   margin: 0;
   display: flex;
@@ -58,7 +59,31 @@ body {
   border: 3px rgb(0, 255, 76) solid;
 }
 
-.countdown{
+.waiting-rooms-title::before {
+  overflow: hidden;
+  display: inline-block;
+  vertical-align: bottom;
+  -webkit-animation: ellipsis steps(3, ) 1500ms infinite;
+  animation: ellipsis steps(3, end) 1500ms infinite;
+  content: "\2026";
+  /* ascii code for the ellipsis character */
+  width: 0px;
+  margin-right: 5px;
+}
+
+@keyframes ellipsis {
+  to {
+    width: 1.0em;
+  }
+}
+
+@-webkit-keyframes ellipsis {
+  to {
+    width: 1.0em;
+  }
+}
+
+.countdown {
   grid-area: countdown;
   margin: 0;
   display: flex;
@@ -71,6 +96,24 @@ body {
   font-size: xx-large;
   border: 3px rgb(187, 0, 255) solid;
 }
+
+.waiting-rooms {
+  grid-area: players;
+  font-family: "Common Pixel", sans-serif;
+  color: black;
+  font-size: x-large;
+  margin: 0;
+  height: 100%;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  overflow-y: auto;
+  border: 3px rgb(255, 145, 0) solid;
+  position: relative;
+}
+
+
 
 .container {
   display: grid;
@@ -86,6 +129,7 @@ body {
     "game-updates game chatroom"
   ;
   position: fixed;
+  justify-content: center;
   overflow-y: auto;
 }
 
@@ -253,11 +297,14 @@ body {
   z-index: 10;
 }
 
-.main-app>.screen {
+.waiting-rooms>.screen {
   display: none;
+  position: absolute;
+  z-index: 999;
+  background-color: whitesmoke;
 }
 
-.main-app>.screen.active {
+.waiting-rooms>.screen.active {
   display: block;
   width: 100%;
   height: 100%;
@@ -310,6 +357,11 @@ body {
   cursor: pointer;
   outline: none;
   border: none;
+}
+
+.chat-screen {
+  width: 100%;
+  height: 100%;
 }
 
 .chat-screen .header {
@@ -391,7 +443,10 @@ body {
 .chat-screen .typebox input {
   flex: 1;
   height: 50px;
-  font-size: 18px;
+  flex: 1;
+  height: 50px;
+  padding-left: 5px;
+  font-size: small;
 }
 
 .chat-screen .typebox button {
@@ -409,4 +464,219 @@ body {
 #exit-chat,
 #join-user {
   font-family: "Common Pixel", sans-serif;
+}
+
+.players-waiting-container {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  display: grid;
+  grid-template-areas:
+    "title"
+    "player-1-card"
+    "player-2-card"
+    "player-3-card"
+    "player-4-card";
+  grid-template-rows: 30px 1fr 1fr 1fr 1fr 5px;
+  grid-gap: 10px;
+  justify-content: center;
+  grid-template-columns: 95%;
+  grid-gap: 10px;
+  justify-content: center;
+  overflow: hidden;
+}
+
+.players-waiting-title {
+  text-align: center;
+  margin-top: 5px;
+  font-size: xx-large;
+}
+
+:root {
+  --card-height: 100%;
+  --card-width: calc(var(--card-height) / 1.5);
+}
+
+.player-1-card,
+.player-2-card,
+.player-3-card,
+.player-4-card {
+  grid-area: player-1-card;
+  max-width: 100%;
+  max-height: 100%;
+  position: relative;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 0 36px;
+  perspective: 100%;
+}
+
+.player-2-card {
+  grid-area: player-2-card;
+}
+
+.player-3-card {
+  grid-area: player-3-card;
+}
+
+.player-4-card {
+  grid-area: player-4-card;
+}
+
+.player-1-cover-image {
+  border-radius: 2rem;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.player-1-card-wrapper {
+  transition: all 0.5s;
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  z-index: -1;
+}
+
+.player-1-card:hover {
+  transform: perspective(100%) translateY(-5%) rotateX(25deg) translateZ(0);
+}
+
+.player-1-card-wrapper::before,
+.player-1-card-wrapper::after {
+  content: "";
+  opacity: 0;
+  max-width: 100%;
+  max-height: 80%;
+  transition: all 0.5s;
+  position: absolute;
+  left: 0;
+}
+
+.player-1-card-wrapper::before {
+  top: 0;
+  height: 100%;
+  background-image: linear-gradient(to top,
+      transparent 46%,
+      rgba(12, 13, 19, 0.5) 68%,
+      rgba(12, 13, 19) 97%);
+}
+
+.player-1-card-wrapper::after {
+  bottom: 0;
+  opacity: 1;
+  background-image: linear-gradient(to bottom,
+      transparent 46%,
+      rgba(12, 13, 19, 0.5) 68%,
+      rgba(12, 13, 19) 97%);
+}
+
+.player-1-card:hover .player-1-card-wrapper::before,
+.player-1-card-wrapper::after {
+  opacity: 1;
+}
+
+.player-1-card:hover .player-1-card-wrapper::after {
+  height: 100%;
+}
+
+.player-1-title {
+  width: 100%;
+  height: 50%;
+  object-fit: contain;
+  transition: transform 0.5s;
+}
+
+.player-1-card:hover .player-1-title {
+  transform: scale(calc(1 + (var(--hover, 0) * 0.25))) rotate(calc(var(--hover, 0) * -5deg));
+}
+
+.player-1-character {
+  max-width: 100%;
+  max-height: 100%;
+  opacity: 0;
+  transition: all 0.5s;
+  position: absolute;
+  z-index: -1;
+}
+
+.player-1-card:hover .player-1-character,
+.player-2-card:hover .player-1-character,
+.player-3-card:hover .player-1-character,
+.player-4-card:hover .player-1-character {
+  opacity: 1;
+}
+
+.player-1-card-footer {
+  padding: 0 1.5rem;
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  display: grid;
+  grid-template-rows: auto auto;
+  background: hsl(0 0% 100% / 0.5);
+  backdrop-filter: blur(var(--blur));
+  height: 30%;
+  align-content: center;
+  --blur: 16px;
+  border-radius: 0px 0px 2rem 2rem;
+}
+
+.game-info-container {
+  grid-area: info;
+  border: 3px #2196F3 solid;
+  display: grid;
+  grid-template-areas:
+    "title title"
+    "controls extras";
+  grid-template-rows: 100px 1fr 10px;
+  grid-template-columns: 49% 49%;
+  grid-gap: 5px;
+  justify-content: center;
+}
+
+.game-info-title {
+  grid-area: title;
+  font-family: "Common Pixel", sans-serif;
+  text-align: center;
+  font-size: xx-large;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.game-controls-container {
+  grid-area: controls;
+  border: 3px #63b6fa solid;
+  display: flex;
+  width: 100%;
+  height: 100%;
+  flex-direction: column;
+  align-items: center;
+  border-radius: 2rem;
+}
+
+.game-controls-title {
+  font-family: "Common Pixel", sans-serif;
+  text-align: center;
+  font-size: x-large;
+}
+
+.game-extras-container {
+  grid-area: extras;
+  border: 3px #0275d3 solid;
+  display: flex;
+  width: 100%;
+  height: 100%;
+  flex-direction: column;
+  align-items: center;
+  border-radius: 2rem;
+}
+
+.game-extras-title {
+  font-family: "Common Pixel", sans-serif;
+  text-align: center;
+  font-size: x-large;
 }
