@@ -1,7 +1,7 @@
 import RJNA from "./rjna/engine.js";
 import { globalSettings } from "./gameSetting.js";
 
-const playerCard = (number) => RJNA.tag.div({ class: `player-${number}-card` },
+export const playerCard = (incomingPlayer) => RJNA.tag.div({ class: `player-${incomingPlayer.count}-card` },
   {},
   {},
   RJNA.tag.div({ class: "player-1-card-wrapper" },
@@ -10,7 +10,7 @@ const playerCard = (number) => RJNA.tag.div({ class: `player-${number}-card` },
     RJNA.tag.img({ class: "player-1-cover-image" }, {}, { src: "https://ggayane.github.io/css-experiments/cards/dark_rider-cover.jpg" })
   ),
   RJNA.tag.span({ class: "player-1-card-footer" }, {}, {},
-    RJNA.tag.span({}, {}, {}, `Player-${number}`),
+    RJNA.tag.span({}, {}, {}, `${incomingPlayer.username}`),
     RJNA.tag.span()
   ),
   // RJNA.tag.img({ class: "player-1-title" }, {}, { src: "https://ggayane.github.io/css-experiments/cards/dark_rider-title.png" }),
@@ -47,10 +47,10 @@ export const waitingRoomGrid = RJNA.tag.div(
     ),
     RJNA.tag.div({ class: "players-waiting-container" }, {}, {},
       RJNA.tag.h3({ class: "players-waiting-title" }, {}, {}, "Ready!!"),
-      playerCard(1),
-      playerCard(2),
-      playerCard(3),
-      playerCard(4),
+      // playerCard(1),
+      // playerCard(2),
+      // playerCard(3),
+      // playerCard(4),
     )
 
   ),

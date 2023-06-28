@@ -624,6 +624,10 @@ body {
   border-radius: 0px 0px 2rem 2rem;
 }
 
+.waiting{
+  color: darkgray;
+}
+
 .game-info-container {
   grid-area: info;
   border: 3px #2196F3 solid;
