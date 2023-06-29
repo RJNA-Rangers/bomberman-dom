@@ -59,6 +59,12 @@ export function createMap(map) {
           break;
         case globalSettings.wallTypes.softWall:
           gameWrapper.setChild(RJNA.tag.img({
+            class: "dirt-patch", style: {
+              top: `${row * globalSettings.wallHeight}px`, left: `${col * globalSettings.wallWidth}px`, width: `${globalSettings.wallWidth}px`,
+              height: `${globalSettings.wallHeight}px`
+            }
+          }, {}, { src: globalSettings.wallSrc.empty }));
+          gameWrapper.setChild(RJNA.tag.img({
             class: "soft-wall", style: {
               top: `${row * globalSettings.wallHeight}px`, left: `${col * globalSettings.wallWidth}px`, width: `${globalSettings.wallWidth}px`,
               height: `${globalSettings.wallHeight}px`

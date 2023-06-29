@@ -1,7 +1,7 @@
 import { chatroom } from "./chatroom.js";
 import { globalSettings } from "./gameSetting.js";
 import { hearts, otherLivesContainer } from "./gameState.js";
-import {waitingRoomGrid} from "./waitingRoom.js"
+import { waitingRoomGrid } from "./waitingRoom.js"
 import RJNA from "./rjna/engine.js";
 // -- Live updates of current game events -- //
 export const gameUpdatesContainer = RJNA.tag.div(
@@ -52,7 +52,7 @@ export const powerUpsContainer = RJNA.tag.div(
 // -- //
 
 // -- game title -- //
-const gameTitle = RJNA.tag.h1({ class: "game-title" }, {}, {}, "💣BOMBERMAN💣");
+const gameTitle = RJNA.tag.h1({ class: "game-title" }, {}, {}, "BOMBERMAN");
 
 // -- game container -- //
 const gameContainer = RJNA.tag.div({ class: "game-container" }, {}, {});

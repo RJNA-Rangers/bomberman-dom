@@ -67,11 +67,6 @@ function openGame() {
         let map = createMap(orbital.cells)
         let gameContainer = RJNA.getObjByAttrsAndPropsVal(orbital.obj, "game-container");
         gameContainer.setChild(map);
-        const gameWrapper = gameContainer.children[0];
-        gameWrapper.setChild(placePlayer(1, "one"))
-        gameWrapper.setChild(placePlayer(2, "ghost"))
-        gameWrapper.setChild(placePlayer(3, "lad"))
-        gameWrapper.setChild(placePlayer(4, "wario"))
         resolve("done")
     })
 }

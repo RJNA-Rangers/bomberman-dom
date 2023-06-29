@@ -1,20 +1,44 @@
 import RJNA from "./rjna/engine.js";
 import { globalSettings } from "./gameSetting.js";
 
+function imageBackground(number) {
+  switch (number) {
+    case 1:
+      return RJNA.tag.img({ class: "player-1-cover-image" }, {}, { src: "https://ggayane.github.io/css-experiments/cards/dark_rider-cover.jpg" })
+    case 2:
+      return RJNA.tag.img({ class: "player-1-cover-image" }, {}, { src: "https://images.unsplash.com/photo-1526297003708-f5a1c2c9c6e7?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=870&q=80" })
+    case 3:
+      return RJNA.tag.img({ class: "player-1-cover-image" }, {}, { src: "https://images-wixmp-ed30a86b8c4ca887773594c2.wixmp.com/f/95e10b5f-f014-468c-a760-4bad15ef5d5a/d9o74ca-78920cfa-91c4-4291-afd6-d5326d80eb63.jpg/v1/fill/w_622,h_350,q_70,strp/scarface_by_cautious2music_d9o74ca-350t.jpg?token=eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ1cm46YXBwOjdlMGQxODg5ODIyNjQzNzNhNWYwZDQxNWVhMGQyNmUwIiwiaXNzIjoidXJuOmFwcDo3ZTBkMTg4OTgyMjY0MzczYTVmMGQ0MTVlYTBkMjZlMCIsIm9iaiI6W1t7ImhlaWdodCI6Ijw9NTc2IiwicGF0aCI6IlwvZlwvOTVlMTBiNWYtZjAxNC00NjhjLWE3NjAtNGJhZDE1ZWY1ZDVhXC9kOW83NGNhLTc4OTIwY2ZhLTkxYzQtNDI5MS1hZmQ2LWQ1MzI2ZDgwZWI2My5qcGciLCJ3aWR0aCI6Ijw9MTAyNCJ9XV0sImF1ZCI6WyJ1cm46c2VydmljZTppbWFnZS5vcGVyYXRpb25zIl19.wqnGNAjA82ZxcrOkvycdT3Mfz-gYgXUEklmX680V9cU" })
+    case 4:
+      return RJNA.tag.img({ class: "player-1-cover-image" }, {}, { src: "https://images-wixmp-ed30a86b8c4ca887773594c2.wixmp.com/f/006d725f-6449-48f6-bba6-db39bbe5331b/d8sh5e0-7b275d44-72a2-4e28-b5a6-b4ee8fdebb02.jpg/v1/fill/w_622,h_350,q_70,strp/halo_5___team_chief_by_vgwallpapers_d8sh5e0-350t.jpg?token=eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ1cm46YXBwOjdlMGQxODg5ODIyNjQzNzNhNWYwZDQxNWVhMGQyNmUwIiwiaXNzIjoidXJuOmFwcDo3ZTBkMTg4OTgyMjY0MzczYTVmMGQ0MTVlYTBkMjZlMCIsIm9iaiI6W1t7ImhlaWdodCI6Ijw9NTc2IiwicGF0aCI6IlwvZlwvMDA2ZDcyNWYtNjQ0OS00OGY2LWJiYTYtZGIzOWJiZTUzMzFiXC9kOHNoNWUwLTdiMjc1ZDQ0LTcyYTItNGUyOC1iNWE2LWI0ZWU4ZmRlYmIwMi5qcGciLCJ3aWR0aCI6Ijw9MTAyNCJ9XV0sImF1ZCI6WyJ1cm46c2VydmljZTppbWFnZS5vcGVyYXRpb25zIl19.CDRgGUDcI7-YtIg6B-5w2wpa2RVKjU-inWG2WXvUEL8" })
+  }
+}
+function imageAvatar(number) {
+  switch (number) {
+    case 1:
+      return RJNA.tag.img({ class: "player-1-character" }, {}, { src: globalSettings.players.one })
+    case 2:
+      return RJNA.tag.img({ class: "player-1-character" }, {}, { src: globalSettings.players.ghost })
+    case 3:
+      return RJNA.tag.img({ class: "player-1-character" }, {}, { src: globalSettings.players.lad })
+    case 4:
+      return RJNA.tag.img({ class: "player-1-character" }, {}, { src: globalSettings.players.wario })
+  }
+}
+
 export const playerCard = (incomingPlayer) => RJNA.tag.div({ class: `player-${incomingPlayer.count}-card` },
   {},
   {},
   RJNA.tag.div({ class: "player-1-card-wrapper" },
     {},
     {},
-    RJNA.tag.img({ class: "player-1-cover-image" }, {}, { src: "https://ggayane.github.io/css-experiments/cards/dark_rider-cover.jpg" })
+    imageBackground(incomingPlayer.count)
   ),
   RJNA.tag.span({ class: "player-1-card-footer" }, {}, {},
     RJNA.tag.span({}, {}, {}, `${incomingPlayer.username}`),
     RJNA.tag.span()
   ),
-  // RJNA.tag.img({ class: "player-1-title" }, {}, { src: "https://ggayane.github.io/css-experiments/cards/dark_rider-title.png" }),
-  RJNA.tag.img({ class: "player-1-character" }, {}, { src: "https://ggayane.github.io/css-experiments/cards/dark_rider-character.webp" }),
+  imageAvatar(incomingPlayer.count)
 )
 
 export const waitingRoomGrid = RJNA.tag.div(
@@ -47,10 +71,6 @@ export const waitingRoomGrid = RJNA.tag.div(
     ),
     RJNA.tag.div({ class: "players-waiting-container" }, {}, {},
       RJNA.tag.h3({ class: "players-waiting-title" }, {}, {}, "Ready!!"),
-      // playerCard(1),
-      // playerCard(2),
-      // playerCard(3),
-      // playerCard(4),
     )
 
   ),
@@ -64,25 +84,3 @@ export const waitingRoomGrid = RJNA.tag.div(
     )
   )
 );
-
-
-//  <div class="card">
-//     <div class="wrapper">
-//       <img src="https://ggayane.github.io/css-experiments/cards/dark_rider-cover.jpg" class="cover-image" />
-//     </div>
-//     <img src="https://ggayane.github.io/css-experiments/cards/dark_rider-title.png" class="title" />
-//     <img src="https://ggayane.github.io/css-experiments/cards/dark_rider-character.webp" class="character" />
-//   </div>
-
-{/* <a href="#" class="card">
-<img src="https://images.unsplash.com/photo-1526297003708-f5a1c2c9c6e7?crop=entropy&cs=tinysrgb&fm=jpg&ixid=MnwzMjM4NDZ8MHwxfHJhbmRvbXx8fHx8fHx8fDE2NjI0OTY1ODM&ixlib=rb-1.2.1&q=80" alt="balloon with an emoji face" class="card__img">
-<span class="card__footer">
-  <span>Awesome speedy card</span>
-  <span>2 minutes!</span>
-</span>
-<span class="card__action">
-  <svg viewBox="0 0 448 512" title="play">
-    <path d="M424.4 214.7L72.4 6.6C43.8-10.3 0 6.1 0 47.9V464c0 37.5 40.7 60.1 72.4 41.3l352-208c31.4-18.5 31.5-64.1 0-82.6z" />
-  </svg>
-</span>
-</a> */}

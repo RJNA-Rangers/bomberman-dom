@@ -17,22 +17,20 @@ app.get('/', (req, res) => {
 
 let waitingTimer;
 let startGameTimer;
+let gameStarted = false
 io.on("connection", function (socket) {
 	socket.on("newuser", function (username) {
-		io.sockets.sockets.size++
+
 		console.log(io.sockets.sockets.size)
 		if (io.sockets.sockets.size <= 4) {
-			
-			// when a player joins (find the smallest number available between 1-4 (based on playerCount) and make
-			// incoming player that number
-			if (startGameTimer) {
+			if (startGameTimer || gameStarted) {
 				socket.emit("connection-limit-reached", "Too Late!! The game has STARTED");
 				socket.disconnect(true);
 			} else {
 				const connectedSockets = io.sockets.sockets;
 				socket.username = username
 				socket.playerCount = findPlayerCount()
-				console.log(connectedSockets)
+				// console.log(connectedSockets)
 				userObj = { "username": socket.username, "count": socket.playerCount }
 				socket.broadcast.emit("waiting", userObj);
 
@@ -49,7 +47,7 @@ io.on("connection", function (socket) {
 					const previouslyJoinedSocket = { "username": connected.username, "count": connected.playerCount }
 					socket.emit("join-lobby", previouslyJoinedSocket)
 				});
-				io.sockets.emit("update", username + " joined the conversation");
+				socket.broadcast.emit("update", username + " joined the conversation");
 			}
 		} else {
 			socket.emit("connection-limit-reached", "Lobby is now full! Please Try Again Later");
@@ -65,6 +63,9 @@ io.on("connection", function (socket) {
 		io.sockets.sockets.delete(socket.id)
 		if (io.sockets.sockets.size < 2 && waitingTimer) {
 			stopCountdown();
+		}
+		if (io.sockets.sockets.size < 2 && startGameTimer) {
+			stopGameCountdown();
 		}
 	});
 	socket.on("chat", function (message) {
@@ -88,6 +89,7 @@ function startGameCountdown() {
 		} else {
 			startGameTimer = null;
 			io.sockets.emit("start-game", countdown);
+			gameStarted = true
 		}
 	}
 	emitGameCountdown();
@@ -123,22 +125,24 @@ function stopCountdown() {
 
 function findPlayerCount() {
 	let smallestMissingValue = null;
-	for (let n of [...Array(4).keys()]) {
-	  let isValuePresent = false;
-	  io.sockets.sockets.forEach(socket => {
-		if (socket.playerCount && socket.playerCount) {
-		  isValuePresent = true;
+	console.log("here")
+	for (let n = 1; n <= 4; n++) {
+		let found = false;
+
+		for (let [id, socket] of io.sockets.sockets) {
+			// console.log(key, "key")
+			// console.log(value, "value")
+			if (socket.playerCount === n) {
+				found = true;
+				break;
+			}
 		}
-	  });
-  
-	  if (!isValuePresent) {
-		// Value n is not present in any socket's playerCount
-		// Update the smallestMissingValue if it is null or greater than n
-		if (smallestMissingValue === null || smallestMissingValue > n+1) {
-		  smallestMissingValue = n+1;
+
+		if (!found) {
+			smallestMissingValue = n;
+			break;
 		}
-	  }
 	}
-  
+
 	return smallestMissingValue;
-  }
+}
