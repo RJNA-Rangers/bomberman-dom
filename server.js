@@ -15,38 +15,41 @@ app.get('/', (req, res) => {
 	res.sendFile(__dirname, 'index.html');
 });
 
-let connectionCount = 0
 let waitingTimer;
 let startGameTimer;
 io.on("connection", function (socket) {
 	socket.on("newuser", function (username) {
-		connectionCount++
-		if (connectionCount <= 4) {
+		io.sockets.sockets.size++
+		console.log(io.sockets.sockets.size)
+		if (io.sockets.sockets.size <= 4) {
+			
 			// when a player joins (find the smallest number available between 1-4 (based on playerCount) and make
 			// incoming player that number
-			const connectedSockets = io.sockets.sockets;
-			socket.username = username
-			socket.playerCount = connectionCount
-			userObj = { "username": socket.username, "count": socket.playerCount }
-			socket.broadcast.emit("waiting", userObj);
+			if (startGameTimer) {
+				socket.emit("connection-limit-reached", "Too Late!! The game has STARTED");
+				socket.disconnect(true);
+			} else {
+				const connectedSockets = io.sockets.sockets;
+				socket.username = username
+				socket.playerCount = findPlayerCount()
+				console.log(connectedSockets)
+				userObj = { "username": socket.username, "count": socket.playerCount }
+				socket.broadcast.emit("waiting", userObj);
 
-			if (connectionCount >= 2 && connectionCount < 4 && !waitingTimer) {
-				// Start countdown when there are two or more connections and countdown is not already running
-				startCountdown();
-			}
-			if (connectionCount === 4 && !startGameTimer) {
-				// Start countdown when there are 4 connections and countdown is not already running
-				startGameCountdown();
-			}
-			//   console.log({connectedSockets})
-			connectedSockets.forEach(connected => {
-				console.log(connected)
-				const previouslyJoinedSocket = { "username": connected.username, "count": connected.playerCount }
-				socket.emit("join-lobby", previouslyJoinedSocket)
-			});
-			io.sockets.emit("update", username + " joined the conversation");
-			if (connectionCount == 2) {
+				if (io.sockets.sockets.size >= 2 && io.sockets.sockets.size < 4 && !waitingTimer) {
+					// Start countdown when there are two or more connections and countdown is not already running
+					startCountdown();
+				}
+				if (io.sockets.sockets.size === 4 && !startGameTimer) {
+					// Start countdown when there are 4 connections and countdown is not already running
+					startGameCountdown();
+				}
 
+				connectedSockets.forEach(connected => {
+					const previouslyJoinedSocket = { "username": connected.username, "count": connected.playerCount }
+					socket.emit("join-lobby", previouslyJoinedSocket)
+				});
+				io.sockets.emit("update", username + " joined the conversation");
 			}
 		} else {
 			socket.emit("connection-limit-reached", "Lobby is now full! Please Try Again Later");
@@ -54,15 +57,13 @@ io.on("connection", function (socket) {
 		}
 	});
 	socket.on("exituser", function (username) {
-		if (connectionCount > 0) {
-			connectionCount--
-		}
+		console.log(io.sockets.sockets.size)
 		socket.broadcast.emit("update", username + " left the conversation");
 		socket.disconnect(true)
 		// remove player-card from all connected users
-		// socket.broadcast.emit("rempove-waiting-player",socket.playerCount)
+		// socket.broadcast.emit("remove-waiting-player",socket.playerCount)
 		io.sockets.sockets.delete(socket.id)
-		if (connectionCount < 2 && waitingTimer) {
+		if (io.sockets.sockets.size < 2 && waitingTimer) {
 			stopCountdown();
 		}
 	});
@@ -119,3 +120,25 @@ function stopCountdown() {
 	clearTimeout(waitingTimer);
 	waitingTimer = null;
 }
+
+function findPlayerCount() {
+	let smallestMissingValue = null;
+	for (let n of [...Array(4).keys()]) {
+	  let isValuePresent = false;
+	  io.sockets.sockets.forEach(socket => {
+		if (socket.playerCount && socket.playerCount) {
+		  isValuePresent = true;
+		}
+	  });
+  
+	  if (!isValuePresent) {
+		// Value n is not present in any socket's playerCount
+		// Update the smallestMissingValue if it is null or greater than n
+		if (smallestMissingValue === null || smallestMissingValue > n+1) {
+		  smallestMissingValue = n+1;
+		}
+	  }
+	}
+  
+	return smallestMissingValue;
+  }
