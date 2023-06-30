@@ -1,7 +1,9 @@
 import RJNA from "../rjna/engine.js";
 import { playerCard } from "../waitingRoom.js";
 import { placePlayer } from "../players.js";
-let socket;
+import { startAnimating } from "../script.js";
+
+export let socket;
 let uname;
 export function runChatroom() {
 	const app = document.querySelector(".app");
@@ -72,12 +74,25 @@ export function runChatroom() {
 					gameWrapper.setChild(placePlayer(4, "wario"))
 					break
 			}
+			orbital["players"][`${userObj["count"]}`] = {
+				"name": userObj.username,
+				"left": false,
+				"right": false,
+				"up": false,
+				"down": false,
+				"lives": 3,
+				"powerUps": []
+			}
 		});
 
 		// retrieves and displays all connected users on recently joined user's waiting room
 		socket.on("join-lobby", function (userObj) {
 			if (Object.keys(userObj).length != 0)
-				RJNA.getObjByAttrsAndPropsVal(orbital.obj, "join-screen").removeAttr("class", "active", "")
+				if (userObj.username == uname) {
+					socket.username = uname
+					socket.playerCount = userObj.count
+				}
+			RJNA.getObjByAttrsAndPropsVal(orbital.obj, "join-screen").removeAttr("class", "active", "")
 			RJNA.getObjByAttrsAndPropsVal(orbital.obj, "chat-screen").setAttr("class", "active")
 			renderMessage("update", userObj.username + " joined the conversation");
 			RJNA.getObjByAttrsAndPropsVal(orbital.obj, "players-waiting-container")
@@ -98,8 +113,18 @@ export function runChatroom() {
 					gameWrapper.setChild(placePlayer(4, "wario"))
 					break
 			}
-			console.log(userObj);
+			orbital["players"][`${userObj["count"]}`] = {
+				"name": userObj.username,
+				"left": false,
+				"right": false,
+				"up": false,
+				"down": false,
+				"lives": 3,
+				"powerUps": []
+			}
 		});
+
+
 
 		// display 20s countdown when 2 or more users have joined the waiting room
 		socket.on("waiting-countdown", function (countdown) {
@@ -126,17 +151,18 @@ export function runChatroom() {
 		// displays full lobby message on form
 		socket.on("connection-limit-reached", function (message) {
 			const fullLobbyMessage = RJNA.tag.p({ class: "full-lobby-message" }, {}, {}, message)
-			// const fullLobbyMessageNode = RJNA.createNode(fullLobbyMessage)
 			RJNA.getObjByAttrsAndPropsVal(orbital.obj, "form").setChild(fullLobbyMessage)
 			socket.emit("exituser", uname);
 			socket.close()
 		});
 
+
+
 		// displays full lobby message on form
 		socket.on("start-game", function () {
 			const waitingRoomContainer = RJNA.getObjByAttrsAndPropsVal(orbital.obj, "waiting-rooms-container")
 			waitingRoomContainer.removeAttr("style", "", { display: "none" })
-			// app.querySelector(".waiting-rooms-container")
+			startAnimating(60)
 		});
 
 		// displays chat message
@@ -144,37 +170,46 @@ export function runChatroom() {
 			renderMessage("other", message);
 		});
 
-		function renderMessage(type, message) {
-			let messageContainer = app.querySelector(".chat-screen .messages");
-			if (type == "my") {
-				let el = document.createElement("div");
-				el.setAttribute("class", "message my-message");
-				el.innerHTML = `
-				<div>
-					<div class="name">You</div>
-					<div class="text">${message.text}</div>
-				</div>
-			`;
-				messageContainer.appendChild(el);
-			} else if (type == "other") {
-				let el = document.createElement("div");
-				el.setAttribute("class", "message other-message");
-				el.innerHTML = `
-				<div>
-					<div class="name">${message.username}</div>
-					<div class="text">${message.text}</div>
-				</div>
-			`;
-				messageContainer.appendChild(el);
-			} else if (type == "update") {
-				let el = document.createElement("div");
-				el.setAttribute("class", "update");
-				el.innerText = message;
-				messageContainer.appendChild(el);
+		socket.on("playerMovement", function (obj) {
+			console.log(obj)
+			for (let [key, value] of Object.entries(obj)) {
+				if (key != "myPlayerNum") {
+					orbital.players[obj.myPlayerNum][key] = value
+				}
 			}
-			// scroll chat to end
-			messageContainer.scrollTop = messageContainer.scrollHeight - messageContainer.clientHeight;
+			console.log(orbital)
+		})
+	}
+	function renderMessage(type, message) {
+		let messageContainer = app.querySelector(".chat-screen .messages");
+		if (type == "my") {
+			let el = document.createElement("div");
+			el.setAttribute("class", "message my-message");
+			el.innerHTML = `
+			<div>
+				<div class="name">You</div>
+				<div class="text">${message.text}</div>
+			</div>
+		`;
+			messageContainer.appendChild(el);
+		} else if (type == "other") {
+			let el = document.createElement("div");
+			el.setAttribute("class", "message other-message");
+			el.innerHTML = `
+			<div>
+				<div class="name">${message.username}</div>
+				<div class="text">${message.text}</div>
+			</div>
+		`;
+			messageContainer.appendChild(el);
+		} else if (type == "update") {
+			let el = document.createElement("div");
+			el.setAttribute("class", "update");
+			el.innerText = message;
+			messageContainer.appendChild(el);
 		}
+		// scroll chat to end
+		messageContainer.scrollTop = messageContainer.scrollHeight - messageContainer.clientHeight;
 	}
 	let hello = "Hello"
 	console.log("🚀 ~ file: code.js:180 ~ hello:", hello)

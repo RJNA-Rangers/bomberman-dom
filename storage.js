@@ -1,8 +1,8 @@
 let orbital = {
     rootEl: undefined,
     obj: undefined,
-    todo: JSON.parse(localStorage.getItem('todo_list')),
-    endpoint: window.location.href.split('/').at(-1),
+    players:{},
+    // endpoint: window.location.href.split('/').at(-1),
 }
 
 

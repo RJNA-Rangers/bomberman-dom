@@ -23,10 +23,10 @@ io.on("connection", function (socket) {
 
 		console.log(io.sockets.sockets.size)
 		if (io.sockets.sockets.size <= 4) {
-			if (startGameTimer || gameStarted) {
-				socket.emit("connection-limit-reached", "Too Late!! The game has STARTED");
-				socket.disconnect(true);
-			} else {
+			// if (startGameTimer || gameStarted) {
+			// 	socket.emit("connection-limit-reached", "Too Late!! The game has STARTED");
+			// 	socket.disconnect(true);
+			// } else {
 				const connectedSockets = io.sockets.sockets;
 				socket.username = username
 				socket.playerCount = findPlayerCount()
@@ -48,7 +48,7 @@ io.on("connection", function (socket) {
 					socket.emit("join-lobby", previouslyJoinedSocket)
 				});
 				socket.broadcast.emit("update", username + " joined the conversation");
-			}
+			// }
 		} else {
 			socket.emit("connection-limit-reached", "Lobby is now full! Please Try Again Later");
 			socket.disconnect(true);
@@ -68,6 +68,11 @@ io.on("connection", function (socket) {
 			stopGameCountdown();
 		}
 	});
+
+	socket.on("playerMovement",function (movingObj) {
+		io.sockets.emit("playerMovement",movingObj)
+	})
+
 	socket.on("chat", function (message) {
 		socket.broadcast.emit("chat", message);
 	});
