@@ -27,27 +27,27 @@ io.on("connection", function (socket) {
 			// 	socket.emit("connection-limit-reached", "Too Late!! The game has STARTED");
 			// 	socket.disconnect(true);
 			// } else {
-				const connectedSockets = io.sockets.sockets;
-				socket.username = username
-				socket.playerCount = findPlayerCount()
-				// console.log(connectedSockets)
-				userObj = { "username": socket.username, "count": socket.playerCount }
-				socket.broadcast.emit("waiting", userObj);
+			const connectedSockets = io.sockets.sockets;
+			socket.username = username
+			socket.playerCount = findPlayerCount()
+			// console.log(connectedSockets)
+			userObj = { "username": socket.username, "count": socket.playerCount }
+			socket.broadcast.emit("waiting", userObj);
 
-				if (io.sockets.sockets.size >= 2 && io.sockets.sockets.size < 4 && !waitingTimer) {
-					// Start countdown when there are two or more connections and countdown is not already running
-					startCountdown();
-				}
-				if (io.sockets.sockets.size === 4 && !startGameTimer) {
-					// Start countdown when there are 4 connections and countdown is not already running
-					startGameCountdown();
-				}
+			if (io.sockets.sockets.size >= 2 && io.sockets.sockets.size < 4 && !waitingTimer) {
+				// Start countdown when there are two or more connections and countdown is not already running
+				startCountdown();
+			}
+			if (io.sockets.sockets.size === 4 && !startGameTimer) {
+				// Start countdown when there are 4 connections and countdown is not already running
+				startGameCountdown();
+			}
 
-				connectedSockets.forEach(connected => {
-					const previouslyJoinedSocket = { "username": connected.username, "count": connected.playerCount }
-					socket.emit("join-lobby", previouslyJoinedSocket)
-				});
-				socket.broadcast.emit("update", username + " joined the conversation");
+			connectedSockets.forEach(connected => {
+				const previouslyJoinedSocket = { "username": connected.username, "count": connected.playerCount }
+				socket.emit("join-lobby", previouslyJoinedSocket)
+			});
+			socket.broadcast.emit("update", username + " joined the conversation");
 			// }
 		} else {
 			socket.emit("connection-limit-reached", "Lobby is now full! Please Try Again Later");
@@ -69,8 +69,8 @@ io.on("connection", function (socket) {
 		}
 	});
 
-	socket.on("playerMovement",function (movingObj) {
-		io.sockets.emit("playerMovement",movingObj)
+	socket.on("playerMovement", function (movingObj) {
+		io.sockets.emit("playerMovement", movingObj)
 	})
 
 	socket.on("chat", function (message) {
@@ -83,7 +83,7 @@ server.listen(port, () => {
 });
 
 function startGameCountdown() {
-	let countdown = 10;
+	let countdown = 2;
 
 	function emitGameCountdown() {
 		io.sockets.emit("start-game-countdown", countdown);
@@ -106,7 +106,7 @@ function stopGameCountdown() {
 }
 
 function startCountdown() {
-	let countdown = 20;
+	let countdown = 0;
 
 	function emitCountdown() {
 		io.sockets.emit("waiting-countdown", countdown);

@@ -50,7 +50,7 @@ function animate(newtime) {
         // draw player movement
         if (socket != null) {
             PlayerMovement(socket)
-            movePlayers()
+            // movePlayers()
         }
 
         // draw bomb drop

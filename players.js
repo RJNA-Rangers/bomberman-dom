@@ -19,10 +19,8 @@ export function placePlayer(number, character) {
 }
 
 export function PlayerMovement(socket) {
-    console.log({ socket })
-    const myPlayerNum = socket.playerCount
     const moving = {
-        "myPlayerNum": myPlayerNum,
+        "myPlayerNum": socket.playerCount,
         "left": false,
         "right": false,
         "up": false,
@@ -45,23 +43,8 @@ export function PlayerMovement(socket) {
     } else if (!downPressed) {
         moving.down = false
     }
-    console.log({ moving })
+    movePlayers()
     socket.emit("playerMovement", moving)
-    // border of player
-    // if (paddleCurrentPos[0] <= gameViewSettings.borderWidth) {
-    //     paddleCurrentPos[0] = gameViewSettings.borderWidth;
-    // }
-    // if (
-    //     paddleCurrentPos[0] >=
-    //     gameViewSettings.gameViewWidth -
-    //         paddleSettings.width -
-    //         gameViewSettings.borderWidth
-    // ) {
-    //     paddleCurrentPos[0] =
-    //         gameViewSettings.gameViewWidth -
-    //         paddleSettings.width -
-    //         gameViewSettings.borderWidth;
-    // }
 }
 
 export function movePlayers() {

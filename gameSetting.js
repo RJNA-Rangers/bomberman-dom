@@ -39,8 +39,8 @@ export const globalSettings = {
         wario: "https://66.media.tumblr.com/a5dc6a16fe07f56389d959e9da5f599f/tumblr_mugvnijgKx1rfjowdo1_500.gif"
     },
     speed: {
-        x: (((window.screen.width - 10 - 10) * 0.6) / 15),
-        y: ((browserHeight() - 60 - 60 - 15 - 15) / 13),
+        x: Math.floor((((window.screen.width - 10 - 10) * 0.6) / 15) * 0.1),
+        y: Math.floor(((browserHeight() - 60 - 60 - 15 - 15) / 13) * 0.1),
 
     },
 
