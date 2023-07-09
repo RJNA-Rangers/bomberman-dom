@@ -18,6 +18,7 @@ app.get('/', (req, res) => {
 let waitingTimer;
 let startGameTimer;
 let gameStarted = false
+let choiceOfMap = []
 io.on("connection", function (socket) {
 	socket.on("newuser", function (username) {
 
@@ -69,6 +70,10 @@ io.on("connection", function (socket) {
 		}
 	});
 
+	socket.on("generate-map", function (mapCells) {
+		choiceOfMap.push(mapCells)
+	})
+
 	socket.on("playerMovement", function (movingObj) {
 		io.sockets.emit("playerMovement", movingObj)
 	})
@@ -93,7 +98,12 @@ function startGameCountdown() {
 			startGameTimer = setTimeout(emitGameCountdown, 1000);
 		} else {
 			startGameTimer = null;
-			io.sockets.emit("start-game", countdown);
+			const cells = choiceOfMap[Math.floor(Math.random() * choiceOfMap.length)]
+			let allPlayers = []
+			io.sockets.sockets.forEach(connected => {
+				allPlayers.push({ "username": connected.username, "count": connected.playerCount })
+			});
+			io.sockets.emit("start-game", { cells, allPlayers });
 			gameStarted = true
 		}
 	}

@@ -12,7 +12,7 @@ const template = [
   ['▉', , '▉', , '▉', , '▉', , '▉', , '▉', , '▉', , '▉'],
   ['▉', 'l', , , , , , , , , , , , 'l', '▉'],
   ['▉', 'l', '▉', , '▉', , '▉', , '▉', , '▉', , '▉', 'l', '▉'],
-  ['▉', 'w', 'l', , , , , , , , , , 'l', 'z', '▉'],
+  ['▉', 'z', 'l', , , , , , , , , , 'l', 'w', '▉'],
   ['▉', '▉', '▉', '▉', '▉', '▉', '▉', '▉', '▉', '▉', '▉', '▉', '▉', '▉', '▉']
 ];
 
@@ -71,9 +71,9 @@ export function createMap(map) {
             }
           }, {}, { src: globalSettings.wallSrc.soft }));
           break;
-        case undefined:
+        case 'x':
           gameWrapper.setChild(RJNA.tag.img({
-            class: "dirt-patch", style: {
+            class: "loading-1", style: {
               top: `${row * globalSettings.wallHeight}px`, left: `${col * globalSettings.wallWidth}px`, width: `${globalSettings.wallWidth}px`,
               height: `${globalSettings.wallHeight}px`
             }
@@ -82,14 +82,6 @@ export function createMap(map) {
         case 'w':
           gameWrapper.setChild(RJNA.tag.img({
             class: "loading-2", style: {
-              top: `${row * globalSettings.wallHeight}px`, left: `${col * globalSettings.wallWidth}px`, width: `${globalSettings.wallWidth}px`,
-              height: `${globalSettings.wallHeight}px`
-            }
-          }, {}, { src: globalSettings.wallSrc.empty }));
-          break
-        case 'x':
-          gameWrapper.setChild(RJNA.tag.img({
-            class: "loading-1", style: {
               top: `${row * globalSettings.wallHeight}px`, left: `${col * globalSettings.wallWidth}px`, width: `${globalSettings.wallWidth}px`,
               height: `${globalSettings.wallHeight}px`
             }
@@ -110,6 +102,14 @@ export function createMap(map) {
               height: `${globalSettings.wallHeight}px`
             }
           }, {}, { src: globalSettings.wallSrc.empty }));
+        default:
+          gameWrapper.setChild(RJNA.tag.img({
+            class: "dirt-patch", style: {
+              top: `${row * globalSettings.wallHeight}px`, left: `${col * globalSettings.wallWidth}px`, width: `${globalSettings.wallWidth}px`,
+              height: `${globalSettings.wallHeight}px`
+            }
+          }, {}, { src: globalSettings.wallSrc.empty }));
+          break
       }
 
     }

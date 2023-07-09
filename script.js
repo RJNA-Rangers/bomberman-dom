@@ -13,6 +13,7 @@ let fps = 60,
     then,
     elapsed;
 
+
 export function startAnimating(fps) {
     console.log("start", socket)
     fpsInterval = 1000 / fps;
@@ -50,7 +51,6 @@ function animate(newtime) {
         // draw player movement
         if (socket != null) {
             PlayerMovement(socket)
-            // movePlayers()
         }
 
         // draw bomb drop
@@ -62,10 +62,8 @@ function animate(newtime) {
 }
 
 export function changeStopValue() {
-    if (stop) {
-        stop = false;
-    } else {
-        stop = true;
+    stop = !stop;
+    if (!stop) {
+        startAnimating(fps);
     }
-    startAnimating(fps);
 }

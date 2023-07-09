@@ -48,29 +48,22 @@ import { runChatroom } from "./public/code.js";
 //         }
 //     }
 // }
-
-const rootObj = RJNA.tag.div({ class: "app" }, {}, {});
-const rootEl = RJNA.createNode(rootObj);
-orbital.obj = rootObj;
-orbital.rootEl = rootEl;
-document.body.appendChild(orbital.rootEl);
-const container = layoutContainer();
-console.log(waitingRoom)
-rootObj.setChild(waitingRoom);
-rootObj.setChild(container);
-console.log(rootEl);
-
-// cells will go inside orbital, it is the representation of the map.
 function openGame() {
     return new Promise((resolve) => {
-        orbital.cells = generateLevel()
-        let map = createMap(orbital.cells)
-        let gameContainer = RJNA.getObjByAttrsAndPropsVal(orbital.obj, "game-container");
-        gameContainer.setChild(map);
-        resolve("done")
+        const rootObj = RJNA.tag.div({ class: "app" }, {}, {});
+        const rootEl = RJNA.createNode(rootObj);
+        orbital.obj = rootObj;
+        orbital.rootEl = rootEl;
+        document.body.appendChild(orbital.rootEl);
+        const container = layoutContainer()
+        rootObj.setChild(waitingRoom);
+        rootObj.setChild(container);
+        console.log(rootEl);
+        resolve("success")
     })
 }
 
 openGame().then(
-    (response) => response == "done" ? runChatroom() : console.log("failed to open chatroom. Please Try Again later")
-)
+    (response) => response == "success" ? runChatroom() : console.log("failed to open chatroom. Please Try Again later")
+);
+

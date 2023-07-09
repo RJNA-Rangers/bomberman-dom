@@ -2,6 +2,8 @@ import RJNA from "../rjna/engine.js";
 import { playerCard } from "../waitingRoom.js";
 import { placePlayer } from "../players.js";
 import { startAnimating } from "../script.js";
+import { createMap, generateLevel } from "../mapTemplate.js";
+import { globalSettings } from "../gameSetting.js";
 
 export let socket;
 let uname;
@@ -58,31 +60,7 @@ export function runChatroom() {
 		socket.on("waiting", function (userObj) {
 			RJNA.getObjByAttrsAndPropsVal(orbital.obj, "players-waiting-container")
 				.setChild(playerCard(userObj))
-			let gameContainer = RJNA.getObjByAttrsAndPropsVal(orbital.obj, "game-container");
-			const gameWrapper = gameContainer.children[0];
-			switch (userObj.count) {
-				case 1:
-					gameWrapper.setChild(placePlayer(1, "one"))
-					break
-				case 2:
-					gameWrapper.setChild(placePlayer(2, "ghost"))
-					break
-				case 3:
-					gameWrapper.setChild(placePlayer(3, "lad"))
-					break
-				case 4:
-					gameWrapper.setChild(placePlayer(4, "wario"))
-					break
-			}
-			orbital["players"][`${userObj["count"]}`] = {
-				"name": userObj.username,
-				"left": false,
-				"right": false,
-				"up": false,
-				"down": false,
-				"lives": 3,
-				"powerUps": []
-			}
+			updatePlayerOrbital(userObj)
 		});
 
 		// retrieves and displays all connected users on recently joined user's waiting room
@@ -97,34 +75,11 @@ export function runChatroom() {
 			renderMessage("update", userObj.username + " joined the conversation");
 			RJNA.getObjByAttrsAndPropsVal(orbital.obj, "players-waiting-container")
 				.setChild(playerCard(userObj))
-			let gameContainer = RJNA.getObjByAttrsAndPropsVal(orbital.obj, "game-container");
-			const gameWrapper = gameContainer.children[0];
-			switch (userObj.count) {
-				case 1:
-					gameWrapper.setChild(placePlayer(1, "one"))
-					break
-				case 2:
-					gameWrapper.setChild(placePlayer(2, "ghost"))
-					break
-				case 3:
-					gameWrapper.setChild(placePlayer(3, "lad"))
-					break
-				case 4:
-					gameWrapper.setChild(placePlayer(4, "wario"))
-					break
-			}
-			orbital["players"][`${userObj["count"]}`] = {
-				"name": userObj.username,
-				"left": false,
-				"right": false,
-				"up": false,
-				"down": false,
-				"lives": 3,
-				"powerUps": []
-			}
+			const cells = generateLevel()
+			console.log(cells)
+			socket.emit("generate-map", cells)
+			updatePlayerOrbital(userObj)
 		});
-
-
 
 		// display 20s countdown when 2 or more users have joined the waiting room
 		socket.on("waiting-countdown", function (countdown) {
@@ -156,10 +111,30 @@ export function runChatroom() {
 			socket.close()
 		});
 
-
-
-		// displays full lobby message on form
-		socket.on("start-game", function () {
+		// draw map with all connected players and start game
+		socket.on("start-game", function (obj) {
+			orbital.cells = obj.cells
+			let map = createMap(obj.cells)
+			console.log(orbital)
+			let gameContainer = RJNA.getObjByAttrsAndPropsVal(orbital.obj, "game-container");
+			gameContainer.setChild(map);
+			const gameWrapper = gameContainer.children[0];
+			for (const player of obj.allPlayers) {
+				switch (player.count) {
+					case 1:
+						gameWrapper.setChild(placePlayer(1, "one"))
+						break
+					case 2:
+						gameWrapper.setChild(placePlayer(2, "ghost"))
+						break
+					case 3:
+						gameWrapper.setChild(placePlayer(3, "lad"))
+						break
+					case 4:
+						gameWrapper.setChild(placePlayer(4, "wario"))
+						break
+				}
+			}
 			const waitingRoomContainer = RJNA.getObjByAttrsAndPropsVal(orbital.obj, "waiting-rooms-container")
 			waitingRoomContainer.removeAttr("style", "", { display: "none" })
 			startAnimating(60)
@@ -171,13 +146,11 @@ export function runChatroom() {
 		});
 
 		socket.on("playerMovement", function (obj) {
-			console.log(obj)
 			for (let [key, value] of Object.entries(obj)) {
 				if (key != "myPlayerNum") {
 					orbital.players[obj.myPlayerNum][key] = value
 				}
 			}
-			console.log(orbital)
 		})
 	}
 	function renderMessage(type, message) {
@@ -215,10 +188,31 @@ export function runChatroom() {
 	console.log("🚀 ~ file: code.js:180 ~ hello:", hello)
 
 };
+function updatePlayerOrbital(userObj) {
+	orbital["players"][`${userObj["count"]}`] = {
+		"name": userObj.username,
+		"lives": 3,
+		"powerUps": [],
+		"speed": globalSettings.speed.normal,
+	}
+	// coordinates are [row][col]
+	switch (userObj.count) {
+		case 1:
+			orbital["players"][`${userObj["count"]}`]["row"] = 1
+			orbital["players"][`${userObj["count"]}`]["col"] = 1
+			break
+		case 2:
+			orbital["players"][`${userObj["count"]}`]["row"] = 11
+			orbital["players"][`${userObj["count"]}`]["col"] = 13
+			break
+		case 3:
+			orbital["players"][`${userObj["count"]}`]["row"] = 1
+			orbital["players"][`${userObj["count"]}`]["col"] = 13
+			break
+		case 4:
+			orbital["players"][`${userObj["count"]}`]["row"] = 11
+			orbital["players"][`${userObj["count"]}`]["col"] = 1
+			break
+	}
+}
 
-// // Add an event listener to capture the page refresh event
-// window.addEventListener('unload', function () {
-// 	console.log("refresh")
-// 	socket.emit("exituser", uname);
-// 	socket.close()
-// });
