@@ -20,13 +20,14 @@ export function PlayerMovement(socket) {
         "col": orbital["players"][`${socket.playerCount}`]["col"],
         "speed": orbital["players"][`${socket.playerCount}`]["speed"]
     }
+    // move when the button is pressed and the next block is empty
     if (leftPressed && canMove(moving.row, moving.col - moving.speed)) {
         moving.col -= moving.speed
-    } else if (rightPressed && canMove(moving.row, moving.col + moving.speed)) {
+    } else if (rightPressed && canMove(moving.row, moving.col + 1)) {
         moving.col += moving.speed
     } else if (upPressed && canMove(moving.row - moving.speed, moving.col)) {
         moving.row -= moving.speed
-    } else if (downPressed && canMove(moving.row + moving.speed, moving.col)) {
+    } else if (downPressed && canMove(moving.row + 1, moving.col)) {
         moving.row += moving.speed
     }
     movePlayers()
