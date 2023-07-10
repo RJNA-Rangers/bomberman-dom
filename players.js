@@ -2,15 +2,29 @@ import { globalSettings } from "./gameSetting.js";
 import RJNA from "./rjna/engine.js"
 import { leftPressed, rightPressed, upPressed, downPressed } from "./input.js";
 
-export function placePlayer(number, character) {
-    return RJNA.tag.img({
-        class: `player-${number}`, style: {
-            top: orbital["players"][`${number}`]["row"] * globalSettings.wallHeight + "px",
-            left: orbital["players"][`${number}`]["col"] * globalSettings.wallWidth + "px",
-            width: `${globalSettings.players.width}px`,
-            height: `${globalSettings.players.height}px`
-        }
-    }, {}, { src: globalSettings.players[character] });
+export function placePlayer(number, character, username) {
+    return RJNA.tag.div(
+        {
+            class: `player-${number}`, style: {
+                top: orbital["players"][`${number}`]["row"] * globalSettings.wallHeight + "px",
+                left: orbital["players"][`${number}`]["col"] * globalSettings.wallWidth + "px",
+                width: `${globalSettings.players.width}px`,
+                height: `${globalSettings.players.height}px`
+            },
+        },
+        {},
+        {},
+        RJNA.tag.p({}, {}, {}, username),
+        RJNA.tag.img(
+            {
+                style: {
+                    width: "100%",
+                    height: "100%",
+                }
+            },
+            {},
+            { src: globalSettings.players[character] })
+    )
 }
 
 export function PlayerMovement(socket) {
@@ -49,6 +63,5 @@ export function movePlayers() {
         document.querySelector(`.player-${playerNum}`).style.top = playerObj.row * globalSettings.wallHeight + "px"
         document.querySelector(`.player-${playerNum}`).style.left = playerObj.col * globalSettings.wallWidth + "px"
     }
-
 }
 

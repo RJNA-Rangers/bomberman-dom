@@ -62,7 +62,8 @@ export const waitingRoomGrid = RJNA.tag.div(
         RJNA.tag.h2({}, {}, {}, "Join Here"),
         RJNA.tag.div({ class: "form-input" }, {}, {},
           RJNA.tag.label({}, {}, {}, "Username"),
-          RJNA.tag.input({ type: "text", id: "username" }, {}, {}, "Join Chatroom"),
+          RJNA.tag.input({ type: "text", id: "username" }, {}, { pattern: "^(?=\\s*\\S).{1,6}$", required: true }, "Join Chatroom"),
+          RJNA.tag.p({}, {}, {}, "Enter up to 6 Characters")
         ),
         RJNA.tag.div({ class: "form-input" }, {}, {},
           RJNA.tag.button({ id: "join-user" }, {}, {}, "Join"),

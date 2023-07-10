@@ -33,7 +33,7 @@ export const hearts = (livesRemaining) => {
 // -- //
 
 // -- number of players is based on the number of websockets -- //
-export const otherLivesContainer = (numberOfPlayers) => {
+export const otherLivesContainer = (allPlayersObj) => {
     const otherLivesContainer = RJNA.tag.div(
         { class: "other-lives-container" },
         {},
@@ -46,11 +46,12 @@ export const otherLivesContainer = (numberOfPlayers) => {
             {},
             "ENEMIES:"),
     )
-    for (let i = 0; i < numberOfPlayers; i++) {
+    for (const player of allPlayersObj) {
         let otherLives = hearts(3)
         //id will depend on the player's socket's id(the player's number will depend on who connected first e.g. player 1 is first connector)
-        otherLives.children[0] = `Player ${i + 2}:`
-        otherLives.setAttr("id", `${i + 2}`);
+        // create div with name and player image
+        otherLives.children[0] = `(Player-${player.count})  ${player.username}:`
+        otherLives.setAttr("id", `player-${player.count}-lives`);
         otherLives.removeAttr("class", "lives-container", "other-lives");
         otherLivesContainer.setChild(otherLives)
     }

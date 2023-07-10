@@ -1,6 +1,6 @@
 import { chatroom } from "./chatroom.js";
 import { globalSettings } from "./gameSetting.js";
-import { hearts, otherLivesContainer } from "./gameState.js";
+import { hearts } from "./gameState.js";
 import { waitingRoomGrid } from "./waitingRoom.js"
 import RJNA from "./rjna/engine.js";
 // -- Live updates of current game events -- //
@@ -75,6 +75,6 @@ export const layoutContainer = () => {
     powerUpsContainer,
     chatroomContainer,
     gameUpdatesContainer,
-    otherLivesContainer(3)
+    // otherLivesContainer(3)
   );
 };

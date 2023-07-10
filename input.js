@@ -8,7 +8,6 @@ document.addEventListener('keydown', keyDownHandler, false);
 document.addEventListener('keyup', keyUpHandler, false);
 
 export function keyDownHandler(e) {
-    console.log(e.key, "pressed")
     if (e.key == 'Right' || e.key == 'ArrowRight') {
         rightPressed = true;
     } else if (e.key == 'Left' || e.key == 'ArrowLeft') {

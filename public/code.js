@@ -4,6 +4,7 @@ import { placePlayer } from "../players.js";
 import { startAnimating } from "../script.js";
 import { createMap, generateLevel } from "../mapTemplate.js";
 import { globalSettings } from "../gameSetting.js";
+import { otherLivesContainer } from "../gameState.js";
 
 export let socket;
 let uname;
@@ -122,19 +123,29 @@ export function runChatroom() {
 			for (const player of obj.allPlayers) {
 				switch (player.count) {
 					case 1:
-						gameWrapper.setChild(placePlayer(1, "one"))
+						gameWrapper.setChild(placePlayer(1, "one", player.username))
 						break
 					case 2:
-						gameWrapper.setChild(placePlayer(2, "ghost"))
+						gameWrapper.setChild(placePlayer(2, "ghost", player.username))
 						break
 					case 3:
-						gameWrapper.setChild(placePlayer(3, "lad"))
+						gameWrapper.setChild(placePlayer(3, "lad", player.username))
 						break
 					case 4:
-						gameWrapper.setChild(placePlayer(4, "wario"))
+						gameWrapper.setChild(placePlayer(4, "wario", player.username))
 						break
 				}
 			}
+			// add player lives to the side
+			let otherPlayers = obj.allPlayers.filter(player => player.count != socket.playerCount)
+			console.log({ otherPlayers })
+			let container = RJNA.getObjByAttrsAndPropsVal(orbital.obj, "container")
+			console.log(container)
+			let otherLivesContainerObj = otherLivesContainer(otherPlayers)
+			container.setChild(otherLivesContainerObj)
+			// console.log({ obj })
+			// console.log({ orbital })
+			// console.log({ socket })
 			const waitingRoomContainer = RJNA.getObjByAttrsAndPropsVal(orbital.obj, "waiting-rooms-container")
 			waitingRoomContainer.removeAttr("style", "", { display: "none" })
 			startAnimating(60)

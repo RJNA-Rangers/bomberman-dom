@@ -191,7 +191,6 @@ body {
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  justify-content: space-between;
   font-family: "Common Pixel", sans-serif;
   color: lightgray;
   font-size: larger;
@@ -274,6 +273,38 @@ body {
   z-index: 999;
 }
 
+.player-1>p,
+.player-2>p,
+.player-3>p,
+.player-4>p {
+  position: absolute;
+  top: -15px;
+  width: 100%;
+  text-align: center;
+  background-color: #00000042;
+  border-radius: 50px;
+  font-size: small;
+  font-weight: bold;
+  padding-top: 2px;
+  padding-bottom: 2px;
+}
+
+.player-1>p {
+  color: #ffffff;
+}
+
+.player-2>p {
+  color: #ffab00;
+}
+
+.player-3>p {
+  color: #99ff00;
+}
+
+.player-4>p {
+  color: #79c3ff;
+}
+
 /* Chats */
 
 * {
@@ -347,6 +378,13 @@ body {
   padding: 10px;
   border: 1px solid #555;
   font-size: 16px;
+}
+
+.screen .form-input p {
+  text-align: center;
+  font-size: large;
+  color: darkgray;
+  margin-top: 10px;
 }
 
 .screen .form-input button {
@@ -624,7 +662,7 @@ body {
   border-radius: 0px 0px 2rem 2rem;
 }
 
-.waiting{
+.waiting {
   color: darkgray;
 }
 
