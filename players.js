@@ -45,7 +45,7 @@ export function PlayerMovement(socket) {
         moving.row += moving.speed
     }
     movePlayers()
-    socket.emit("playerMovement", moving)
+    socket.emit("player-movement", moving)
 }
 
 function canMove(row, col) {

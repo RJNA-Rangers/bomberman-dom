@@ -56,7 +56,7 @@ io.on("connection", function (socket) {
 		}
 	});
 	socket.on("exituser", function (username) {
-		console.log(io.sockets.sockets.size)
+		console.log("user has closed tab")
 		socket.broadcast.emit("update", username + " left the conversation");
 		socket.disconnect(true)
 		// remove player-card from all connected users
@@ -74,13 +74,20 @@ io.on("connection", function (socket) {
 		choiceOfMap.push(mapCells)
 	})
 
-	socket.on("playerMovement", function (movingObj) {
-		io.sockets.emit("playerMovement", movingObj)
+	socket.on("player-movement", function (movingObj) {
+		io.sockets.emit("player-moving", movingObj)
 	})
 
 	socket.on("chat", function (message) {
 		socket.broadcast.emit("chat", message);
 	});
+	socket.on("disconnect", function (reason) {
+		console.log({ reason })
+		console.log({ socket })
+		socket.broadcast.emit("update", socket.username + " has left the conversation")
+		socket.broadcast.emit("remove-player", { "username": socket.username, "count": socket.playerCount })
+		// if the length of connections=1, that player wins, send out game over with winner
+	})
 });
 
 server.listen(port, () => {
@@ -145,8 +152,6 @@ function findPlayerCount() {
 		let found = false;
 
 		for (let [id, socket] of io.sockets.sockets) {
-			// console.log(key, "key")
-			// console.log(value, "value")
 			if (socket.playerCount === n) {
 				found = true;
 				break;

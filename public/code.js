@@ -53,7 +53,6 @@ export function runChatroom() {
 
 	function runSocket() {	// sends update message to the chatroom
 		socket.on("update", function (update) {
-			console.log({ update })
 			renderMessage("update", update);
 		});
 
@@ -143,9 +142,6 @@ export function runChatroom() {
 			console.log(container)
 			let otherLivesContainerObj = otherLivesContainer(otherPlayers)
 			container.setChild(otherLivesContainerObj)
-			// console.log({ obj })
-			// console.log({ orbital })
-			// console.log({ socket })
 			const waitingRoomContainer = RJNA.getObjByAttrsAndPropsVal(orbital.obj, "waiting-rooms-container")
 			waitingRoomContainer.removeAttr("style", "", { display: "none" })
 			startAnimating(60)
@@ -156,12 +152,18 @@ export function runChatroom() {
 			renderMessage("other", message);
 		});
 
-		socket.on("playerMovement", function (obj) {
+		socket.on("player-moving", function (obj) {
 			for (let [key, value] of Object.entries(obj)) {
 				if (key != "myPlayerNum") {
 					orbital.players[obj.myPlayerNum][key] = value
 				}
 			}
+		})
+		socket.on("remove-player", function (userObj) {
+			delete orbital.players[userObj.count]
+			document.querySelector(`.player-${userObj.count}`).remove()
+			document.querySelector(`#player-${userObj.count}-lives`).remove()
+			console.log(orbital)
 		})
 	}
 	function renderMessage(type, message) {
@@ -199,6 +201,7 @@ export function runChatroom() {
 	console.log("🚀 ~ file: code.js:180 ~ hello:", hello)
 
 };
+
 function updatePlayerOrbital(userObj) {
 	orbital["players"][`${userObj["count"]}`] = {
 		"name": userObj.username,

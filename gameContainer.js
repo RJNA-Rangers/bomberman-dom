@@ -47,7 +47,7 @@ export const powerUpsContainer = RJNA.tag.div(
   { class: "power-up-container" },
   {},
   {},
-  RJNA.tag.h3({ class: "power-up-title" }, {}, {}, "💣💣💣")
+  RJNA.tag.h3({ class: "power-up-title" }, {}, {}, "Power-Ups: 💣💣💣")
 );
 // -- //
 

@@ -42,6 +42,10 @@ export const globalSettings = {
         normal: 0.1,
         fast: 0.2,
     },
+    "power-ups": {
+        cooldown: 0.25,
+        "double-speed": "https://cdn.onlinewebfonts.com/svg/img_515277.png",
+    }
 }
 
 export function changeGameSettingValue(key, value) {

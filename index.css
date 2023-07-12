@@ -197,10 +197,16 @@ body {
   border: 3px blue solid;
 }
 
+.other-lives-title {
+  margin-top: 10px;
+  margin-bottom: 30px;
+}
+
 .other-lives {
   display: flex;
   flex-direction: column;
   align-items: center;
+  margin-bottom: 154e44px;
 }
 
 .other-lives>.lives-heart-container>img {
