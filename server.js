@@ -15,10 +15,10 @@ app.get('/', (req, res) => {
 	res.sendFile(__dirname, 'index.html');
 });
 
-let waitingTimer;
-let startGameTimer;
+let waitingTimer, startGameTimer, powerUpTimer, cells;
 let gameStarted = false
 let choiceOfMap = []
+let choiceOfPowerUp = ["speed", "flames", "bombs"]
 io.on("connection", function (socket) {
 	socket.on("newuser", function (username) {
 
@@ -81,6 +81,9 @@ io.on("connection", function (socket) {
 	socket.on("chat", function (message) {
 		socket.broadcast.emit("chat", message);
 	});
+	socket.on("update-cells", function (updatedCells) {
+		cells = updatedCells
+	})
 	socket.on("disconnect", function (reason) {
 		console.log({ reason })
 		console.log({ socket })
@@ -94,6 +97,23 @@ server.listen(port, () => {
 	console.log(`App listening at http://localhost:${port}`);
 });
 
+function dropPowerUp(cells) {
+	let softWallCoords = []
+	for (let r = 0; r < cells.length; r++) {
+		for (let c = 0; c < cells[r].length; c++) {
+			if (cells[r][c] == 1 && Math.random() < 0.13) {
+				const powerUpCoords = [r, c]
+				const powerUp = choiceOfPowerUp[Math.floor(Math.random() * choiceOfPowerUp.length)]
+				softWallCoords.push({ powerUp, powerUpCoords })
+			}
+		}
+	}
+	if (softWallCoords.length != 0) {
+		io.sockets.emit("drop-power-up", softWallCoords);
+	}
+}
+
+
 function startGameCountdown() {
 	let countdown = 2;
 
@@ -105,12 +125,13 @@ function startGameCountdown() {
 			startGameTimer = setTimeout(emitGameCountdown, 1000);
 		} else {
 			startGameTimer = null;
-			const cells = choiceOfMap[Math.floor(Math.random() * choiceOfMap.length)]
+			cells = choiceOfMap[Math.floor(Math.random() * choiceOfMap.length)]
 			let allPlayers = []
 			io.sockets.sockets.forEach(connected => {
 				allPlayers.push({ "username": connected.username, "count": connected.playerCount })
 			});
 			io.sockets.emit("start-game", { cells, allPlayers });
+			dropPowerUp(cells)
 			gameStarted = true
 		}
 	}
@@ -147,7 +168,6 @@ function stopCountdown() {
 
 function findPlayerCount() {
 	let smallestMissingValue = null;
-	console.log("here")
 	for (let n = 1; n <= 4; n++) {
 		let found = false;
 
@@ -166,3 +186,4 @@ function findPlayerCount() {
 
 	return smallestMissingValue;
 }
+

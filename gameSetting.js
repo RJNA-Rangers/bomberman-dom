@@ -43,9 +43,12 @@ export const globalSettings = {
         fast: 0.2,
     },
     "power-ups": {
-        cooldown: 0.25,
-        "double-speed": "https://cdn.onlinewebfonts.com/svg/img_515277.png",
-    }
+        width: ((window.screen.width - 10 - 10) * 0.6) / 15,
+        height: ((browserHeight() - 60 - 60 - 15 - 15) / 13),
+        speed: "https://media1.giphy.com/media/3ohc19SFUdIJ0YQcLe/source.gif",
+        flames: "https://i.gifer.com/origin/a9/a95ef9bce2a1d53accc6a8018df04ff6_w200.gif",
+        bombs: "https://www.pngall.com/wp-content/uploads/5/Animated-Bomb-PNG.png",
+    },
 }
 
 export function changeGameSettingValue(key, value) {

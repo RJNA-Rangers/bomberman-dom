@@ -5,6 +5,7 @@ import { startAnimating } from "../script.js";
 import { createMap, generateLevel } from "../mapTemplate.js";
 import { globalSettings } from "../gameSetting.js";
 import { otherLivesContainer } from "../gameState.js";
+import { placePowerUp } from "../powerUps.js";
 
 export let socket;
 let uname;
@@ -165,6 +166,28 @@ export function runChatroom() {
 			document.querySelector(`#player-${userObj.count}-lives`).remove()
 			console.log(orbital)
 		})
+		socket.on("receive-cells", function () {
+			socket.emit("update-cells", orbital.cells)
+		})
+		socket.on("drop-power-up", function (powerUpArr) {
+			for (let powerUpObj of powerUpArr) {
+				switch (powerUpObj.powerUp) {
+					case "speed":
+						orbital.cells[powerUpObj.powerUpCoords[0]][[powerUpObj.powerUpCoords[1]]] = '🏃‍♂️'
+						break;
+					case "flames":
+						orbital.cells[powerUpObj.powerUpCoords[0]][[powerUpObj.powerUpCoords[1]]] = '🔥'
+						break;
+					case "bombs":
+						orbital.cells[powerUpObj.powerUpCoords[0]][[powerUpObj.powerUpCoords[1]]] = '💣'
+						break;
+				}
+				let gameContainer = RJNA.getObjByAttrsAndPropsVal(orbital.obj, "game-container");
+				const gameWrapper = gameContainer.children[0];
+				gameWrapper.setChild(placePowerUp(powerUpObj))
+			}
+		})
+
 	}
 	function renderMessage(type, message) {
 		let messageContainer = app.querySelector(".chat-screen .messages");
@@ -216,11 +239,11 @@ function updatePlayerOrbital(userObj) {
 			orbital["players"][`${userObj["count"]}`]["col"] = 1
 			break
 		case 2:
-			orbital["players"][`${userObj["count"]}`]["row"] = 11
+			orbital["players"][`${userObj["count"]}`]["row"] = 1
 			orbital["players"][`${userObj["count"]}`]["col"] = 13
 			break
 		case 3:
-			orbital["players"][`${userObj["count"]}`]["row"] = 1
+			orbital["players"][`${userObj["count"]}`]["row"] = 11
 			orbital["players"][`${userObj["count"]}`]["col"] = 13
 			break
 		case 4:
