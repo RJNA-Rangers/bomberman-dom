@@ -10,6 +10,7 @@ export function placePowerUp(powerUpObj) {
                 width: `${globalSettings["power-ups"]["width"]}px`,
                 height: `${globalSettings["power-ups"]["height"]}px`,
             },
+            // id: `${powerUpObj["powerUpCoords"][0]}${powerUpObj["powerUpCoords"][1]}`
         },
         {},
         {},
@@ -24,3 +25,18 @@ export function placePowerUp(powerUpObj) {
             { src: globalSettings["power-ups"][powerUpObj["powerUp"]] })
     )
 }
+
+// function PowerUp(row, col, name, owner, socket) {
+//     this.row = row
+//     this.col = col
+//     this.name = name
+//     this.type = globalSettings["power-ups"]["types"][name]
+//     this.owner = owner
+//     this.timer = 3000
+
+//     // when player presses a key, activate power-up and send that power up to everyone
+//     this.action = function () {
+
+//     }
+
+// }

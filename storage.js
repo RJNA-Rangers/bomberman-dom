@@ -1,7 +1,8 @@
 let orbital = {
     rootEl: undefined,
     obj: undefined,
-    players:{},
+    players: {},
+    // cells:[],
     // endpoint: window.location.href.split('/').at(-1),
 }
 

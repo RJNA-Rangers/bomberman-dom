@@ -2,7 +2,11 @@
 export let rightPressed = false,
     leftPressed = false,
     upPressed = false,
-    downPressed = false;
+    downPressed = false,
+    pickUp = false,
+    one = false,
+    two = false,
+    three = false;
 
 document.addEventListener('keydown', keyDownHandler, false);
 document.addEventListener('keyup', keyUpHandler, false);
@@ -16,6 +20,17 @@ export function keyDownHandler(e) {
         upPressed = true;
     } else if (e.key == 'Down' || e.key == 'ArrowDown') {
         downPressed = true;
+    } else if (e.key == "q") {
+        pickUp = true
+    } else if (e.key == "1") {
+        //active speed power up
+        one = true;
+    } else if (e.key == "2") {
+        // active flames power
+        two = true;
+    } else if (e.key == "3") {
+        //active bombs power up
+        three = true;
     }
 }
 
@@ -28,6 +43,17 @@ export function keyUpHandler(e) {
         upPressed = false;
     } else if (e.key == 'Down' || e.key == 'ArrowDown') {
         downPressed = false;
+    } else if (e.key == "q") {
+        pickUp = false
+    } else if (e.key == "1") {
+        //active speed power up
+        one = false;
+    } else if (e.key == "2") {
+        // active flames power
+        two = false;
+    } else if (e.key == "3") {
+        //active bombs power up
+        three = false;
     }
 }
 

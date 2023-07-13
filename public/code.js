@@ -171,23 +171,56 @@ export function runChatroom() {
 		})
 		socket.on("drop-power-up", function (powerUpArr) {
 			for (let powerUpObj of powerUpArr) {
-				switch (powerUpObj.powerUp) {
-					case "speed":
-						orbital.cells[powerUpObj.powerUpCoords[0]][[powerUpObj.powerUpCoords[1]]] = '🏃‍♂️'
-						break;
-					case "flames":
-						orbital.cells[powerUpObj.powerUpCoords[0]][[powerUpObj.powerUpCoords[1]]] = '🔥'
-						break;
-					case "bombs":
-						orbital.cells[powerUpObj.powerUpCoords[0]][[powerUpObj.powerUpCoords[1]]] = '💣'
-						break;
-				}
+				orbital.cells[powerUpObj.powerUpCoords[0]][[powerUpObj.powerUpCoords[1]]] = globalSettings["power-ups"]["types"][powerUpObj.powerUp]
 				let gameContainer = RJNA.getObjByAttrsAndPropsVal(orbital.obj, "game-container");
 				const gameWrapper = gameContainer.children[0];
 				gameWrapper.setChild(placePowerUp(powerUpObj))
 			}
 		})
 
+		socket.on("remove-power-up", function (powerUp) {
+			console.log({ powerUp })
+			orbital.cells[powerUp["powerUpCoords"][0]][powerUp["powerUpCoords"][1]] = null;
+			console.log(document.querySelectorAll(`.${powerUp["powerUp"]}`), "this is coudment query selector.")
+			const removedPower = Array.from(document.querySelectorAll(`.${powerUp["powerUp"]}`))
+				.filter(
+					ele => {
+						let eleTopDp = Math.pow(10, 0);
+						if (ele.style.top.includes(".")) {
+							eleTopDp = Math.pow(10, ele.style.top.split(".")[1].length - 2);
+						}
+						let eleLeftDp = Math.pow(10, 0);
+						if (ele.style.left.includes(".")) {
+							eleLeftDp = Math.pow(10, ele.style.left.split(".")[1].length - 2);
+						}
+						let top = Math.round(powerUp["powerUpCoords"][0] * globalSettings["power-ups"]["height"] * eleTopDp) / eleTopDp;
+						let left = Math.round(powerUp["powerUpCoords"][1] * globalSettings["power-ups"]["width"] * eleLeftDp) / eleLeftDp;
+						return (Math.round(parseFloat(ele.style.top) * eleTopDp) / eleTopDp) === top
+							&& (Math.round(parseFloat(ele.style.left) * eleLeftDp) / eleLeftDp) === left
+					})
+
+			if (removedPower.length > 0) {
+				removedPower.shift().remove();
+			}
+
+			console.log(orbital)
+		})
+		socket.on("game-update", function (message) {
+			let gameUpdatesContainer = document.querySelector('.live-updates');
+			switch (message["power-up"]) {
+				case "speed":
+					gameUpdatesContainer.innerHTML += `<p class="live-updates-message">${message.username} has picked up a speed power up 🏃</p>`
+					break
+				case "flames":
+					gameUpdatesContainer.innerHTML += `<p class="live-updates-message">${message.username} has picked up a flames power up 🔥</p>`
+					break
+				case "bombs":
+					gameUpdatesContainer.innerHTML += `<p class="live-updates-message">${message.username} has picked up a bombs power up 💣</p>`
+					break
+				default:
+					console.log('switch case didnt run in "game updates"');
+			}
+		})
 	}
 	function renderMessage(type, message) {
 		let messageContainer = app.querySelector(".chat-screen .messages");
@@ -229,7 +262,7 @@ function updatePlayerOrbital(userObj) {
 	orbital["players"][`${userObj["count"]}`] = {
 		"name": userObj.username,
 		"lives": 3,
-		"powerUps": [],
+		"power-ups": [],
 		"speed": globalSettings.speed.normal,
 	}
 	// coordinates are [row][col]

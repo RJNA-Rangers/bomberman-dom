@@ -84,6 +84,11 @@ io.on("connection", function (socket) {
 	socket.on("update-cells", function (updatedCells) {
 		cells = updatedCells
 	})
+
+	socket.on("power-picked-up", function (powerUp) {
+		io.sockets.emit("remove-power-up", powerUp)
+		io.sockets.emit("game-update", { "username": socket.username, "power-up": powerUp.powerUp })
+	})
 	socket.on("disconnect", function (reason) {
 		console.log({ reason })
 		console.log({ socket })
@@ -98,18 +103,18 @@ server.listen(port, () => {
 });
 
 function dropPowerUp(cells) {
-	let softWallCoords = []
+	let emptyCoords = []
 	for (let r = 0; r < cells.length; r++) {
 		for (let c = 0; c < cells[r].length; c++) {
-			if (cells[r][c] == 1 && Math.random() < 0.13) {
+			if (cells[r][c] == null && Math.random() < 0.3) {
 				const powerUpCoords = [r, c]
 				const powerUp = choiceOfPowerUp[Math.floor(Math.random() * choiceOfPowerUp.length)]
-				softWallCoords.push({ powerUp, powerUpCoords })
+				emptyCoords.push({ powerUp, powerUpCoords })
 			}
 		}
 	}
-	if (softWallCoords.length != 0) {
-		io.sockets.emit("drop-power-up", softWallCoords);
+	if (emptyCoords.length != 0) {
+		io.sockets.emit("drop-power-up", emptyCoords);
 	}
 }
 
