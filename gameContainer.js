@@ -47,7 +47,23 @@ export const powerUpsContainer = RJNA.tag.div(
   { class: "power-up-container" },
   {},
   {},
-  RJNA.tag.h3({ class: "power-up-title" }, {}, {}, "Power-Ups: 💣💣💣")
+  RJNA.tag.h3({ class: "power-up-title" }, {}, {}, "Power-Ups:"),
+  RJNA.tag.div({ class: "power-up-speed-icon" }, {}, {},
+    RJNA.tag.p({ class: "key" }, {}, {}, "s"),
+    RJNA.tag.img({}, {}, { src: globalSettings["power-ups"]["speed"] }),
+    RJNA.tag.p({ class: "speed-amount" }, {}, {}, "0"),
+  ),
+  RJNA.tag.div({ class: "power-up-flames-icon" }, {}, {},
+    RJNA.tag.p({ class: "key" }, {}, {}, "a"),
+    RJNA.tag.img({}, {}, { src: globalSettings["power-ups"]["flames"] }),
+    RJNA.tag.p({ class: "flames-amount" }, {}, {}, "0"),
+  ),
+  RJNA.tag.div({ class: "power-up-bombs-icon" }, {}, {},
+    RJNA.tag.p({ class: "key" }, {}, {}, "d"),
+    RJNA.tag.img({}, {}, { src: globalSettings["power-ups"]["bombs"] }),
+    RJNA.tag.p({ class: "bombs-amount" }, {}, {}, "0"),
+  )
+
 );
 // -- //
 

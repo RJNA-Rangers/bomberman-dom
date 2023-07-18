@@ -18,6 +18,7 @@ body {
   justify-content: center;
 }
 
+/* Waiting Rooms */
 .waiting-rooms-container {
   width: 100%;
   height: 100%;
@@ -113,8 +114,6 @@ body {
   position: relative;
 }
 
-
-
 .container {
   display: grid;
   margin: 0;
@@ -171,17 +170,6 @@ body {
   margin: 0;
 }
 
-.power-up-container {
-  grid-area: info;
-  margin: 0;
-  height: 100%;
-  width: 100%;
-  display: flex;
-  align-items: center;
-  justify-content: End;
-  font-size: xx-large;
-}
-
 .other-lives-container {
   grid-area: other-lives;
   margin: 0;
@@ -212,6 +200,19 @@ body {
   width: 40px;
   height: 40px;
   margin: 0;
+}
+
+.power-up-container {
+  grid-area: info;
+  margin: 0;
+  height: 100%;
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: End;
+  font-size: xx-large;
+  color: white;
+  font-family: "Common Pixel", sans-serif;
 }
 
 .game-updates-container {
@@ -278,6 +279,57 @@ body {
 
 .power-up {
   z-index: 1;
+}
+
+.power-up-speed-icon,
+.power-up-flames-icon,
+.power-up-bombs-icon {
+  height: 80%;
+  width: 5%;
+  position: relative;
+  margin-right: 10px;
+}
+
+.power-up-speed-icon>img,
+.power-up-flames-icon>img,
+.power-up-bombs-icon>img {
+  height: 100%;
+  padding: 5px;
+}
+
+.power-up-speed-icon>.speed-amount,
+.power-up-flames-icon>.flames-amount,
+.power-up-bombs-icon>.bombs-amount {
+  position: absolute;
+  bottom: 0;
+  right: 0;
+  background-color: darkorchid;
+  color: whitesmoke;
+  font-size: small;
+  width: 30%;
+  height: 30%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 8px;
+  border-radius: 5px;
+}
+
+.power-up-speed-icon>.key,
+.power-up-flames-icon>.key,
+.power-up-bombs-icon>.key {
+  position: absolute;
+  top: 0;
+  left: 0;
+  color: whitesmoke;
+  font-size: small;
+  width: 30%;
+  height: 30%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 8px;
+  border-radius: 5px;
 }
 
 .player-1,

@@ -15,10 +15,10 @@ app.get('/', (req, res) => {
 	res.sendFile(__dirname, 'index.html');
 });
 
-let waitingTimer, startGameTimer, powerUpTimer, cells;
+let waitingTimer, startGameTimer, cells;
 let gameStarted = false
 let choiceOfMap = []
-let choiceOfPowerUp = ["speed", "flames", "bombs"]
+
 io.on("connection", function (socket) {
 	socket.on("newuser", function (username) {
 
@@ -86,6 +86,7 @@ io.on("connection", function (socket) {
 	})
 
 	socket.on("power-picked-up", function (powerUp) {
+		console.log({ powerUp })
 		io.sockets.emit("remove-power-up", powerUp)
 		io.sockets.emit("game-update", { "username": socket.username, "power-up": powerUp.powerUp })
 	})
@@ -102,21 +103,21 @@ server.listen(port, () => {
 	console.log(`App listening at http://localhost:${port}`);
 });
 
-function dropPowerUp(cells) {
-	let emptyCoords = []
-	for (let r = 0; r < cells.length; r++) {
-		for (let c = 0; c < cells[r].length; c++) {
-			if (cells[r][c] == null && Math.random() < 0.3) {
-				const powerUpCoords = [r, c]
-				const powerUp = choiceOfPowerUp[Math.floor(Math.random() * choiceOfPowerUp.length)]
-				emptyCoords.push({ powerUp, powerUpCoords })
-			}
-		}
-	}
-	if (emptyCoords.length != 0) {
-		io.sockets.emit("drop-power-up", emptyCoords);
-	}
-}
+// function dropPowerUp(cells) {
+// 	let emptyCoords = []
+// 	for (let r = 0; r < cells.length; r++) {
+// 		for (let c = 0; c < cells[r].length; c++) {
+// 			if (cells[r][c] == null && Math.random() < 1) {
+// 				const powerUpCoords = [r, c]
+// 				const powerUp = choiceOfPowerUp[Math.floor(Math.random() * choiceOfPowerUp.length)]
+// 				emptyCoords.push({ powerUp, powerUpCoords })
+// 			}
+// 		}
+// 	}
+// 	if (emptyCoords.length != 0) {
+// 		io.sockets.emit("drop-power-up", emptyCoords);
+// 	}
+// }
 
 
 function startGameCountdown() {
@@ -136,7 +137,7 @@ function startGameCountdown() {
 				allPlayers.push({ "username": connected.username, "count": connected.playerCount })
 			});
 			io.sockets.emit("start-game", { cells, allPlayers });
-			dropPowerUp(cells)
+			// dropPowerUp(cells)
 			gameStarted = true
 		}
 	}

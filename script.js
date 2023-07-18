@@ -19,7 +19,7 @@ export function startAnimating(fps) {
     fpsInterval = 1000 / fps;
     then = window.performance.now();
     startTime = then;
-    animate();
+    animate(fpsInterval);
 }
 
 // let duration = 0;
