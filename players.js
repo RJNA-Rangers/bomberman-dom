@@ -1,6 +1,6 @@
 import { globalSettings } from "./gameSetting.js";
 import RJNA from "./rjna/engine.js"
-import { leftPressed, rightPressed, upPressed, downPressed, pickUp, speedPressed, flamesPressed, bombsPressed } from "./input.js";
+import { leftPressed, rightPressed, upPressed, downPressed, pickUp, speedPressed, flamesPressed, bombsPressed, falseKeyBool } from "./input.js";
 import { checkWallCollision } from "./collision.js";
 
 export function placePlayer(number, character, username) {
@@ -50,26 +50,27 @@ export function PlayerMovement(socket) {
         moving.row -= moving.speed;
     } else if (downPressed && !checkWallCollision("down", socket.playerCount, moving.speed)) {
         moving.row += moving.speed;
-    } else if (pickUp && isPowerUp(moving.row, moving.col)) {
-        // if (playerPowerUpsArr.length < 3) {
-        // console.log(touchingPowerUp(socket.playerCount,moving))
-        let row = moving.row
-        let col = moving.col
-        let powerUp;
-        let powerUpCoords = [Math.floor(row), Math.floor(col)]
-        if (orbital.cells[Math.floor(row)][Math.floor(col)] === globalSettings["power-ups"]["types"]["speed"]) {
-            powerUp = "speed"
-        } else if (orbital.cells[Math.floor(row)][Math.floor(col)] === globalSettings["power-ups"]["types"]["flames"]) {
-            powerUp = "flames"
-        } else if (orbital.cells[Math.floor(row)][Math.floor(col)] === globalSettings["power-ups"]["types"]["bombs"]) {
-            powerUp = "bombs"
+    } else if (pickUp) {
+        falseKeyBool("pick-up")
+        if (playerPowerUpsArr.length < 3 && isPowerUp(moving.row, moving.col)) {
+            let row = moving.row
+            let col = moving.col
+            let powerUp;
+            let powerUpCoords = [Math.floor(row), Math.floor(col)]
+            if (orbital.cells[Math.floor(row)][Math.floor(col)] === globalSettings["power-ups"]["types"]["speed"]) {
+                powerUp = "speed"
+            } else if (orbital.cells[Math.floor(row)][Math.floor(col)] === globalSettings["power-ups"]["types"]["flames"]) {
+                powerUp = "flames"
+            } else if (orbital.cells[Math.floor(row)][Math.floor(col)] === globalSettings["power-ups"]["types"]["bombs"]) {
+                powerUp = "bombs"
+            }
+            playerPowerUpsArr.push(powerUp)
+            let amountOfPowerUp = playerPowerUpsArr.filter(power => power === powerUp).length
+            document.querySelector(`.${powerUp}-amount`).innerHTML = amountOfPowerUp
+            socket.emit("power-picked-up", { powerUp, powerUpCoords })
         }
-        playerPowerUpsArr.push(powerUp)
-        let amountOfPowerUp = playerPowerUpsArr.filter(power => power === powerUp).length
-        document.querySelector(`.${powerUp}-amount`).innerHTML = amountOfPowerUp
-        socket.emit("power-picked-up", { powerUp, powerUpCoords })
-        // }
     } else if (speedPressed) {
+        falseKeyBool("speed-pressed")
         console.log(playerPowerUpsArr)
         if (playerPowerUpsArr.indexOf("speed") !== -1 && moving.speed == globalSettings.speed.normal)
             moving.speed = globalSettings.speed.fast

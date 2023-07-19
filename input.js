@@ -20,17 +20,6 @@ export function keyDownHandler(e) {
         upPressed = true;
     } else if (e.key == 'Down' || e.key == 'ArrowDown') {
         downPressed = true;
-    } else if (e.key == "q") {
-        pickUp = true
-    } else if (e.key == "s") {
-        //active speed power up
-        speedPressed = true;
-    } else if (e.key == "a") {
-        // active flames power
-        flamesPressed = true;
-    } else if (e.key == "d") {
-        //active bombs power up
-        bombsPressed = true;
     }
 }
 
@@ -44,16 +33,44 @@ export function keyUpHandler(e) {
     } else if (e.key == 'Down' || e.key == 'ArrowDown') {
         downPressed = false;
     } else if (e.key == "q") {
-        pickUp = false
+        pickUp = true
     } else if (e.key == "s") {
         //active speed power up
-        speedPressed = false;
+        speedPressed = true;
     } else if (e.key == "a") {
         // active flames power
-        flamesPressed = false;
+        flamesPressed = true;
     } else if (e.key == "d") {
         //active bombs power up
-        bombsPressed = false;
+        bombsPressed = true;
+    }
+}
+export function falseKeyBool(string) {
+    switch (string) {
+        case "left":
+            leftPressed = false
+            break
+        case "right":
+            rightPressed = false
+            break
+        case "up":
+            upPressed = false
+            break
+        case "down":
+            downPressed = false
+            break
+        case "pick-up":
+            pickUp = false
+            break
+        case "speed-pressed":
+            speedPressed = false
+            break
+        case "flames-pressed":
+            flamesPressed = false
+            break
+        case "bombs-pressed":
+            bombsPressed = false
+            break
     }
 }
 
