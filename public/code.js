@@ -77,7 +77,6 @@ export function runChatroom() {
 			RJNA.getObjByAttrsAndPropsVal(orbital.obj, "players-waiting-container")
 				.setChild(playerCard(userObj))
 			const cells = generateLevel()
-			console.log(cells)
 			socket.emit("generate-map", cells)
 			updatePlayerOrbital(userObj)
 		});
@@ -138,9 +137,7 @@ export function runChatroom() {
 			}
 			// add player lives to the side
 			let otherPlayers = obj.allPlayers.filter(player => player.count != socket.playerCount)
-			console.log({ otherPlayers })
 			let container = RJNA.getObjByAttrsAndPropsVal(orbital.obj, "container")
-			console.log(container)
 			let otherLivesContainerObj = otherLivesContainer(otherPlayers)
 			container.setChild(otherLivesContainerObj)
 			const waitingRoomContainer = RJNA.getObjByAttrsAndPropsVal(orbital.obj, "waiting-rooms-container")
@@ -164,7 +161,6 @@ export function runChatroom() {
 			delete orbital.players[userObj.count]
 			document.querySelector(`.player-${userObj.count}`).remove()
 			document.querySelector(`#player-${userObj.count}-lives`).remove()
-			console.log(orbital)
 		})
 		socket.on("receive-cells", function () {
 			socket.emit("update-cells", orbital.cells)
@@ -181,7 +177,6 @@ export function runChatroom() {
 		socket.on("remove-power-up", function (powerUp) {
 			console.log({ powerUp })
 			orbital.cells[powerUp["powerUpCoords"][0]][powerUp["powerUpCoords"][1]] = null;
-			console.log(document.querySelectorAll(`.${powerUp["powerUp"]}`), "this is coudment query selector.")
 			const removedPower = Array.from(document.querySelectorAll(`.${powerUp["powerUp"]}`))
 				.filter(
 					ele => {
@@ -202,24 +197,16 @@ export function runChatroom() {
 			if (removedPower.length > 0) {
 				removedPower.shift().remove();
 			}
-
-			console.log(orbital)
 		})
 		socket.on("game-update", function (message) {
 			let gameUpdatesContainer = document.querySelector('.live-updates');
-			switch (message["power-up"]) {
-				case "speed":
-					gameUpdatesContainer.innerHTML += `<p class="live-updates-message">${message.username} has picked up a speed power up 🏃</p>`
-					break
-				case "flames":
-					gameUpdatesContainer.innerHTML += `<p class="live-updates-message">${message.username} has picked up a flames power up 🔥</p>`
-					break
-				case "bombs":
-					gameUpdatesContainer.innerHTML += `<p class="live-updates-message">${message.username} has picked up a bombs power up 💣</p>`
-					break
-				default:
-					console.log('switch case didnt run in "game updates"');
-			}
+			let updateMessage = RJNA.createNode(RJNA.tag.p(
+				{ class: "live-updates-message" },
+				{},
+				{},
+				`${message.username} has picked up a speed power up ${globalSettings["power-ups"]["types"][message["power-up"]]}`
+			))
+			gameUpdatesContainer.insertBefore(updateMessage, gameUpdatesContainer.firstChild)
 		})
 	}
 	function renderMessage(type, message) {

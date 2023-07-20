@@ -12,9 +12,10 @@ export const gameUpdatesContainer = RJNA.tag.div(
     { class: "game-updates-title" },
     {},
     {},
-    "GAME UPDATES:",
-    RJNA.tag.div({ class: "live-updates" }, {}, {})
-  )
+    "GAME UPDATES:"
+
+  ),
+  RJNA.tag.div({ class: "live-updates" }, {}, {})
 );
 // -- //
 
