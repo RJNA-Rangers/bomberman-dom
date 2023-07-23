@@ -60,7 +60,6 @@ export function checkWallCollision(direction, playerCount, movingSpeed) {
 }
 
 export function whichSideCollision(playerDOMRect, objectDOMRect) {
-
     switch (true) {
         //bottom right corner of object
         case playerDOMRect.y + playerDOMRect.height > objectDOMRect.y + objectDOMRect.height &&
@@ -149,5 +148,56 @@ export function touchPowerUp(count, moving) {
             }
         }
     }
+}
 
+export function touchBombExplosion(count, j, moving) {
+    const player = document.querySelector(`.player-${j}`).getBoundingClientRect()
+    const explosionImage = document.querySelectorAll(`.player-${count}-explosion`);
+    for (let i = 0; i < explosionImage.length; i++) {
+        let explosionImageRect = explosionImage[i].getBoundingClientRect();
+        if (checkCollision(player, explosionImageRect)) {
+            // Collision detected with a power-up
+            switch (whichSideCollision(player, explosionImageRect)) {
+                case "bottom-right":
+                    console.log("bottom-right")
+                    return { "playerKilled": `player-${j}`, "playerKilledCoords": [Math.floor(moving.row), Math.floor(moving.col)] }
+                case "top-right":
+                    console.log("top-right")
+                    return { "playerKilled": `player-${j}`, "playerKilledCoords": [Math.ceil(moving.row), Math.floor(moving.col)] }
+                case "bottom-left":
+                    console.log("bottom-left")
+                    return { "playerKilled": `player-${j}`, "playerKilledCoords": [Math.floor(moving.row), Math.ceil(moving.col)] }
+                case "top-left":
+                    console.log("top-left")
+                    return { "playerKilled": `player-${j}`, "playerKilledCoords": [Math.ceil(moving.row), Math.ceil(moving.col)] }
+                case "bottom":
+                    console.log("bottom")
+                    if (moving.col >= Math.floor(moving.col) + 0.8) {
+                        return { "playerKilled": `player-${j}`, "playerKilledCoords": [Math.floor(moving.row), Math.ceil(moving.col)] }
+                    }
+                    return { "playerKilled": `player-${j}`, "playerKilledCoords": [Math.floor(moving.row), Math.floor(moving.col)] }
+                case "top":
+                    console.log("top")
+                    if (moving.col >= Math.floor(moving.col) + 0.8) {
+                        return { "playerKilled": `player-${j}`, "playerKilledCoords": [Math.ceil(moving.row), Math.ceil(moving.col)] }
+                    }
+                    return { "playerKilled": `player-${j}`, "playerKilledCoords": [Math.ceil(moving.row), Math.floor(moving.col)] }
+                case "left":
+                    console.log("left")
+                    if (moving.row >= Math.floor(moving.row) + 0.8) {
+                        return { "playerKilled": `player-${j}`, "playerKilledCoords": [Math.ceil(moving.row), Math.ceil(moving.col)] }
+                    }
+                    return { "playerKilled": `player-${j}`, "playerKilledCoords": [Math.floor(moving.row), Math.ceil(moving.col)] }
+                case "right":
+                    console.log("right")
+                    if (moving.row >= Math.floor(moving.row) + 0.8) {
+                        return { "playerKilled": `player-${j}`, "playerKilledCoords": [Math.ceil(moving.row), Math.floor(moving.col)] }
+                    }
+                    return { "playerKilled": `player-${j}`, "playerKilledCoords": [Math.floor(moving.row), Math.floor(moving.col)] }
+                default:
+                    console.log("default")
+                    return { "playerKilled": `player-${j}`, "playerKilledCoords": [Math.floor(moving.row), Math.ceil(moving.col)] }
+            }
+        }
+    }
 }

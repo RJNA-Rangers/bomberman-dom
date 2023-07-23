@@ -42,6 +42,18 @@ export const globalSettings = {
         normal: 0.05,
         fast: 0.1,
     },
+    flames: {
+        normal: 3,
+        pickUp1: 5,
+        pickUp2: 7,
+        pickUp3: 9,
+    },
+    bombs : {
+        normal: 1,
+        pickUp1:2,
+        pickUp2:3,
+        pickUp3:4,
+    },
     "power-ups": {
         width: ((window.screen.width - 10 - 10) * 0.6) / 15,
         height: (browserHeight() - 60 - 60 - 15 - 15) / 13,
@@ -54,6 +66,16 @@ export const globalSettings = {
             bombs: '💣'
         }
     },
+    "bomb" :{
+        width:((window.screen.width - 10 - 10) * 0.6) / 15,
+        height: (browserHeight() - 60 - 60 - 15 - 15) / 13,
+        src : "https://www.pngall.com/wp-content/uploads/5/Animated-Bomb-PNG.png",
+    },
+    "explosion":{
+        width:((window.screen.width - 10 - 10) * 0.6) / 15,
+        height:(browserHeight() - 60 - 60 - 15 - 15) / 13,
+        src: "https://i.gifer.com/4xjg.gif"
+    }
 }
 
 export function changeGameSettingValue(key, value) {

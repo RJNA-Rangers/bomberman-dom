@@ -72,31 +72,35 @@ io.on("connection", function (socket) {
 
 	socket.on("generate-map", function (mapCells) {
 		choiceOfMap.push(mapCells)
-	})
+	});
 
 	socket.on("player-movement", function (movingObj) {
 		io.sockets.emit("player-moving", movingObj)
-	})
+	});
 
+	socket.on("drop-bomb", async function(movingObj){
+		io.sockets.emit("bomb-dropped", movingObj)
+	});
 	socket.on("chat", function (message) {
 		socket.broadcast.emit("chat", message);
 	});
 	socket.on("update-cells", function (updatedCells) {
 		cells = updatedCells
-	})
+	});
 
 	socket.on("power-picked-up", function (powerUp) {
 		console.log({ powerUp })
 		io.sockets.emit("remove-power-up", powerUp)
 		io.sockets.emit("game-update", { "username": socket.username, "power-up": powerUp.powerUp })
-	})
+	});
+
 	socket.on("disconnect", function (reason) {
 		console.log({ reason })
 		console.log({ socket })
 		socket.broadcast.emit("update", socket.username + " has left the conversation")
 		socket.broadcast.emit("remove-player", { "username": socket.username, "count": socket.playerCount })
 		// if the length of connections=1, that player wins, send out game over with winner
-	})
+	});
 });
 
 server.listen(port, () => {
@@ -121,7 +125,7 @@ server.listen(port, () => {
 
 
 function startGameCountdown() {
-	let countdown = 2;
+	let countdown = 15;
 
 	function emitGameCountdown() {
 		io.sockets.emit("start-game-countdown", countdown);
@@ -150,7 +154,7 @@ function stopGameCountdown() {
 }
 
 function startCountdown() {
-	let countdown = 0;
+	let countdown = 10;
 
 	function emitCountdown() {
 		io.sockets.emit("waiting-countdown", countdown);

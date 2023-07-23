@@ -6,7 +6,8 @@ export let rightPressed = false,
     pickUp = false,
     speedPressed = false,
     flamesPressed = false,
-    bombsPressed = false;
+    bombsPressed = false,
+    bombDropped = false;
 
 document.addEventListener('keydown', keyDownHandler, false);
 document.addEventListener('keyup', keyUpHandler, false);
@@ -43,6 +44,9 @@ export function keyUpHandler(e) {
     } else if (e.key == "d") {
         //active bombs power up
         bombsPressed = true;
+    }else if (e.key == "w"){
+        console.log("w pressed...")
+        bombDropped = true;
     }
 }
 export function falseKeyBool(string) {
@@ -71,6 +75,9 @@ export function falseKeyBool(string) {
         case "bombs-pressed":
             bombsPressed = false
             break
+        case "bombs-dropped":
+            bombDropped = false
+            break
     }
 }
 
@@ -81,7 +88,6 @@ window.addEventListener(
     function stopCrolling(e) {
         if (
             [
-                'Space',
                 'ArrowUp',
                 'ArrowDown',
                 'ArrowLeft',

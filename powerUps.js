@@ -26,6 +26,56 @@ export function placePowerUp(powerUpObj) {
     )
 }
 
+export function placeBomb(moving) {
+    return RJNA.tag.div(
+        {
+            class: `player-${moving["myPlayerNum"]}-bomb`, style: {
+                top: Math.round(moving.row) * globalSettings["bomb"]["height"] + "px",
+                left: Math.round(moving.col) * globalSettings["bomb"]["width"] + "px",
+                width: `${globalSettings["bomb"]["width"]}px`,
+                height: `${globalSettings["bomb"]["height"]}px`,
+                position:"absolute",
+            },
+            // id: `${powerUpObj["powerUpCoords"][0]}${powerUpObj["powerUpCoords"][1]}`
+        },
+        {},
+        {},
+        RJNA.tag.img(
+            {
+                style: {
+                    width: "100%",
+                    height: "100%",
+                }
+            },
+            {},
+            { src: globalSettings["bomb"]["src"] })
+    )
+}
+
+export function placeExplosion(moving) {
+    return RJNA.tag.div(
+        {
+            class: `player-${moving["myPlayerNum"]}-explosion`, style: {
+                top: Math.round(moving.row) * globalSettings["bomb"]["height"] + "px",
+                left: Math.round(moving.col) * globalSettings["bomb"]["width"] + "px",
+                width: `${globalSettings["explosion"]["width"]}px`,
+                height: `${globalSettings["explosion"]["height"]}px`,
+                position:"absolute",
+            },
+        },
+        {},
+        {},
+        RJNA.tag.img(
+            {
+                style: {
+                    width: "100%",
+                    height: "100%",
+                }
+            },
+            {},
+            { src: globalSettings["explosion"]["src"] })
+    )
+}
 // function PowerUp(row, col, name, owner, socket) {
 //     this.row = row
 //     this.col = col

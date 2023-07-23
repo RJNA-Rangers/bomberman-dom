@@ -7,63 +7,64 @@ export let currentLevel;
 
 let stop = false;
 let fps = 60,
-    fpsInterval,
-    startTime,
-    now,
-    then,
-    elapsed;
-
+  fpsInterval,
+  startTime,
+  now,
+  then,
+  elapsed;
 
 export function startAnimating(fps) {
-    console.log("start", socket)
-    fpsInterval = 1000 / fps;
-    then = window.performance.now();
-    startTime = then;
-    animate(fpsInterval);
+  console.log("start", socket);
+  fpsInterval = 1000 / fps;
+  then = window.performance.now();
+  startTime = then;
+  animate(fpsInterval);
 }
 
 // let duration = 0;
-
 function animate(newtime) {
     // stop
     if (stop) {
         return;
     }
-
+    
     // request another frame
-
+    
     requestAnimationFrame(animate);
-
+    
     // calc elapsed time since last loop
-
+    
     now = newtime;
     elapsed = now - then;
-
+    
     // if enough time has elapsed, draw the next frame
-
+    
     if (elapsed > fpsInterval) {
         // Get ready for next frame by setting then=now, but...
         // Also, adjust for fpsInterval not being multiple of 16.67
         then = now - (elapsed % fpsInterval);
-
+        
         // draw stuff here
+        
+    // draw player movement
+    if (socket != null)
+    PlayerMovement(socket);
+    // draw bomb drop
+    let lives = Array.from(
+      document.querySelector(".lives-container").children[0].children
+    );
+    if (lives.length !== orbital["players"][`${socket.playerCount}`].lives) {
+      lives.shift().remove();
+    };
+    // draw bomb explosion and collision
 
-        // draw player movement
-        if (socket != null) {
-            PlayerMovement(socket)
-        }
-
-        // draw bomb drop
-
-        // draw bomb explosion and collision
-
-        // 
-    }
+    //
+  }
 }
 
 export function changeStopValue() {
-    stop = !stop;
-    if (!stop) {
-        startAnimating(fps);
-    }
+  stop = !stop;
+  if (!stop) {
+    startAnimating(fps);
+  }
 }
