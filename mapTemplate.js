@@ -27,9 +27,9 @@ export function generateLevel() {
     for (let col = 0; col < globalSettings.numOfCols; col++) {
 
       // 90% chance cells will contain a soft wall
-      if (!template[row][col] && Math.random() < 0.90) {
-        cells[row][col] = globalSettings.wallTypes.softWall;
-      }
+      // if (!template[row][col] && Math.random() < 0.90) {
+      //   cells[row][col] = globalSettings.wallTypes.softWall;
+      // }
 
       if (template[row][col] === globalSettings.wallTypes.wall) {
         cells[row][col] = globalSettings.wallTypes.wall;

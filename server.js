@@ -125,7 +125,7 @@ server.listen(port, () => {
 
 
 function startGameCountdown() {
-	let countdown = 15;
+	let countdown = 2;
 
 	function emitGameCountdown() {
 		io.sockets.emit("start-game-countdown", countdown);
@@ -154,7 +154,7 @@ function stopGameCountdown() {
 }
 
 function startCountdown() {
-	let countdown = 10;
+	let countdown = 0;
 
 	function emitCountdown() {
 		io.sockets.emit("waiting-countdown", countdown);

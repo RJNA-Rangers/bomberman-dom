@@ -3,6 +3,7 @@ import { socket } from "./public/code.js";
 
 export let currentLevel;
 
+
 //https://stackoverflow.com/questions/19764018/controlling-fps-with-requestanimationframe
 
 let stop = false;
@@ -49,16 +50,6 @@ function animate(newtime) {
     // draw player movement
     if (socket != null)
     PlayerMovement(socket);
-    // draw bomb drop
-    let lives = Array.from(
-      document.querySelector(".lives-container").children[0].children
-    );
-    if (lives.length !== orbital["players"][`${socket.playerCount}`].lives) {
-      lives.shift().remove();
-    };
-    // draw bomb explosion and collision
-
-    //
   }
 }
 

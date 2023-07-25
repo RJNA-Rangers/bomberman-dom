@@ -14,7 +14,6 @@ import {
 } from "./input.js";
 import {
   checkWallCollision,
-  touchBombExplosion,
   touchPowerUp,
 } from "./collision.js";
 

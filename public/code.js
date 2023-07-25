@@ -5,8 +5,12 @@ import { startAnimating } from "../script.js";
 import { createMap, generateLevel } from "../mapTemplate.js";
 import { globalSettings } from "../gameSetting.js";
 import { otherLivesContainer } from "../gameState.js";
-import { placeBomb, placeExplosion, placePowerUp } from "../powerUps.js";
-import { touchBombExplosion } from "../collision.js";
+import { placePowerUp } from "../powerUps.js";
+import {
+  touchExplosion,
+  placeBombAndExplode,
+  checkBombCollision,
+} from "../collision.js";
 
 export let socket;
 let uname;
@@ -189,6 +193,12 @@ export function runChatroom() {
       for (let [key, value] of Object.entries(obj)) {
         if (key != "myPlayerNum") {
           orbital.players[obj.myPlayerNum][key] = value;
+          //if the player is immune then make them mune again
+          if (obj.immune) {
+            setTimeout(() => {
+              orbital.players[obj.myPlayerNum]["immune"] = false;
+            }, 1500);
+          }
         }
       }
     });
@@ -254,118 +264,10 @@ export function runChatroom() {
       }
     });
     socket.on("bomb-dropped", function (moving) {
-      //explode bomb after a setTimeout
-      //change bomb's class to ".explosion" and image src to explosion image
       //check if a player collided with an explosion
-      async function placeBombAndExplode(moving) {
-        return new Promise((res) => {
-          let bombElement = createNode(placeBomb(moving));
-          let gameWrapper = document.querySelector(".game-wrapper");
-          gameWrapper.appendChild(bombElement);
-          setTimeout(() => {
-            bombElement.classList.replace(
-              `player-${moving["myPlayerNum"]}-bomb`,
-              `player-${moving["myPlayerNum"]}-explosion`
-            );
-            bombElement.children[0].src = globalSettings.explosion.src;
-
-            // Function to handle explosion propagation in a specific direction
-            function propagateExplosion(rowChange, colChange, moving) {
-              let tmpMovingObj = JSON.parse(JSON.stringify(moving));
-              for (let r = 0; r < moving.flames; r++) {
-                tmpMovingObj.row = Math.round(tmpMovingObj.row);
-                tmpMovingObj.col = Math.round(tmpMovingObj.col);
-                tmpMovingObj.row += rowChange; 
-                tmpMovingObj.col += colChange;
-
-                // Check if the cell is a wall
-                // Stop the explosion if it is
-                if (
-                  orbital.cells[tmpMovingObj.row][tmpMovingObj.col] ===
-                  globalSettings.wallTypes.wall
-                )
-                  break;
-
-                // Check if the cell is a soft wall
-                if (
-                  orbital.cells[tmpMovingObj.row][tmpMovingObj.col] ===
-                  globalSettings.wallTypes.softWall
-                ) {
-                  //destroy the soft wall
-                  orbital.cells[tmpMovingObj.row][tmpMovingObj.col] = null;
-                  const removedWalls = Array.from(
-                    document.querySelectorAll(`.soft-wall`)
-                  ).filter((ele) => {
-                    //if the co-ord has a decimal places then make it to 2dp.
-                    let eleTopDp = Math.pow(10, 0);
-                    if (ele.style.top.includes(".")) {
-                      eleTopDp = Math.pow(
-                        10,
-                        ele.style.top.split(".")[1].length - 2
-                      );
-                    }
-                    let eleLeftDp = Math.pow(10, 0);
-                    if (ele.style.left.includes(".")) {
-                      eleLeftDp = Math.pow(
-                        10,
-                        ele.style.left.split(".")[1].length - 2
-                      );
-                    }
-                    let top =
-                      Math.round(
-                        tmpMovingObj.row *
-                          globalSettings["wallHeight"] *
-                          eleTopDp
-                      ) / eleTopDp;
-                    let left =
-                      Math.round(
-                        tmpMovingObj.col *
-                          globalSettings["wallWidth"] *
-                          eleLeftDp
-                      ) / eleLeftDp;
-                      console.log(top, left, "these are top and lefts of wall");
-                    return (
-                      Math.round(parseFloat(ele.style.top) * eleTopDp) /
-                        eleTopDp ===
-                        top &&
-                      Math.round(parseFloat(ele.style.left) * eleLeftDp) /
-                        eleLeftDp ===
-                        left
-                    );
-                  });
-                  while (removedWalls.length > 0) {
-                    removedWalls.shift().remove();
-                  }
-                  break;
-                }
-                // If the cell is not a wall place the explosion at the current position
-                gameWrapper.appendChild(
-                  createNode(placeExplosion(tmpMovingObj))
-                );
-              }
-            }
-            // Propagate explosion in all four directions
-            propagateExplosion(0, 1, moving); // Right
-            propagateExplosion(0, -1, moving); // Left
-            propagateExplosion(1, 0, moving); // Down
-            propagateExplosion(-1, 0, moving); // Up
-            res(moving);
-          }, 2000);
-        });
-      }
       placeBombAndExplode(moving).then((res) => {
-        //check if player touched an explosion
         for (let i = 1; i <= Object.keys(orbital.players).length; i++) {
-          if (
-            Array.from(
-              document.querySelectorAll(
-                `.player-${moving["myPlayerNum"]}-explosion`
-              )
-            ).length <= 0
-          )
-            continue;
-          if (i === moving["myPlayerNum"]) continue;
-          let explosionTouchedObj = touchBombExplosion(
+          let explosionTouchedObj = touchExplosion(
             moving["myPlayerNum"],
             i,
             moving
@@ -374,60 +276,46 @@ export function runChatroom() {
           let playerNumber = parseInt(
             explosionTouchedObj.playerKilled.split("-")[1]
           );
+          let playerOrbital = JSON.parse(JSON.stringify(orbital["players"][`${playerNumber}`]));
           //reduce their live count from orbital
-          orbital["players"][`${playerNumber}`].lives > 0
-            ? (orbital["players"][`${playerNumber}`].lives -= 0.5)
-            : 0;
-          let updateOrbital = {
-            playerNumber: playerNumber,
-            lives: orbital["players"][`${playerNumber}`].lives,
-          };
+          playerOrbital.lives > 0
+            ? (playerOrbital.lives -= 1)
+            : (playerOrbital.lives = 0);
           //reset player position's to corners
-          const playerPositionReset = orbital["players"][`${playerNumber}`];
           switch (playerNumber) {
             case 1:
-              playerPositionReset.myPlayerNum = playerNumber;
-              playerPositionReset.row = 1;
-              playerPositionReset.col = 1;
+              playerOrbital.myPlayerNum = playerNumber;
+              playerOrbital.row = 1;
+              playerOrbital.col = 1;
+              playerOrbital.immune = true;
               movePlayers();
-              socket.emit("player-movement", playerPositionReset);
+              socket.emit("player-movement", playerOrbital);
               break;
             case 2:
-              playerPositionReset.myPlayerNum = playerNumber;
-              playerPositionReset.row = 1;
-              playerPositionReset.col = 13;
+              playerOrbital.myPlayerNum = playerNumber;
+              playerOrbital.row = 1;
+              playerOrbital.col = 13;
+              playerOrbital.immune = true;
               movePlayers();
-              socket.emit("player-movement", playerPositionReset);
+              socket.emit("player-movement", playerOrbital);
               break;
             case 3:
-              playerPositionReset.myPlayerNum = playerNumber;
-              playerPositionReset.row = 11;
-              playerPositionReset.col = 13;
+              playerOrbital.myPlayerNum = playerNumber;
+              playerOrbital.row = 11;
+              playerOrbital.col = 13;
+              playerOrbital.immune = true;
               movePlayers();
-              socket.emit("player-movement", playerPositionReset);
+              socket.emit("player-movement", playerOrbital);
               break;
             case 4:
-              playerPositionReset.myPlayerNum = playerNumber;
-              playerPositionReset.row = 11;
-              playerPositionReset.col = 1;
+              playerOrbital.myPlayerNum = playerNumber;
+              playerOrbital.row = 11;
+              playerOrbital.col = 1;
+              playerOrbital.immune = true;
               movePlayers();
-              socket.emit("player-movement", playerPositionReset);
+              socket.emit("player-movement", playerOrbital);
               break;
           }
-          //reduce player's live count
-          let playerLives = document.querySelector(
-            `#player-${playerNumber}-lives`
-          );
-          if (playerLives !== undefined && playerLives !== null)
-            if (
-              updateOrbital["lives"] >= 0 &&
-              Array.from(playerLives.children[0].children) !== null &&
-              Array.from(playerLives.children[0].children).shift() !== undefined
-            ) {
-              Array.from(playerLives.children[0].children).shift().remove();
-            } else {
-              //disconnect player from the game as they have no more lives?..
-            }
         }
         setTimeout(() => {
           Array.from(
@@ -435,21 +323,39 @@ export function runChatroom() {
               `.player-${moving["myPlayerNum"]}-explosion`
             )
           ).forEach((el) => el.remove());
-        }, 2000);
+        }, 1000);
       });
     });
     socket.on("game-update", function (message) {
+      console.log("in game update");
       let gameUpdatesContainer = document.querySelector(".live-updates");
-      let updateMessage = RJNA.createNode(
-        RJNA.tag.p(
-          { class: "live-updates-message" },
-          {},
-          {},
-          `${message.username} has picked up a speed power up ${
-            globalSettings["power-ups"]["types"][message["power-up"]]
-          }`
-        )
-      );
+      let updateMessage;
+      console.log(message);
+      switch (message) {
+        case message.powerUp !== undefined:
+          updateMessage = RJNA.createNode(
+            RJNA.tag.p(
+              { class: "live-updates-message" },
+              {},
+              {},
+              `${message.username} has picked up a speed power up ${
+                globalSettings["power-ups"]["types"][message["power-up"]]
+              }`
+            )
+          );
+          break;
+        case message.playerKilled !== undefined:
+          let playerNumber = parseInt(message.playerKilled.split("-")[1]);
+          RJNA.createNode(
+            RJNA.tag.p(
+              { class: "live-updates-message" },
+              {},
+              {},
+              `${orbital["players"][`${playerNumber}`].name} has exploded`
+            )
+          );
+          break;
+      }
       gameUpdatesContainer.insertBefore(
         updateMessage,
         gameUpdatesContainer.firstChild
@@ -495,10 +401,42 @@ export function runChatroom() {
 function updatePlayerOrbital(userObj) {
   orbital["players"][`${userObj["count"]}`] = {
     name: userObj.username,
-    lives: 3,
+    _lives: 3, // Add the underlying property _lives to store the actual value
     "power-ups": [],
     speed: globalSettings.speed.normal,
   };
+  Object.defineProperty(orbital["players"][`${userObj["count"]}`], "lives", {
+    get: function () {
+      return this._lives; // Return the value from the underlying property _lives
+    },
+    set: function (v) {
+      let playerLives = document.querySelector(
+        `#player-${userObj["count"]}-lives`
+      );
+      this._lives = v; // Update the value of the underlying property _lives
+      if (playerLives !== undefined && playerLives !== null) {
+        const lifeElements = playerLives.children[0].children;
+        if (this._lives < lifeElements.length && lifeElements.length > 0) {
+          Array.from(lifeElements).shift().remove();
+        } else if (
+          this._lives > lifeElements.length &&
+          lifeElements.length > 0
+        ) {
+          // Code to add new life elements if needed.
+        } else {
+          // Code to handle other cases or errors.
+        }
+      } else {
+        let lives = Array.from(
+          document.querySelector(".lives-container").children[0].children
+        );
+        if (lives.length > this._lives) {
+          lives.shift().remove();
+        }
+      }
+    },
+  });
+
   // coordinates are [row][col]
   switch (userObj.count) {
     case 1:
