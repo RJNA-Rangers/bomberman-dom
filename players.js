@@ -15,6 +15,7 @@ import {
 import {
   checkWallCollision,
   touchPowerUp,
+  touchExplosion
 } from "./collision.js";
 
 export function placePlayer(number, character, username) {
@@ -66,6 +67,58 @@ export function PlayerMovement(socket) {
     falseKeyBool("bombs-dropped");
     //send to everyone bomb has been dropped
     socket.emit("drop-bomb", moving);
+    for (let i = 1; i <= Object.keys(orbital.players).length; i++) {
+      let explosionTouchedObj = touchExplosion(
+        moving["myPlayerNum"],
+        i,
+        moving
+      );
+      if (explosionTouchedObj == undefined) continue;
+      console.log(explosionTouchedObj);
+      let playerNumber = parseInt(
+        explosionTouchedObj.playerKilled.split("-")[1]
+      );
+      let playerOrbital = JSON.parse(JSON.stringify(orbital["players"][`${playerNumber}`]));
+      //reduce their live count from orbital
+      playerOrbital.lives > 0
+        ? (playerOrbital.lives -= 1)
+        : (playerOrbital.lives = 0);
+      //reset player position's to corners
+      switch (playerNumber) {
+        case 1:
+          playerOrbital.myPlayerNum = playerNumber;
+          playerOrbital.row = 1;
+          playerOrbital.col = 1;
+          playerOrbital.immune = true;
+          movePlayers();
+          socket.emit("player-movement", playerOrbital);
+          break;
+        case 2:
+          playerOrbital.myPlayerNum = playerNumber;
+          playerOrbital.row = 1;
+          playerOrbital.col = 13;
+          playerOrbital.immune = true;
+          movePlayers();
+          socket.emit("player-movement", playerOrbital);
+          break;
+        case 3:
+          playerOrbital.myPlayerNum = playerNumber;
+          playerOrbital.row = 11;
+          playerOrbital.col = 13;
+          playerOrbital.immune = true;
+          movePlayers();
+          socket.emit("player-movement", playerOrbital);
+          break;
+        case 4:
+          playerOrbital.myPlayerNum = playerNumber;
+          playerOrbital.row = 11;
+          playerOrbital.col = 1;
+          playerOrbital.immune = true;
+          movePlayers();
+          socket.emit("player-movement", playerOrbital);
+          break;
+      }
+    }
   }
   // move when the button is pressed and the next block is empty
   if (

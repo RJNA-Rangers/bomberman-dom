@@ -1,7 +1,5 @@
 import { globalSettings } from "./gameSetting.js";
 import { createNode } from "./rjna/engine.js";
-import { placeExplosion, placeBomb } from "./powerUps.js";
-import { movePlayers } from "./players.js";
 export function checkCollision(player, objectDOMRect) {
   // https://youtu.be/r0sy-Cr6WHY?t=327
   if (
@@ -207,61 +205,61 @@ export function touchPowerUp(count, moving) {
     }
   }
 }
-// export function checkBombCollision(
-//   direction,
-//   playerCount,
-//   movingSpeed,
-//   bombDropped
-// ) {
-//   console.log(bombDropped);
-//   if (!bombDropped) return false;
-//   for (let i = 1; i <= Object.keys(orbital.players).length; i++) {
-//     let bombs = document.querySelectorAll(`player-${i}-bomb`);
-//     console.log(bombs, "it should give all the bomb elements");
-//     if (bombs.length <= 0) continue;
-//     let playerDOMRect = document
-//       .querySelector(`.player-${playerCount}`)
-//       .getBoundingClientRect();
-//     let newPlayerDOMRect = {
-//       x: playerDOMRect.x + globalSettings.players.width * 0.4,
-//       y: playerDOMRect.y + globalSettings.players.height * 0.2,
-//       width: playerDOMRect.width - globalSettings.players.width * 0.4,
-//       height: playerDOMRect.height - globalSettings.players.height * 0.4,
-//     };
-//     switch (direction) {
-//       case "left":
-//         newPlayerDOMRect.x -=
-//           movingSpeed * globalSettings.bomb.width +
-//           globalSettings.bomb.width * 0.1;
-//         break;
-//       case "right":
-//         newPlayerDOMRect.x +=
-//           movingSpeed * globalSettings.bomb.width +
-//           globalSettings.bomb.width * 0.1;
-//         break;
-//       case "up":
-//         newPlayerDOMRect.y -=
-//           movingSpeed * globalSettings.bomb.height +
-//           globalSettings.bomb.height * 0.1;
-//         break;
-//       case "down":
-//         newPlayerDOMRect.y +=
-//           movingSpeed * globalSettings.bomb.height +
-//           globalSettings.bomb.height * 0.2;
-//         break;
-//     }
+export function checkBombCollision(
+  direction,
+  playerCount,
+  movingSpeed,
+  bombDropped
+) {
+  console.log(bombDropped);
+  if (!bombDropped) return false;
+  for (let i = 1; i <= Object.keys(orbital.players).length; i++) {
+    let bombs = document.querySelectorAll(`player-${i}-bomb`);
+    console.log(bombs, "it should give all the bomb elements");
+    if (bombs.length <= 0) continue;
+    let playerDOMRect = document
+      .querySelector(`.player-${playerCount}`)
+      .getBoundingClientRect();
+    let newPlayerDOMRect = {
+      x: playerDOMRect.x + globalSettings.players.width * 0.4,
+      y: playerDOMRect.y + globalSettings.players.height * 0.2,
+      width: playerDOMRect.width - globalSettings.players.width * 0.4,
+      height: playerDOMRect.height - globalSettings.players.height * 0.4,
+    };
+    switch (direction) {
+      case "left":
+        newPlayerDOMRect.x -=
+          movingSpeed * globalSettings.bomb.width +
+          globalSettings.bomb.width * 0.1;
+        break;
+      case "right":
+        newPlayerDOMRect.x +=
+          movingSpeed * globalSettings.bomb.width +
+          globalSettings.bomb.width * 0.1;
+        break;
+      case "up":
+        newPlayerDOMRect.y -=
+          movingSpeed * globalSettings.bomb.height +
+          globalSettings.bomb.height * 0.1;
+        break;
+      case "down":
+        newPlayerDOMRect.y +=
+          movingSpeed * globalSettings.bomb.height +
+          globalSettings.bomb.height * 0.2;
+        break;
+    }
 
-//     for (let i = 0; i < bombs.length; i++) {
-//       let bombDOMRect = bombs[i].getBoundingClientRect();
-//       if (checkCollision(newPlayerDOMRect, bombDOMRect)) {
-//         // Collision detected with a bomb
-//         return true;
-//       }
-//     }
-//     // No collision with any bombs
-//     return false;
-//   }
-// }
+    for (let i = 0; i < bombs.length; i++) {
+      let bombDOMRect = bombs[i].getBoundingClientRect();
+      if (checkCollision(newPlayerDOMRect, bombDOMRect)) {
+        // Collision detected with a bomb
+        return true;
+      }
+    }
+    // No collision with any bombs
+    return false;
+  }
+}
 export function touchExplosion(count, j, moving) {
   const player = document.querySelector(`.player-${j}`).getBoundingClientRect();
   const explosionImage = document.querySelectorAll(
@@ -271,8 +269,7 @@ export function touchExplosion(count, j, moving) {
   if (
     orbital["players"][`${j}`].hasOwnProperty("immune") &&
     orbital["players"][`${j}`].immune
-  )
-    return undefined;
+  ) return undefined;
   for (let i = 0; i < explosionImage.length; i++) {
     let explosionImageRect = explosionImage[i].getBoundingClientRect();
     if (checkCollision(player, explosionImageRect)) {

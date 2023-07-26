@@ -1,4 +1,4 @@
-import RJNA, { createNode } from "../rjna/engine.js";
+import RJNA from "../rjna/engine.js";
 import { playerCard } from "../waitingRoom.js";
 import { movePlayers, placePlayer } from "../players.js";
 import { startAnimating } from "../script.js";
@@ -6,11 +6,8 @@ import { createMap, generateLevel } from "../mapTemplate.js";
 import { globalSettings } from "../gameSetting.js";
 import { otherLivesContainer } from "../gameState.js";
 import { placePowerUp } from "../powerUps.js";
-import {
-  touchExplosion,
-  placeBombAndExplode,
-  checkBombCollision,
-} from "../collision.js";
+import {placeBombAndExplode} from "../bombs.js";
+import { touchExplosion } from "../collision.js";
 
 export let socket;
 let uname;
@@ -265,67 +262,69 @@ export function runChatroom() {
     });
     socket.on("bomb-dropped", function (moving) {
       //check if a player collided with an explosion
-      placeBombAndExplode(moving).then((res) => {
-        for (let i = 1; i <= Object.keys(orbital.players).length; i++) {
-          let explosionTouchedObj = touchExplosion(
-            moving["myPlayerNum"],
-            i,
-            moving
-          );
-          if (explosionTouchedObj == undefined) continue;
-          let playerNumber = parseInt(
-            explosionTouchedObj.playerKilled.split("-")[1]
-          );
-          let playerOrbital = JSON.parse(JSON.stringify(orbital["players"][`${playerNumber}`]));
-          //reduce their live count from orbital
-          playerOrbital.lives > 0
-            ? (playerOrbital.lives -= 1)
-            : (playerOrbital.lives = 0);
-          //reset player position's to corners
-          switch (playerNumber) {
-            case 1:
-              playerOrbital.myPlayerNum = playerNumber;
-              playerOrbital.row = 1;
-              playerOrbital.col = 1;
-              playerOrbital.immune = true;
-              movePlayers();
-              socket.emit("player-movement", playerOrbital);
-              break;
-            case 2:
-              playerOrbital.myPlayerNum = playerNumber;
-              playerOrbital.row = 1;
-              playerOrbital.col = 13;
-              playerOrbital.immune = true;
-              movePlayers();
-              socket.emit("player-movement", playerOrbital);
-              break;
-            case 3:
-              playerOrbital.myPlayerNum = playerNumber;
-              playerOrbital.row = 11;
-              playerOrbital.col = 13;
-              playerOrbital.immune = true;
-              movePlayers();
-              socket.emit("player-movement", playerOrbital);
-              break;
-            case 4:
-              playerOrbital.myPlayerNum = playerNumber;
-              playerOrbital.row = 11;
-              playerOrbital.col = 1;
-              playerOrbital.immune = true;
-              movePlayers();
-              socket.emit("player-movement", playerOrbital);
-              break;
-          }
-        }
+      placeBombAndExplode(moving).then(res=>{
         setTimeout(() => {
+          // for (let i = 1; i <= Object.keys(orbital.players).length; i++) {
+          //   let explosionTouchedObj = touchExplosion(
+          //     moving["myPlayerNum"],
+          //     i,
+          //     moving
+          //   );
+          //   if (explosionTouchedObj == undefined) continue;
+          //   console.log(explosionTouchedObj);
+          //   let playerNumber = parseInt(
+          //     explosionTouchedObj.playerKilled.split("-")[1]
+          //   );
+          //   let playerOrbital = JSON.parse(JSON.stringify(orbital["players"][`${playerNumber}`]));
+          //   //reduce their live count from orbital
+          //   playerOrbital.lives > 0
+          //     ? (playerOrbital.lives -= 1)
+          //     : (playerOrbital.lives = 0);
+          //   //reset player position's to corners
+          //   switch (playerNumber) {
+          //     case 1:
+          //       playerOrbital.myPlayerNum = playerNumber;
+          //       playerOrbital.row = 1;
+          //       playerOrbital.col = 1;
+          //       playerOrbital.immune = true;
+          //       movePlayers();
+          //       socket.emit("player-movement", playerOrbital);
+          //       break;
+          //     case 2:
+          //       playerOrbital.myPlayerNum = playerNumber;
+          //       playerOrbital.row = 1;
+          //       playerOrbital.col = 13;
+          //       playerOrbital.immune = true;
+          //       movePlayers();
+          //       socket.emit("player-movement", playerOrbital);
+          //       break;
+          //     case 3:
+          //       playerOrbital.myPlayerNum = playerNumber;
+          //       playerOrbital.row = 11;
+          //       playerOrbital.col = 13;
+          //       playerOrbital.immune = true;
+          //       movePlayers();
+          //       socket.emit("player-movement", playerOrbital);
+          //       break;
+          //     case 4:
+          //       playerOrbital.myPlayerNum = playerNumber;
+          //       playerOrbital.row = 11;
+          //       playerOrbital.col = 1;
+          //       playerOrbital.immune = true;
+          //       movePlayers();
+          //       socket.emit("player-movement", playerOrbital);
+          //       break;
+          //   }
+          // }
           Array.from(
             document.querySelectorAll(
               `.player-${moving["myPlayerNum"]}-explosion`
             )
           ).forEach((el) => el.remove());
         }, 1000);
-      });
     });
+      })
+      
     socket.on("game-update", function (message) {
       console.log("in game update");
       let gameUpdatesContainer = document.querySelector(".live-updates");

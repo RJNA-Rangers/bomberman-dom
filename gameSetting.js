@@ -43,10 +43,10 @@ export const globalSettings = {
         fast: 0.1,
     },
     flames: {
-        normal: 3,
-        pickUp1: 5,
-        pickUp2: 7,
-        pickUp3: 9,
+        normal: 1,
+        pickUp1: 3,
+        pickUp2: 5,
+        pickUp3: 7,
     },
     bombs : {
         normal: 1,
