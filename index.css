@@ -1,4 +1,7 @@
 @import url("https://fonts.cdnfonts.com/css/common-pixel");
+@import url('https://fonts.cdnfonts.com/css/technicality');
+@import url('https://fonts.cdnfonts.com/css/serious-rounded');
+@import url('https://fonts.cdnfonts.com/css/goma-octagon');
 
 html,
 body {
@@ -770,14 +773,30 @@ body {
   justify-content: center;
 }
 
-.game-info-title {
+.synopsis-info {
+  display: flex;
+  flex-direction: column;
+  margin-top: 10px;
+  padding: 5px;
+  width: 100%;
+  justify-content: space-around;
+  align-items: center;
   grid-area: title;
+}
+
+.game-info-title {
   font-family: "Common Pixel", sans-serif;
   text-align: center;
   font-size: xx-large;
-  display: flex;
-  align-items: center;
-  justify-content: center;
+  width: 50%;
+}
+
+.synopsis-text {
+  text-align: center;
+  padding: 5px;
+  font-family: 'seriousr2b', sans-serif;
+  color: gray;
+  font-size: smaller;
 }
 
 .game-controls-container {
@@ -789,12 +808,67 @@ body {
   flex-direction: column;
   align-items: center;
   border-radius: 2rem;
+  overflow: auto;
+  font-family: 'seriousr2b', sans-serif;
+
 }
 
 .game-controls-title {
   font-family: "Common Pixel", sans-serif;
   text-align: center;
   font-size: x-large;
+}
+
+.arrow-controls-info {
+  height: max-content;
+  margin-bottom: 5px;
+}
+
+.arrow-controls-image {
+  width: 40%;
+  float: right;
+}
+
+.arrow-controls-text {
+  padding: 20px;
+}
+
+.pick-up-controls-info {
+  display: flex;
+  align-items: center;
+  margin-bottom: 10px;
+}
+
+.pick-up-controls-image {
+  width: 20%;
+  height: 100%;
+  float: left;
+}
+
+.pick-up-controls-text {
+  padding: 10px;
+}
+
+.pick-up-controls-info {
+  display: flex;
+  align-items: center;
+}
+
+.power-up-controls-info {
+  width: 100%;
+}
+
+.power-up-controls-image {
+  width: 40%;
+  float: right;
+}
+
+.power-up-controls-text {
+  padding: 20px;
+  /* font-size: 1.1rem; */
+  position: relative;
+  top: 50%;
+  transform: translateY(-50%);
 }
 
 .game-extras-container {
@@ -806,10 +880,45 @@ body {
   flex-direction: column;
   align-items: center;
   border-radius: 2rem;
+  overflow: auto;
+  font-family: 'seriousr2b', sans-serif;
+  justify-content: space-between;
 }
 
 .game-extras-title {
   font-family: "Common Pixel", sans-serif;
   text-align: center;
   font-size: x-large;
+}
+
+.speed-info,
+.flames-info,
+.bombs-info {
+  display: flex;
+  width: 100%;
+  align-items: center;
+  margin-bottom: 5px;
+}
+
+.speed-image,
+.flames-image,
+.bombs-image {
+  width: 10%;
+  height: 100%;
+  float: left;
+}
+
+.speed-text,
+.flames-text,
+.bombs-text {
+  padding: 10px;
+}
+
+.authors-info {
+  margin: 10px;
+  padding: 5px;
+}
+
+.authors-text {
+  text-align: center
 }

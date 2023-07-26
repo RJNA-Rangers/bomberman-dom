@@ -56,11 +56,10 @@ io.on("connection", function (socket) {
 		}
 	});
 	socket.on("exituser", function (username) {
-		console.log("user has closed tab")
+		console.log("user has closed chat")
 		socket.broadcast.emit("update", username + " left the conversation");
 		socket.disconnect(true)
-		// remove player-card from all connected users
-		// socket.broadcast.emit("remove-waiting-player",socket.playerCount)
+		socket.broadcast.emit("remove-waiting-player", socket.playerCount)
 		io.sockets.sockets.delete(socket.id)
 		if (io.sockets.sockets.size < 2 && waitingTimer) {
 			stopCountdown();
@@ -96,6 +95,23 @@ io.on("connection", function (socket) {
 		socket.broadcast.emit("update", socket.username + " has left the conversation")
 		socket.broadcast.emit("remove-player", { "username": socket.username, "count": socket.playerCount })
 		// if the length of connections=1, that player wins, send out game over with winner
+		if (io.sockets.sockets.size < 2 && waitingTimer) {
+			stopCountdown();
+		}
+		if (io.sockets.sockets.size < 2 && startGameTimer) {
+			stopGameCountdown();
+		}
+		if (io.sockets.sockets.size < 2 && !gameStarted) {
+			stopGameCountdown();
+			socket.broadcast.emit("remove-waiting-player", socket.playerCount)
+		}
+		if (io.sockets.sockets.size == 1 && gameStarted) {
+			console.log("game-over event")
+			gameStarted = false
+			// game over, last remaining connection display message
+			// after a while force disconnect
+			//re-render the entire game with no connections
+		}
 	})
 });
 
@@ -103,26 +119,13 @@ server.listen(port, () => {
 	console.log(`App listening at http://localhost:${port}`);
 });
 
-// function dropPowerUp(cells) {
-// 	let emptyCoords = []
-// 	for (let r = 0; r < cells.length; r++) {
-// 		for (let c = 0; c < cells[r].length; c++) {
-// 			if (cells[r][c] == null && Math.random() < 1) {
-// 				const powerUpCoords = [r, c]
-// 				const powerUp = choiceOfPowerUp[Math.floor(Math.random() * choiceOfPowerUp.length)]
-// 				emptyCoords.push({ powerUp, powerUpCoords })
-// 			}
-// 		}
-// 	}
-// 	if (emptyCoords.length != 0) {
-// 		io.sockets.emit("drop-power-up", emptyCoords);
-// 	}
-// }
-
-
 function startGameCountdown() {
 	let countdown = 2;
-
+	cells = choiceOfMap[Math.floor(Math.random() * choiceOfMap.length)]
+	let allPlayers = []
+	io.sockets.sockets.forEach(connected => {
+		allPlayers.push({ "username": connected.username, "count": connected.playerCount })
+	});
 	function emitGameCountdown() {
 		io.sockets.emit("start-game-countdown", countdown);
 
@@ -131,13 +134,8 @@ function startGameCountdown() {
 			startGameTimer = setTimeout(emitGameCountdown, 1000);
 		} else {
 			startGameTimer = null;
-			cells = choiceOfMap[Math.floor(Math.random() * choiceOfMap.length)]
-			let allPlayers = []
-			io.sockets.sockets.forEach(connected => {
-				allPlayers.push({ "username": connected.username, "count": connected.playerCount })
-			});
+
 			io.sockets.emit("start-game", { cells, allPlayers });
-			// dropPowerUp(cells)
 			gameStarted = true
 		}
 	}

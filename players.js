@@ -49,7 +49,8 @@ export function PlayerMovement(socket) {
         moving.row = parseFloat((moving.row - moving.speed).toFixed(2));
     } else if (downPressed && !checkWallCollision("down", socket.playerCount, moving.speed)) {
         moving.row = parseFloat((moving.row + moving.speed).toFixed(2));
-    } else if (pickUp) {
+    }
+    if (pickUp) {
         falseKeyBool("pick-up")
         // console.log(touchPowerUp(socket.playerCount, moving))
         if (playerPowerUpsArr.length < 3) {
@@ -60,7 +61,8 @@ export function PlayerMovement(socket) {
             document.querySelector(`.${powerUpObj.powerUp}-amount`).innerHTML = amountOfPowerUp
             socket.emit("power-picked-up", powerUpObj)
         }
-    } else if (speedPressed) {
+    }
+    if (speedPressed) {
         falseKeyBool("speed-pressed")
         if (playerPowerUpsArr.indexOf("speed") !== -1 && moving.speed == globalSettings.speed.normal) {
             moving.speed = globalSettings.speed.fast

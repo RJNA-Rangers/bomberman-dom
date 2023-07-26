@@ -76,12 +76,173 @@ export const waitingRoomGrid = RJNA.tag.div(
 
   ),
   RJNA.tag.div({ class: "game-info-container" }, {}, {},
-    RJNA.tag.h3({ class: "game-info-title" }, {}, {}, "Info"),
+    RJNA.tag.div({ class: "synopsis-info" }, {}, {},
+      RJNA.tag.h3({ class: "game-info-title" }, {}, {}, "Welcome to Bomberman"),
+      RJNA.tag.p(
+        { class: "synopsis-text" },
+        {},
+        {},
+        `Bomberman is an arcade-style game where players control a 
+           character who strategically places bombs to eliminate obstacles,
+           enemies, and opponents in a maze-like arena.
+          `),
+      RJNA.tag.p(
+        { class: "synopsis-text" },
+        {},
+        {},
+        `Can You Outwit Your Enemies`)
+    ),
     RJNA.tag.div({ class: "game-controls-container" }, {}, {},
       RJNA.tag.h3({ class: "game-controls-title" }, {}, {}, "Controls"),
+      RJNA.tag.div({ class: "arrow-controls-info" }, {}, {},
+        RJNA.tag.img({ class: "arrow-controls-image" }, {}, { src: "./img/arrows.png" }),
+        RJNA.tag.p(
+          { class: "arrow-controls-text" },
+          {},
+          {},
+          "To move the player character, use the arrow keys on your keyboard:",
+          RJNA.tag.br(),
+          RJNA.tag.br(),
+          RJNA.tag.ul(
+            { class: "arrow-controls-list" },
+            {},
+            {},
+            RJNA.tag.li({}, {}, {}, "Press the Left Arrow key to move the player character to the left."),
+            RJNA.tag.li({}, {}, {}, "Press the Right Arrow key to move the player character to the right."),
+            RJNA.tag.li({}, {}, {}, "Press the Up Arrow key to move the player character upwards."),
+            RJNA.tag.li({}, {}, {}, "Press the Down Arrow key to move the player character downwards.")
+          )
+        )
+      ),
+      RJNA.tag.div({ class: "pick-up-controls-info" }, {}, {},
+        RJNA.tag.img({ class: "pick-up-controls-image" }, {}, { src: "./img/q.png" }),
+        RJNA.tag.p(
+          { class: "pick-up-controls-text" },
+          {},
+          {},
+          "Press and Release the Q key to pick up a power-up. But remember you only get up to 3.",
+        )
+      ),
+      RJNA.tag.div({ class: "power-up-controls-info" }, {}, {},
+        RJNA.tag.img({ class: "power-up-controls-image" }, {}, { src: "./img/asd.png" }),
+        RJNA.tag.p(
+          { class: "power-up-controls-text" },
+          {},
+          {},
+          "To use power-ups, use the following keys on your keyboard:",
+          RJNA.tag.br(),
+          RJNA.tag.br(),
+          RJNA.tag.ul(
+            { class: "power-up-controls-list" },
+            {},
+            {},
+            RJNA.tag.li({}, {}, {}, "Press and Release the A key to use the flames power-up."),
+            RJNA.tag.li({}, {}, {}, "Press and Release the S  key to use the speed power-up."),
+            RJNA.tag.li({}, {}, {}, "Press and Release the D key to use bombs power-up.")
+          )
+        )
+      )
     ),
     RJNA.tag.div({ class: "game-extras-container" }, {}, {},
       RJNA.tag.h3({ class: "game-extras-title" }, {}, {}, "Extra"),
+      RJNA.tag.div({ class: "synopsis-info" }, {}, {},
+        RJNA.tag.p(
+          { class: "bombs-text" },
+          {},
+          {},
+          "A 20s countdown will be initiated once 2 or more players join a lobby - during this time more players can join. Once the countdown has ended or the lobby is full with 4 players, the game will be start after a further 10s countdown. At this point, there is no going back!"
+        )
+      ),
+      RJNA.tag.div({ class: "speed-info" }, {}, {},
+        RJNA.tag.p(
+          { class: "speed-text" },
+          {},
+          {},
+          "There are three types of power ups:",
+        ),
+      ),
+      RJNA.tag.div({ class: "speed-info" }, {}, {},
+        RJNA.tag.img({ class: "speed-image" }, {}, { src: globalSettings["power-ups"]["speed"] }),
+        RJNA.tag.p(
+          { class: "speed-text" },
+          {},
+          {},
+          "SPEED",
+        ),
+        RJNA.tag.p(
+          { class: "speed-text" },
+          {},
+          {},
+          "Temporarily increases movement speed for 10s",
+        )
+      ),
+      RJNA.tag.div({ class: "flames-info" }, {}, {},
+        RJNA.tag.img({ class: "flames-image" }, {}, { src: globalSettings["power-ups"]["flames"] }),
+        RJNA.tag.p(
+          { class: "flames-text" },
+          {},
+          {},
+          "FLAMES",
+        ),
+        RJNA.tag.p(
+          { class: "flames-text" },
+          {},
+          {},
+          " Increases explosion range from the bomb in four directions by 1 block",
+        )
+      ),
+      RJNA.tag.div({ class: "bombs-info" }, {}, {},
+        RJNA.tag.img({ class: "bombs-image" }, {}, { src: globalSettings["power-ups"]["bombs"] }),
+        RJNA.tag.p(
+          { class: "bombs-text" },
+          {},
+          {},
+          "BOMBS",
+        ),
+        RJNA.tag.p(
+          { class: "bombs-text" },
+          {},
+          {},
+          " Increases the amount of bombs dropped at a time by 1",
+        )
+      ),
+      RJNA.tag.div({ class: "authors-info" }, {}, {},
+        RJNA.tag.p(
+          { class: "authors-text" },
+          {},
+          {},
+          "This game was created by:"),
+        RJNA.tag.div({ class: "authors-list" }, {}, {},
+          RJNA.tag.a(
+            {
+              href: "https://github.com/rsmith-github",
+            },
+            {},
+            {},
+            " Remington Smith, "
+          ),
+          RJNA.tag.a(
+            {
+              href: "https://github.com/Jasonasante",
+            },
+            {},
+            {},
+            " Jason Asante, "
+          ),
+          RJNA.tag.a({
+            href: "https://github.com/nik-don",
+          },
+            {},
+            {},
+            " Nikolo Don, "),
+          RJNA.tag.a({
+            href: "https://github.com/AbdKhan1",
+          },
+            {},
+            {},
+            " Abd Al-Raheem Khan"),
+        )
+      )
     )
   )
 );
