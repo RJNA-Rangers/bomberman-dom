@@ -833,25 +833,23 @@ body {
   padding: 20px;
 }
 
-.pick-up-controls-info {
+.pick-up-controls-info,
+.bomb-controls-info {
   display: flex;
   align-items: center;
   margin-bottom: 10px;
 }
 
-.pick-up-controls-image {
+.pick-up-controls-image,
+.bomb-controls-image {
   width: 20%;
   height: 100%;
   float: left;
 }
 
-.pick-up-controls-text {
+.pick-up-controls-text,
+.bomb-controls-text{
   padding: 10px;
-}
-
-.pick-up-controls-info {
-  display: flex;
-  align-items: center;
 }
 
 .power-up-controls-info {

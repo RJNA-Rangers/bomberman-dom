@@ -114,6 +114,15 @@ export const waitingRoomGrid = RJNA.tag.div(
           )
         )
       ),
+      RJNA.tag.div({ class: "bomb-controls-info" }, {}, {},
+        RJNA.tag.img({ class: "bomb-controls-image" }, {}, { src: "./img/w.png" }),
+        RJNA.tag.p(
+          { class: "bomb-controls-text" },
+          {},
+          {},
+          "Press and Release the W key to drop a bomb. Be careful tho, friendly fire is activated.",
+        )
+      ),
       RJNA.tag.div({ class: "pick-up-controls-info" }, {}, {},
         RJNA.tag.img({ class: "pick-up-controls-image" }, {}, { src: "./img/q.png" }),
         RJNA.tag.p(
