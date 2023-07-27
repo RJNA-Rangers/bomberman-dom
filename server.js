@@ -91,8 +91,13 @@ io.on("connection", function (socket) {
 	socket.on("power-picked-up", function (powerUp) {
 		console.log({ powerUp })
 		io.sockets.emit("remove-power-up", powerUp)
-		io.sockets.emit("game-update", { "username": socket.username, "power-up": powerUp.powerUp })
+		io.sockets.emit("game-update", { "event":"power-up", "username": socket.username, "power-up": powerUp.powerUp })
 	});
+
+	socket.on("player-killed", function (playerKilledObj){
+		io.sockets.emit("game-update", { "event":"player-killed", "playerKilled": playerKilledObj.playerKilled })
+		io.sockets.emit("player-death", playerKilledObj)
+	})
 
 	socket.on("disconnect", function (reason) {
 		console.log({ reason })
@@ -106,23 +111,6 @@ io.on("connection", function (socket) {
 server.listen(port, () => {
 	console.log(`App listening at http://localhost:${port}`);
 });
-
-// function dropPowerUp(cells) {
-// 	let emptyCoords = []
-// 	for (let r = 0; r < cells.length; r++) {
-// 		for (let c = 0; c < cells[r].length; c++) {
-// 			if (cells[r][c] == null && Math.random() < 1) {
-// 				const powerUpCoords = [r, c]
-// 				const powerUp = choiceOfPowerUp[Math.floor(Math.random() * choiceOfPowerUp.length)]
-// 				emptyCoords.push({ powerUp, powerUpCoords })
-// 			}
-// 		}
-// 	}
-// 	if (emptyCoords.length != 0) {
-// 		io.sockets.emit("drop-power-up", emptyCoords);
-// 	}
-// }
-
 
 function startGameCountdown() {
 	let countdown = 2;

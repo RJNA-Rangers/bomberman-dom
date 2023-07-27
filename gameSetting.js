@@ -44,36 +44,36 @@ export const globalSettings = {
     },
     flames: {
         normal: 1,
-        pickUp1: 3,
-        pickUp2: 5,
-        pickUp3: 7,
+        pickUp1: 2,
+        pickUp2: 3,
+        pickUp3: 4,
     },
-    bombs : {
+    bombs: {
         normal: 1,
-        pickUp1:2,
-        pickUp2:3,
-        pickUp3:4,
+        pickUp1: 2,
+        pickUp2: 3,
+        pickUp3: 4,
     },
     "power-ups": {
         width: ((window.screen.width - 10 - 10) * 0.6) / 15,
         height: (browserHeight() - 60 - 60 - 15 - 15) / 13,
         speed: "https://media1.giphy.com/media/3ohc19SFUdIJ0YQcLe/source.gif",
-        flames: "https://i.gifer.com/origin/a9/a95ef9bce2a1d53accc6a8018df04ff6_w200.gif",
-        bombs: "https://www.pngall.com/wp-content/uploads/5/Animated-Bomb-PNG.png",
+        flames: "https://images-wixmp-ed30a86b8c4ca887773594c2.wixmp.com/f/7b674371-0178-47a7-bf86-e9960c61f200/d9t5ysy-3979d702-c657-4050-9278-681e2d41c3fa.gif?token=eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ1cm46YXBwOjdlMGQxODg5ODIyNjQzNzNhNWYwZDQxNWVhMGQyNmUwIiwiaXNzIjoidXJuOmFwcDo3ZTBkMTg4OTgyMjY0MzczYTVmMGQ0MTVlYTBkMjZlMCIsIm9iaiI6W1t7InBhdGgiOiJcL2ZcLzdiNjc0MzcxLTAxNzgtNDdhNy1iZjg2LWU5OTYwYzYxZjIwMFwvZDl0NXlzeS0zOTc5ZDcwMi1jNjU3LTQwNTAtOTI3OC02ODFlMmQ0MWMzZmEuZ2lmIn1dXSwiYXVkIjpbInVybjpzZXJ2aWNlOmZpbGUuZG93bmxvYWQiXX0.yvStuICT_LEcY0GH5O2WxP0LA4gYUbyKiQudA0w5Nns",
+        bombs: "https://cdnb.artstation.com/p/assets/images/images/028/086/635/original/juanito-medina-1-up.gif?1593449374",
         types: {
             speed: '🏃‍♂️',
             flames: '🔥',
             bombs: '💣'
         }
     },
-    "bomb" :{
-        width:((window.screen.width - 10 - 10) * 0.6) / 15,
+    "bomb": {
+        width: ((window.screen.width - 10 - 10) * 0.6) / 15,
         height: (browserHeight() - 60 - 60 - 15 - 15) / 13,
-        src : "https://www.pngall.com/wp-content/uploads/5/Animated-Bomb-PNG.png",
+        src: "https://images-wixmp-ed30a86b8c4ca887773594c2.wixmp.com/f/07c86608-ef70-47c9-8e03-a11d0aacb17a/dayapq8-3b25e31d-6a18-4430-83aa-c1237e7cdfde.gif?token=eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ1cm46YXBwOjdlMGQxODg5ODIyNjQzNzNhNWYwZDQxNWVhMGQyNmUwIiwiaXNzIjoidXJuOmFwcDo3ZTBkMTg4OTgyMjY0MzczYTVmMGQ0MTVlYTBkMjZlMCIsIm9iaiI6W1t7InBhdGgiOiJcL2ZcLzA3Yzg2NjA4LWVmNzAtNDdjOS04ZTAzLWExMWQwYWFjYjE3YVwvZGF5YXBxOC0zYjI1ZTMxZC02YTE4LTQ0MzAtODNhYS1jMTIzN2U3Y2RmZGUuZ2lmIn1dXSwiYXVkIjpbInVybjpzZXJ2aWNlOmZpbGUuZG93bmxvYWQiXX0.12JSApNxz3-0njFUpo_BNqcp4ZhCDtrTOQdMN9_-Rok",
     },
-    "explosion":{
-        width:((window.screen.width - 10 - 10) * 0.6) / 15,
-        height:(browserHeight() - 60 - 60 - 15 - 15) / 13,
+    "explosion": {
+        width: ((window.screen.width - 10 - 10) * 0.6) / 15,
+        height: (browserHeight() - 60 - 60 - 15 - 15) / 13,
         src: "https://i.gifer.com/4xjg.gif"
     }
 }

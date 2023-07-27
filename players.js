@@ -50,75 +50,40 @@ export function placePlayer(number, character, username) {
     )
   );
 }
-
+let isTouchingExplosion = false
 export function PlayerMovement(socket) {
   const moving = {
     myPlayerNum: socket.playerCount,
     row: orbital["players"][`${socket.playerCount}`]["row"],
     col: orbital["players"][`${socket.playerCount}`]["col"],
     speed: orbital["players"][`${socket.playerCount}`]["speed"] || 0.05,
-    flames: orbital["players"][`${socket.playerCount}`]["flames"] || 3,
+    flames: orbital["players"][`${socket.playerCount}`]["flames"] || 1,
     bombs: orbital["players"][`${socket.playerCount}`]["bombs"] || 1,
   };
   let playerPowerUpsArr = orbital["players"][moving.myPlayerNum]["power-ups"];
+  const touchingExplosion = touchExplosion(moving);
+
+  // Check if touchExplosion is true and the event hasn't been emitted yet
+  if (touchingExplosion && !isTouchingExplosion) {
+    // Set the flag to true to prevent further requests
+    isTouchingExplosion = true;
+
+    // Emit the "player-killed" event
+    socket.emit("player-killed", touchingExplosion);
+    // reset moving to original position
+    resetMovingCoords(moving)
+
+    // Reset the flag to false after a delay (e.g., 100 milliseconds)
+    setTimeout(() => {
+      isTouchingExplosion = false;
+    }, 100);
+  }
 
   //drop player's bomb when they press 'w'
   if (bombDropped) {
     falseKeyBool("bombs-dropped");
     //send to everyone bomb has been dropped
     socket.emit("drop-bomb", moving);
-    for (let i = 1; i <= Object.keys(orbital.players).length; i++) {
-      let explosionTouchedObj = touchExplosion(
-        moving["myPlayerNum"],
-        i,
-        moving
-      );
-      if (explosionTouchedObj == undefined) continue;
-      console.log(explosionTouchedObj);
-      let playerNumber = parseInt(
-        explosionTouchedObj.playerKilled.split("-")[1]
-      );
-      let playerOrbital = JSON.parse(JSON.stringify(orbital["players"][`${playerNumber}`]));
-      //reduce their live count from orbital
-      playerOrbital.lives > 0
-        ? (playerOrbital.lives -= 1)
-        : (playerOrbital.lives = 0);
-      //reset player position's to corners
-      switch (playerNumber) {
-        case 1:
-          playerOrbital.myPlayerNum = playerNumber;
-          playerOrbital.row = 1;
-          playerOrbital.col = 1;
-          playerOrbital.immune = true;
-          movePlayers();
-          socket.emit("player-movement", playerOrbital);
-          break;
-        case 2:
-          playerOrbital.myPlayerNum = playerNumber;
-          playerOrbital.row = 1;
-          playerOrbital.col = 13;
-          playerOrbital.immune = true;
-          movePlayers();
-          socket.emit("player-movement", playerOrbital);
-          break;
-        case 3:
-          playerOrbital.myPlayerNum = playerNumber;
-          playerOrbital.row = 11;
-          playerOrbital.col = 13;
-          playerOrbital.immune = true;
-          movePlayers();
-          socket.emit("player-movement", playerOrbital);
-          break;
-        case 4:
-          playerOrbital.myPlayerNum = playerNumber;
-          playerOrbital.row = 11;
-          playerOrbital.col = 1;
-          playerOrbital.immune = true;
-          movePlayers();
-          socket.emit("player-movement", playerOrbital);
-          break;
-      }
-    }
   }
   // move when the button is pressed and the next block is empty
   if (
@@ -146,13 +111,15 @@ export function PlayerMovement(socket) {
     // console.log(touchPowerUp(socket.playerCount, moving))
     if (playerPowerUpsArr.length < 3) {
       let powerUpObj = touchPowerUp(socket.playerCount, moving);
-      if (powerUpObj != undefined) playerPowerUpsArr.push(powerUpObj.powerUp);
-      let amountOfPowerUp = playerPowerUpsArr.filter(
-        (power) => power === powerUpObj.powerUp
-      ).length;
-      document.querySelector(`.${powerUpObj.powerUp}-amount`).innerHTML =
-        amountOfPowerUp;
-      socket.emit("power-picked-up", powerUpObj);
+      if (powerUpObj !== undefined) {
+        playerPowerUpsArr.push(powerUpObj.powerUp);
+        let amountOfPowerUp = playerPowerUpsArr.filter(
+          (power) => power === powerUpObj.powerUp
+        ).length;
+        document.querySelector(`.${powerUpObj.powerUp}-amount`).innerHTML =
+          amountOfPowerUp;
+        socket.emit("power-picked-up", powerUpObj);
+      }
     }
   } else if (speedPressed) {
     falseKeyBool("speed-pressed");
@@ -191,41 +158,21 @@ export function PlayerMovement(socket) {
       let amountOfPowerUp = playerPowerUpsArr.filter(
         (power) => power === "flames"
       ).length;
-      document.querySelector(`.speed-amount`).innerHTML = amountOfPowerUp;
+      document.querySelector(`.flames-amount`).innerHTML = amountOfPowerUp;
     }
   } else if (bombsPressed) {
     falseKeyBool("bombs-pressed");
     if (playerPowerUpsArr.indexOf("bombs") !== -1) {
-      if (moving.bombs === globalSettings.bombs.normal) {
-        moving.bombs = globalSettings.bombs.pickUp1;
-      } else if (moving.bombs === globalSettings.bombs.pickUp1) {
-        moving.bombs = globalSettings.bombs.pickUp2;
-      } else if (moving.bombs === globalSettings.bombs.pickUp2) {
-        moving.bombs = globalSettings.bombs.pickUp3;
-      }
+      orbital["players"][moving["myPlayerNum"]]["numOfBombs"]++
       playerPowerUpsArr.splice(playerPowerUpsArr.indexOf("bombs"), 1);
       let amountOfPowerUp = playerPowerUpsArr.filter(
         (power) => power === "bombs"
       ).length;
-      document.querySelector(`.speed-amount`).innerHTML = amountOfPowerUp;
+      document.querySelector(`.bombs-amount`).innerHTML = amountOfPowerUp;
     }
   }
   movePlayers();
   socket.emit("player-movement", moving);
-}
-
-function isPowerUp(row, col) {
-  if (
-    orbital.cells[Math.floor(row)][Math.floor(col)] ==
-      globalSettings["power-ups"]["types"]["speed"] ||
-    orbital.cells[Math.floor(row)][Math.floor(col)] ==
-      globalSettings["power-ups"]["types"]["flames"] ||
-    orbital.cells[Math.floor(row)][Math.floor(col)] ==
-      globalSettings["power-ups"]["types"]["bombs"]
-  ) {
-    return true;
-  }
-  return false;
 }
 
 export function movePlayers() {
@@ -238,5 +185,38 @@ export function movePlayers() {
       playerObj.col * globalSettings.wallWidth +
       globalSettings.wallWidth * 0.1 +
       "px";
+  }
+}
+
+export const debounce = (func, wait) => {
+  let debounceTimer
+  return function (eve) {
+    const context = this
+    const args = arguments
+    clearTimeout(debounceTimer)
+    debounceTimer = setTimeout(() => func.apply(context, args), wait)
+    return debounceTimer
+  }
+}
+
+function resetMovingCoords(moving) {
+  // also reset speed, flames and bombs as well as remove all power ups
+  switch (moving.myPlayerNum) {
+    case 1:
+      moving.row = 1;
+      moving.col = 1;
+      break;
+    case 2:
+      moving.row = 1;
+      moving.col = 13;
+      break;
+    case 3:
+      moving.row = 11;
+      moving.col = 13;
+      break;
+    case 4:
+      moving.row = 11;
+      moving.col = 1;
+      break;
   }
 }

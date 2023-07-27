@@ -23,7 +23,8 @@ export function checkCollision(player, objectDOMRect) {
 export function checkWallCollision(direction, playerCount, movingSpeed) {
   let hardWalls = document.querySelectorAll(".hard-wall");
   let softWalls = document.querySelectorAll(".soft-wall");
-  let allWalls = [...hardWalls, ...softWalls];
+  let allBombs = document.querySelectorAll(".bomb");
+  let allWallsAndBombs = [...hardWalls, ...softWalls, ...allBombs];
   let playerDOMRect = document
     .querySelector(`.player-${playerCount}`)
     .getBoundingClientRect();
@@ -54,8 +55,8 @@ export function checkWallCollision(direction, playerCount, movingSpeed) {
       break;
   }
 
-  for (let i = 0; i < allWalls.length; i++) {
-    let wallDOMRect = allWalls[i].getBoundingClientRect();
+  for (let i = 0; i < allWallsAndBombs.length; i++) {
+    let wallDOMRect = allWallsAndBombs[i].getBoundingClientRect();
     if (checkCollision(newPlayerDOMRect, wallDOMRect)) {
       // Collision detected with a wall
       return true;
@@ -72,13 +73,13 @@ export function whichSideCollision(playerDOMRect, objectDOMRect) {
     case playerDOMRect.y + playerDOMRect.height >
       objectDOMRect.y + objectDOMRect.height &&
       playerDOMRect.x + playerDOMRect.width >=
-        objectDOMRect.x + objectDOMRect.width:
+      objectDOMRect.x + objectDOMRect.width:
       return "bottom-right";
 
     //top right corner of object
     case playerDOMRect.y < objectDOMRect.y &&
       playerDOMRect.x + playerDOMRect.width >=
-        objectDOMRect.x + objectDOMRect.width:
+      objectDOMRect.x + objectDOMRect.width:
       return "top-right";
 
     //bottom left corner of object
@@ -205,70 +206,16 @@ export function touchPowerUp(count, moving) {
     }
   }
 }
-export function checkBombCollision(
-  direction,
-  playerCount,
-  movingSpeed,
-  bombDropped
-) {
-  console.log(bombDropped);
-  if (!bombDropped) return false;
-  for (let i = 1; i <= Object.keys(orbital.players).length; i++) {
-    let bombs = document.querySelectorAll(`player-${i}-bomb`);
-    console.log(bombs, "it should give all the bomb elements");
-    if (bombs.length <= 0) continue;
-    let playerDOMRect = document
-      .querySelector(`.player-${playerCount}`)
-      .getBoundingClientRect();
-    let newPlayerDOMRect = {
-      x: playerDOMRect.x + globalSettings.players.width * 0.4,
-      y: playerDOMRect.y + globalSettings.players.height * 0.2,
-      width: playerDOMRect.width - globalSettings.players.width * 0.4,
-      height: playerDOMRect.height - globalSettings.players.height * 0.4,
-    };
-    switch (direction) {
-      case "left":
-        newPlayerDOMRect.x -=
-          movingSpeed * globalSettings.bomb.width +
-          globalSettings.bomb.width * 0.1;
-        break;
-      case "right":
-        newPlayerDOMRect.x +=
-          movingSpeed * globalSettings.bomb.width +
-          globalSettings.bomb.width * 0.1;
-        break;
-      case "up":
-        newPlayerDOMRect.y -=
-          movingSpeed * globalSettings.bomb.height +
-          globalSettings.bomb.height * 0.1;
-        break;
-      case "down":
-        newPlayerDOMRect.y +=
-          movingSpeed * globalSettings.bomb.height +
-          globalSettings.bomb.height * 0.2;
-        break;
-    }
 
-    for (let i = 0; i < bombs.length; i++) {
-      let bombDOMRect = bombs[i].getBoundingClientRect();
-      if (checkCollision(newPlayerDOMRect, bombDOMRect)) {
-        // Collision detected with a bomb
-        return true;
-      }
-    }
-    // No collision with any bombs
-    return false;
-  }
-}
-export function touchExplosion(count, j, moving) {
-  const player = document.querySelector(`.player-${j}`).getBoundingClientRect();
+export function touchExplosion(moving) {
+  const player = document.querySelector(`.player-${moving["myPlayerNum"]}`).getBoundingClientRect();
   const explosionImage = document.querySelectorAll(
-    `.player-${count}-explosion`
+    `.explosion`
   );
   //bomb cannot touch player if they are immune
   if (
-    orbital["players"][`${j}`].hasOwnProperty("immune") &&
-    orbital["players"][`${j}`].immune
+    orbital["players"][`${moving["myPlayerNum"]}`].hasOwnProperty("immune") &&
+    orbital["players"][`${moving["myPlayerNum"]}`].immune
   ) return undefined;
   for (let i = 0; i < explosionImage.length; i++) {
     let explosionImageRect = explosionImage[i].getBoundingClientRect();
@@ -278,7 +225,7 @@ export function touchExplosion(count, j, moving) {
         case "bottom-right":
           console.log("bottom-right");
           return {
-            playerKilled: `player-${j}`,
+            playerKilled: `${moving["myPlayerNum"]}`,
             playerKilledCoords: [
               Math.floor(moving.row),
               Math.floor(moving.col),
@@ -287,26 +234,26 @@ export function touchExplosion(count, j, moving) {
         case "top-right":
           console.log("top-right");
           return {
-            playerKilled: `player-${j}`,
+            playerKilled: `${moving["myPlayerNum"]}`,
             playerKilledCoords: [Math.ceil(moving.row), Math.floor(moving.col)],
           };
         case "bottom-left":
           console.log("bottom-left");
           return {
-            playerKilled: `player-${j}`,
+            playerKilled: `${moving["myPlayerNum"]}`,
             playerKilledCoords: [Math.floor(moving.row), Math.ceil(moving.col)],
           };
         case "top-left":
           console.log("top-left");
           return {
-            playerKilled: `player-${j}`,
+            playerKilled: `${moving["myPlayerNum"]}`,
             playerKilledCoords: [Math.ceil(moving.row), Math.ceil(moving.col)],
           };
         case "bottom":
           console.log("bottom");
           if (moving.col >= Math.floor(moving.col) + 0.8) {
             return {
-              playerKilled: `player-${j}`,
+              playerKilled: `${moving["myPlayerNum"]}`,
               playerKilledCoords: [
                 Math.floor(moving.row),
                 Math.ceil(moving.col),
@@ -314,7 +261,7 @@ export function touchExplosion(count, j, moving) {
             };
           }
           return {
-            playerKilled: `player-${j}`,
+            playerKilled: `${moving["myPlayerNum"]}`,
             playerKilledCoords: [
               Math.floor(moving.row),
               Math.floor(moving.col),
@@ -324,7 +271,7 @@ export function touchExplosion(count, j, moving) {
           console.log("top");
           if (moving.col >= Math.floor(moving.col) + 0.8) {
             return {
-              playerKilled: `player-${j}`,
+              playerKilled: `${moving["myPlayerNum"]}`,
               playerKilledCoords: [
                 Math.ceil(moving.row),
                 Math.ceil(moving.col),
@@ -332,14 +279,14 @@ export function touchExplosion(count, j, moving) {
             };
           }
           return {
-            playerKilled: `player-${j}`,
+            playerKilled: `${moving["myPlayerNum"]}`,
             playerKilledCoords: [Math.ceil(moving.row), Math.floor(moving.col)],
           };
         case "left":
           console.log("left");
           if (moving.row >= Math.floor(moving.row) + 0.8) {
             return {
-              playerKilled: `player-${j}`,
+              playerKilled: `${moving["myPlayerNum"]}`,
               playerKilledCoords: [
                 Math.ceil(moving.row),
                 Math.ceil(moving.col),
@@ -347,14 +294,14 @@ export function touchExplosion(count, j, moving) {
             };
           }
           return {
-            playerKilled: `player-${j}`,
+            playerKilled: `${moving["myPlayerNum"]}`,
             playerKilledCoords: [Math.floor(moving.row), Math.ceil(moving.col)],
           };
         case "right":
           console.log("right");
           if (moving.row >= Math.floor(moving.row) + 0.8) {
             return {
-              playerKilled: `player-${j}`,
+              playerKilled: `${moving["myPlayerNum"]}`,
               playerKilledCoords: [
                 Math.ceil(moving.row),
                 Math.floor(moving.col),
@@ -362,7 +309,7 @@ export function touchExplosion(count, j, moving) {
             };
           }
           return {
-            playerKilled: `player-${j}`,
+            playerKilled: `${moving["myPlayerNum"]}`,
             playerKilledCoords: [
               Math.floor(moving.row),
               Math.floor(moving.col),
@@ -371,7 +318,7 @@ export function touchExplosion(count, j, moving) {
         default:
           console.log("default");
           return {
-            playerKilled: `player-${j}`,
+            playerKilled: `${moving["myPlayerNum"]}`,
             playerKilledCoords: [Math.floor(moving.row), Math.ceil(moving.col)],
           };
       }

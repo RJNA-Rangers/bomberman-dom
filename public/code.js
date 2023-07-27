@@ -6,7 +6,7 @@ import { createMap, generateLevel } from "../mapTemplate.js";
 import { globalSettings } from "../gameSetting.js";
 import { otherLivesContainer } from "../gameState.js";
 import { placePowerUp } from "../powerUps.js";
-import {placeBombAndExplode} from "../bombs.js";
+import { placeBombAndExplode } from "../bombs.js";
 import { touchExplosion } from "../collision.js";
 
 export let socket;
@@ -198,6 +198,7 @@ export function runChatroom() {
           }
         }
       }
+      movePlayers()
     });
     socket.on("remove-player", function (userObj) {
       delete orbital.players[userObj.count];
@@ -240,19 +241,19 @@ export function runChatroom() {
         let top =
           Math.round(
             powerUp["powerUpCoords"][0] *
-              globalSettings["power-ups"]["height"] *
-              eleTopDp
+            globalSettings["power-ups"]["height"] *
+            eleTopDp
           ) / eleTopDp;
         let left =
           Math.round(
             powerUp["powerUpCoords"][1] *
-              globalSettings["power-ups"]["width"] *
-              eleLeftDp
+            globalSettings["power-ups"]["width"] *
+            eleLeftDp
           ) / eleLeftDp;
         return (
           Math.round(parseFloat(ele.style.top) * eleTopDp) / eleTopDp === top &&
           Math.round(parseFloat(ele.style.left) * eleLeftDp) / eleLeftDp ===
-            left
+          left
         );
       });
 
@@ -260,105 +261,123 @@ export function runChatroom() {
         removedPower.shift().remove();
       }
     });
+    socket.on("player-death", function (playerKilledObj) {
+      console.log(playerKilledObj);
+      let playerNumber = parseInt(
+        playerKilledObj.playerKilled
+      );
+      console.log(playerNumber);
+      let playerOrbital = orbital["players"][`${playerNumber}`];
+      console.log(playerOrbital.lives, "before")
+      // playerOrbital.lives = 3;
+      //reduce their live count from orbital
+      playerOrbital.lives > 0
+        ? (playerOrbital.lives -= 1)
+        : (playerOrbital.lives = 0);
+      console.log(playerOrbital.lives, "after")
+      let newPlayerOrbital = JSON.parse(JSON.stringify(playerOrbital))
+      //reset player position's to corners
+      switch (playerNumber) {
+        case 1:
+          newPlayerOrbital.myPlayerNum = playerNumber;
+          newPlayerOrbital.row = 1;
+          newPlayerOrbital.col = 1;
+          newPlayerOrbital.immune = true;
+          break;
+        case 2:
+          newPlayerOrbital.myPlayerNum = playerNumber;
+          newPlayerOrbital.row = 1;
+          newPlayerOrbital.col = 13;
+          newPlayerOrbital.immune = true;
+          break;
+        case 3:
+          newPlayerOrbital.myPlayerNum = playerNumber;
+          newPlayerOrbital.row = 11;
+          newPlayerOrbital.col = 13;
+          newPlayerOrbital.immune = true;
+          break;
+        case 4:
+          newPlayerOrbital.myPlayerNum = playerNumber;
+          newPlayerOrbital.row = 11;
+          newPlayerOrbital.col = 1;
+          newPlayerOrbital.immune = true;
+          break;
+      }
+      socket.emit("player-movement", newPlayerOrbital);
+    })
     socket.on("bomb-dropped", function (moving) {
       //check if a player collided with an explosion
-      placeBombAndExplode(moving).then(res=>{
+      placeBombAndExplode(moving).then(res => {
         setTimeout(() => {
-          // for (let i = 1; i <= Object.keys(orbital.players).length; i++) {
-          //   let explosionTouchedObj = touchExplosion(
-          //     moving["myPlayerNum"],
-          //     i,
-          //     moving
-          //   );
-          //   if (explosionTouchedObj == undefined) continue;
-          //   console.log(explosionTouchedObj);
-          //   let playerNumber = parseInt(
-          //     explosionTouchedObj.playerKilled.split("-")[1]
-          //   );
-          //   let playerOrbital = JSON.parse(JSON.stringify(orbital["players"][`${playerNumber}`]));
-          //   //reduce their live count from orbital
-          //   playerOrbital.lives > 0
-          //     ? (playerOrbital.lives -= 1)
-          //     : (playerOrbital.lives = 0);
-          //   //reset player position's to corners
-          //   switch (playerNumber) {
-          //     case 1:
-          //       playerOrbital.myPlayerNum = playerNumber;
-          //       playerOrbital.row = 1;
-          //       playerOrbital.col = 1;
-          //       playerOrbital.immune = true;
-          //       movePlayers();
-          //       socket.emit("player-movement", playerOrbital);
-          //       break;
-          //     case 2:
-          //       playerOrbital.myPlayerNum = playerNumber;
-          //       playerOrbital.row = 1;
-          //       playerOrbital.col = 13;
-          //       playerOrbital.immune = true;
-          //       movePlayers();
-          //       socket.emit("player-movement", playerOrbital);
-          //       break;
-          //     case 3:
-          //       playerOrbital.myPlayerNum = playerNumber;
-          //       playerOrbital.row = 11;
-          //       playerOrbital.col = 13;
-          //       playerOrbital.immune = true;
-          //       movePlayers();
-          //       socket.emit("player-movement", playerOrbital);
-          //       break;
-          //     case 4:
-          //       playerOrbital.myPlayerNum = playerNumber;
-          //       playerOrbital.row = 11;
-          //       playerOrbital.col = 1;
-          //       playerOrbital.immune = true;
-          //       movePlayers();
-          //       socket.emit("player-movement", playerOrbital);
-          //       break;
-          //   }
-          // }
           Array.from(
             document.querySelectorAll(
               `.player-${moving["myPlayerNum"]}-explosion`
             )
           ).forEach((el) => el.remove());
         }, 1000);
-    });
-      })
-      
+      });
+    })
+
     socket.on("game-update", function (message) {
       console.log("in game update");
       let gameUpdatesContainer = document.querySelector(".live-updates");
       let updateMessage;
       console.log(message);
-      switch (message) {
-        case message.powerUp !== undefined:
+      switch (message.event) {
+        case "power-up":
           updateMessage = RJNA.createNode(
             RJNA.tag.p(
               { class: "live-updates-message" },
               {},
               {},
-              `${message.username} has picked up a speed power up ${
-                globalSettings["power-ups"]["types"][message["power-up"]]
+              `${message.username} has picked up a ${message["power-up"]} power-up ${globalSettings["power-ups"]["types"][message["power-up"]]
               }`
             )
           );
           break;
-        case message.playerKilled !== undefined:
-          let playerNumber = parseInt(message.playerKilled.split("-")[1]);
-          RJNA.createNode(
-            RJNA.tag.p(
-              { class: "live-updates-message" },
-              {},
-              {},
-              `${orbital["players"][`${playerNumber}`].name} has exploded`
-            )
-          );
+        case "player-killed":
+          let playerNumber = parseInt(message.playerKilled);
+          let deathMessageArr = [
+            `${orbital["players"][`${playerNumber}`].name} has exploded`,
+            `${orbital["players"][`${playerNumber}`].name} GOT MERKED!! MESSOP`,
+            `${orbital["players"][`${playerNumber}`].name} has met Allah!!`,
+            `${orbital["players"][`${playerNumber}`].name} was caught in an explosion`,
+            `RIP ${orbital["players"][`${playerNumber}`].name}`,
+            `${orbital["players"][`${playerNumber}`].name} sadly passed away`
+          ]
+          let finalDeathMessage = `${orbital["players"][`${playerNumber}`].name} has been ELIMINATED`
+          if (orbital["players"][`${playerNumber}`].lives != 0) {
+            updateMessage = RJNA.createNode(
+              RJNA.tag.p(
+                { class: "live-updates-message" },
+                {},
+                {},
+                deathMessageArr[Math.floor(Math.random() * deathMessageArr.length)]
+              )
+            );
+          } else {
+            updateMessage = RJNA.createNode(
+              RJNA.tag.p(
+                { class: "live-updates-message" },
+                {},
+                {},
+                finalDeathMessage
+              )
+            );
+          }
+          console.log({ updateMessage })
+
           break;
       }
-      gameUpdatesContainer.insertBefore(
-        updateMessage,
-        gameUpdatesContainer.firstChild
-      );
+      if (gameUpdatesContainer.childNodes.length != 0) {
+        gameUpdatesContainer.insertBefore(
+          updateMessage,
+          gameUpdatesContainer.firstChild
+        )
+      } else {
+        gameUpdatesContainer.appendChild(updateMessage)
+      }
+      ;
     });
   }
   function renderMessage(type, message) {
@@ -403,6 +422,7 @@ function updatePlayerOrbital(userObj) {
     _lives: 3, // Add the underlying property _lives to store the actual value
     "power-ups": [],
     speed: globalSettings.speed.normal,
+    numOfBombs: 1,
   };
   Object.defineProperty(orbital["players"][`${userObj["count"]}`], "lives", {
     get: function () {
@@ -413,8 +433,10 @@ function updatePlayerOrbital(userObj) {
         `#player-${userObj["count"]}-lives`
       );
       this._lives = v; // Update the value of the underlying property _lives
+      console.log(this._lives, "this is lives value for: ", this.name, ' line 436');
       if (playerLives !== undefined && playerLives !== null) {
         const lifeElements = playerLives.children[0].children;
+        console.log(lifeElements);
         if (this._lives < lifeElements.length && lifeElements.length > 0) {
           Array.from(lifeElements).shift().remove();
         } else if (
@@ -429,6 +451,7 @@ function updatePlayerOrbital(userObj) {
         let lives = Array.from(
           document.querySelector(".lives-container").children[0].children
         );
+        console.log(lives);
         if (lives.length > this._lives) {
           lives.shift().remove();
         }

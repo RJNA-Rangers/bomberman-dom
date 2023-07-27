@@ -17,7 +17,7 @@ const template = [
 ];
 
 // -- creates an 2d array of map with randomly generated soft walls and empty spaces --// 
-let choiceOfPowerUp = ["speed", "speed", "speed"]
+let choiceOfPowerUp = ["speed", "bombs", "flames"]
 export function generateLevel() {
   let cells = [];
 
