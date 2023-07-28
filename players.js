@@ -61,23 +61,6 @@ export function PlayerMovement(socket) {
     bombs: orbital["players"][`${socket.playerCount}`]["bombs"] || 1,
   };
   let playerPowerUpsArr = orbital["players"][moving.myPlayerNum]["power-ups"];
-  const touchingExplosion = touchExplosion(moving);
-
-  // Check if touchExplosion is true and the event hasn't been emitted yet
-  if (touchingExplosion && !isTouchingExplosion) {
-    // Set the flag to true to prevent further requests
-    isTouchingExplosion = true;
-
-    // Emit the "player-killed" event
-    socket.emit("player-killed", touchingExplosion);
-    // reset moving to original position
-    resetMovingCoords(moving)
-
-    // Reset the flag to false after a delay (e.g., 100 milliseconds)
-    setTimeout(() => {
-      isTouchingExplosion = false;
-    }, 100);
-  }
 
   //drop player's bomb when they press 'w'
   if (bombDropped) {
@@ -106,7 +89,8 @@ export function PlayerMovement(socket) {
     !checkWallCollision("down", socket.playerCount, moving.speed)
   ) {
     moving.row = parseFloat((moving.row + moving.speed).toFixed(2));
-  } else if (pickUp) {
+  }
+  if (pickUp) {
     falseKeyBool("pick-up");
     // console.log(touchPowerUp(socket.playerCount, moving))
     if (playerPowerUpsArr.length < 3) {
@@ -121,22 +105,22 @@ export function PlayerMovement(socket) {
         socket.emit("power-picked-up", powerUpObj);
       }
     }
-  } else if (speedPressed) {
+  }
+
+  if (speedPressed) {
+    console.log({ playerPowerUpsArr }, { orbital })
     falseKeyBool("speed-pressed");
     if (
-      playerPowerUpsArr.indexOf("speed") !== -1 &&
-      moving.speed == globalSettings.speed.normal
+      playerPowerUpsArr.indexOf("speed") !== -1
     ) {
+      console.log('in here to speed up.', orbital)
       moving.speed = globalSettings.speed.fast;
       playerPowerUpsArr.splice(playerPowerUpsArr.indexOf("speed"), 1);
       setTimeout(() => {
         const revert = {
           myPlayerNum: socket.playerCount,
-          row: orbital["players"][`${socket.playerCount}`]["row"],
-          col: orbital["players"][`${socket.playerCount}`]["col"],
-          speed: orbital["players"][`${socket.playerCount}`]["speed"],
+          speed: globalSettings.speed.normal,
         };
-        revert.speed = globalSettings.speed.normal;
         socket.emit("player-movement", revert);
       }, 10000);
       let amountOfPowerUp = playerPowerUpsArr.filter(
@@ -144,7 +128,9 @@ export function PlayerMovement(socket) {
       ).length;
       document.querySelector(`.speed-amount`).innerHTML = amountOfPowerUp;
     }
-  } else if (flamesPressed) {
+  }
+  if (flamesPressed) {
+    console.log("flames pressed")
     falseKeyBool("flames-pressed");
     if (playerPowerUpsArr.indexOf("flames") !== -1) {
       if (moving.flames === globalSettings.flames.normal) {
@@ -160,7 +146,10 @@ export function PlayerMovement(socket) {
       ).length;
       document.querySelector(`.flames-amount`).innerHTML = amountOfPowerUp;
     }
-  } else if (bombsPressed) {
+  }
+
+  if (bombsPressed) {
+    console.log("bombs pressed")
     falseKeyBool("bombs-pressed");
     if (playerPowerUpsArr.indexOf("bombs") !== -1) {
       orbital["players"][moving["myPlayerNum"]]["numOfBombs"]++
@@ -170,6 +159,23 @@ export function PlayerMovement(socket) {
       ).length;
       document.querySelector(`.bombs-amount`).innerHTML = amountOfPowerUp;
     }
+  }
+  const touchingExplosion = touchExplosion(moving);
+  // Check if touchExplosion is true and the event hasn't been emitted yet
+  if (touchingExplosion && !isTouchingExplosion && orbital["players"][`${moving["myPlayerNum"]}`].hasOwnProperty("immune") &&
+    orbital["players"][`${moving["myPlayerNum"]}`].immune) {
+    // Set the flag to true to prevent further requests
+    isTouchingExplosion = true;
+
+    // Emit the "player-killed" event
+    socket.emit("player-killed", touchingExplosion);
+    // reset moving to original position
+    resetMovingCoords(moving)
+
+    // Reset the flag to false after a delay (e.g., 100 milliseconds)
+    setTimeout(() => {
+      isTouchingExplosion = false;
+    }, 67);
   }
   movePlayers();
   socket.emit("player-movement", moving);
@@ -201,6 +207,10 @@ export const debounce = (func, wait) => {
 
 function resetMovingCoords(moving) {
   // also reset speed, flames and bombs as well as remove all power ups
+  moving.speed = globalSettings.speed.normal
+  moving.flames = globalSettings.flames.normal
+  moving.bombs = globalSettings.bombs.normal
+  moving.immune = true
   switch (moving.myPlayerNum) {
     case 1:
       moving.row = 1;

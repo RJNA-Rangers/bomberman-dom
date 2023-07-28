@@ -305,7 +305,7 @@ export function runChatroom() {
       }
       socket.emit("player-movement", newPlayerOrbital);
     })
-    socket.on("bomb-dropped", function (moving) {
+    socket.on("bomb-dropped", async function (moving) {
       //check if a player collided with an explosion
       placeBombAndExplode(moving).then(res => {
         setTimeout(() => {
@@ -315,12 +315,16 @@ export function runChatroom() {
             )
           ).forEach((el) => el.remove());
         }, 1000);
-      });
+      }).catch(err => {
+        socket.emit("cannot-drop-bomb",moving["myPlayerNum"])
+        console.log('Soz!! you cannot drop a bomb rn!!!!');
+      })
     })
 
+
     socket.on("game-update", function (message) {
-      console.log("in game update");
-      let gameUpdatesContainer = document.querySelector(".live-updates");
+      console.log("in game update", message);
+
       let updateMessage;
       console.log(message);
       switch (message.event) {
@@ -366,18 +370,19 @@ export function runChatroom() {
             );
           }
           console.log({ updateMessage })
-
+          appendLiveUpdateMessage(updateMessage)
           break;
+        case "cannot-drop-bomb":
+          if (socket.playerCount==message.playerCount)
+          appendLiveUpdateMessage(RJNA.createNode(
+            RJNA.tag.p(
+              { class: "live-updates-message" },
+              {},
+              {},
+              'Soz!! you cannot drop a bomb rn!!!!'
+            )
+          ))
       }
-      if (gameUpdatesContainer.childNodes.length != 0) {
-        gameUpdatesContainer.insertBefore(
-          updateMessage,
-          gameUpdatesContainer.firstChild
-        )
-      } else {
-        gameUpdatesContainer.appendChild(updateMessage)
-      }
-      ;
     });
   }
   function renderMessage(type, message) {
@@ -477,5 +482,17 @@ function updatePlayerOrbital(userObj) {
       orbital["players"][`${userObj["count"]}`]["row"] = 11;
       orbital["players"][`${userObj["count"]}`]["col"] = 1;
       break;
+  }
+}
+
+function appendLiveUpdateMessage(updateMessage) {
+  let gameUpdatesContainer = document.querySelector(".live-updates");
+  if (gameUpdatesContainer.childNodes.length != 0) {
+    gameUpdatesContainer.insertBefore(
+      updateMessage,
+      gameUpdatesContainer.firstChild
+    )
+  } else {
+    gameUpdatesContainer.appendChild(updateMessage)
   }
 }

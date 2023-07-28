@@ -212,11 +212,11 @@ export function touchExplosion(moving) {
   const explosionImage = document.querySelectorAll(
     `.explosion`
   );
-  //bomb cannot touch player if they are immune
-  if (
-    orbital["players"][`${moving["myPlayerNum"]}`].hasOwnProperty("immune") &&
-    orbital["players"][`${moving["myPlayerNum"]}`].immune
-  ) return undefined;
+      //bomb cannot touch player if they are immune
+      if (
+        orbital["players"][`${moving["myPlayerNum"]}`].hasOwnProperty("immune") &&
+        orbital["players"][`${moving["myPlayerNum"]}`].immune
+      ) return undefined;
   for (let i = 0; i < explosionImage.length; i++) {
     let explosionImageRect = explosionImage[i].getBoundingClientRect();
     if (checkCollision(player, explosionImageRect)) {

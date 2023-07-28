@@ -118,8 +118,12 @@ function propagateExplosion(rowChange, colChange, moving) {
 }
 
 export async function placeBombAndExplode(moving) {
-  return new Promise((res) => {
-    let bombElement = RJNA.createNode(placeBomb(moving));
+  return new Promise((res, reject) => {
+    let newBomb=placeBomb(moving)
+    if (newBomb==undefined){
+      reject("placeBomb is undefined")
+    }else{
+    let bombElement = RJNA.createNode(newBomb);
     setTimeout(() => {
       bombElement.classList.replace('just-dropped-bomb', 'bomb');
     }, 1000);
@@ -138,5 +142,6 @@ export async function placeBombAndExplode(moving) {
       res(moving);
       orbital["players"][moving["myPlayerNum"]]["numOfBombs"]++
     }, 2500);
+  }
   });
 }

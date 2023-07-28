@@ -99,6 +99,10 @@ io.on("connection", function (socket) {
 		io.sockets.emit("player-death", playerKilledObj)
 	})
 
+	socket.on("cannot-drop-bomb", function (count){
+		socket.emit("game-update", { "event":"cannot-drop-bomb","playerCount":count})
+	})
+
 	socket.on("disconnect", function (reason) {
 		console.log({ reason })
 		console.log({ socket })
@@ -142,7 +146,7 @@ function stopGameCountdown() {
 }
 
 function startCountdown() {
-	let countdown = 0;
+	let countdown = 3;
 
 	function emitCountdown() {
 		io.sockets.emit("waiting-countdown", countdown);
