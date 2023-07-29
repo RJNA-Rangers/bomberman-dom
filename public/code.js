@@ -190,15 +190,9 @@ export function runChatroom() {
       for (let [key, value] of Object.entries(obj)) {
         if (key != "myPlayerNum") {
           orbital.players[obj.myPlayerNum][key] = value;
-          //if the player is immune then make them mune again
-          if (obj.immune) {
-            setTimeout(() => {
-              orbital.players[obj.myPlayerNum]["immune"] = false;
-            }, 1500);
-          }
         }
       }
-      movePlayers()
+      movePlayers();
     });
     socket.on("remove-player", function (userObj) {
       delete orbital.players[userObj.count];
@@ -223,7 +217,6 @@ export function runChatroom() {
     });
 
     socket.on("remove-power-up", function (powerUp) {
-      console.log({ powerUp });
       orbital.cells[powerUp["powerUpCoords"][0]][powerUp["powerUpCoords"][1]] =
         null;
       const removedPower = Array.from(
@@ -241,19 +234,19 @@ export function runChatroom() {
         let top =
           Math.round(
             powerUp["powerUpCoords"][0] *
-            globalSettings["power-ups"]["height"] *
-            eleTopDp
+              globalSettings["power-ups"]["height"] *
+              eleTopDp
           ) / eleTopDp;
         let left =
           Math.round(
             powerUp["powerUpCoords"][1] *
-            globalSettings["power-ups"]["width"] *
-            eleLeftDp
+              globalSettings["power-ups"]["width"] *
+              eleLeftDp
           ) / eleLeftDp;
         return (
           Math.round(parseFloat(ele.style.top) * eleTopDp) / eleTopDp === top &&
           Math.round(parseFloat(ele.style.left) * eleLeftDp) / eleLeftDp ===
-          left
+            left
         );
       });
 
@@ -262,71 +255,48 @@ export function runChatroom() {
       }
     });
     socket.on("player-death", function (playerKilledObj) {
-      console.log(playerKilledObj);
-      let playerNumber = parseInt(
-        playerKilledObj.playerKilled
-      );
-      console.log(playerNumber);
+      let playerNumber = parseInt(playerKilledObj.playerKilled);
       let playerOrbital = orbital["players"][`${playerNumber}`];
-      console.log(playerOrbital.lives, "before")
+      let playerDOM = document.querySelector(`.player-${playerNumber}`);
       // playerOrbital.lives = 3;
       //reduce their live count from orbital
       playerOrbital.lives > 0
         ? (playerOrbital.lives -= 1)
         : (playerOrbital.lives = 0);
-      console.log(playerOrbital.lives, "after")
-      let newPlayerOrbital = JSON.parse(JSON.stringify(playerOrbital))
-      //reset player position's to corners
-      switch (playerNumber) {
-        case 1:
-          newPlayerOrbital.myPlayerNum = playerNumber;
-          newPlayerOrbital.row = 1;
-          newPlayerOrbital.col = 1;
-          newPlayerOrbital.immune = true;
-          break;
-        case 2:
-          newPlayerOrbital.myPlayerNum = playerNumber;
-          newPlayerOrbital.row = 1;
-          newPlayerOrbital.col = 13;
-          newPlayerOrbital.immune = true;
-          break;
-        case 3:
-          newPlayerOrbital.myPlayerNum = playerNumber;
-          newPlayerOrbital.row = 11;
-          newPlayerOrbital.col = 13;
-          newPlayerOrbital.immune = true;
-          break;
-        case 4:
-          newPlayerOrbital.myPlayerNum = playerNumber;
-          newPlayerOrbital.row = 11;
-          newPlayerOrbital.col = 1;
-          newPlayerOrbital.immune = true;
-          break;
-      }
-      socket.emit("player-movement", newPlayerOrbital);
-    })
+      playerOrbital.immune = true;
+      playerDOM.classList.toggle("immune");
+      setTimeout(() => {
+        playerOrbital.immune = false;
+        playerDOM.classList.toggle("immune");
+      }, 1500);
+    });
     socket.on("bomb-dropped", async function (moving) {
       //check if a player collided with an explosion
-      placeBombAndExplode(moving).then(res => {
-        setTimeout(() => {
-          Array.from(
-            document.querySelectorAll(
-              `.player-${moving["myPlayerNum"]}-explosion`
-            )
-          ).forEach((el) => el.remove());
-        }, 1000);
-      }).catch(err => {
-        socket.emit("cannot-drop-bomb",moving["myPlayerNum"])
-        console.log('Soz!! you cannot drop a bomb rn!!!!');
-      })
-    })
-
+      placeBombAndExplode(moving)
+        .then((res) => {
+          setTimeout(() => {
+            Array.from(
+              document.querySelectorAll(
+                `.player-${moving["myPlayerNum"]}-explosion`
+              )
+            ).forEach((el) => el.remove());
+            if (
+              orbital["players"][moving["myPlayerNum"]]["numOfBombs"] === 0 &&
+              document.querySelector(
+                `.player-${moving["myPlayerNum"]}-bomb`
+              ) === null
+            ) {
+              orbital["players"][moving["myPlayerNum"]]["numOfBombs"] = 1;
+            }
+          }, 1000);
+        })
+        .catch((err) => {
+          socket.emit("cannot-drop-bomb", moving["myPlayerNum"]);
+        });
+    });
 
     socket.on("game-update", function (message) {
-      console.log("in game update", message);
-
       let updateMessage;
-      console.log(message);
       switch (message.event) {
         case "power-up":
           updateMessage = RJNA.createNode(
@@ -334,7 +304,10 @@ export function runChatroom() {
               { class: "live-updates-message" },
               {},
               {},
-              `${message.username} has picked up a ${message["power-up"]} power-up ${globalSettings["power-ups"]["types"][message["power-up"]]
+              `${message.username} has picked up a ${
+                message["power-up"]
+              } power-up ${
+                globalSettings["power-ups"]["types"][message["power-up"]]
               }`
             )
           );
@@ -345,18 +318,24 @@ export function runChatroom() {
             `${orbital["players"][`${playerNumber}`].name} has exploded`,
             `${orbital["players"][`${playerNumber}`].name} GOT MERKED!! MESSOP`,
             `${orbital["players"][`${playerNumber}`].name} has met Allah!!`,
-            `${orbital["players"][`${playerNumber}`].name} was caught in an explosion`,
+            `${
+              orbital["players"][`${playerNumber}`].name
+            } was caught in an explosion`,
             `RIP ${orbital["players"][`${playerNumber}`].name}`,
-            `${orbital["players"][`${playerNumber}`].name} sadly passed away`
-          ]
-          let finalDeathMessage = `${orbital["players"][`${playerNumber}`].name} has been ELIMINATED`
+            `${orbital["players"][`${playerNumber}`].name} sadly passed away`,
+          ];
+          let finalDeathMessage = `${
+            orbital["players"][`${playerNumber}`].name
+          } has been ELIMINATED`;
           if (orbital["players"][`${playerNumber}`].lives != 0) {
             updateMessage = RJNA.createNode(
               RJNA.tag.p(
                 { class: "live-updates-message" },
                 {},
                 {},
-                deathMessageArr[Math.floor(Math.random() * deathMessageArr.length)]
+                deathMessageArr[
+                  Math.floor(Math.random() * deathMessageArr.length)
+                ]
               )
             );
           } else {
@@ -369,19 +348,20 @@ export function runChatroom() {
               )
             );
           }
-          console.log({ updateMessage })
-          appendLiveUpdateMessage(updateMessage)
+          appendLiveUpdateMessage(updateMessage);
           break;
         case "cannot-drop-bomb":
-          if (socket.playerCount==message.playerCount)
-          appendLiveUpdateMessage(RJNA.createNode(
-            RJNA.tag.p(
-              { class: "live-updates-message" },
-              {},
-              {},
-              'Soz!! you cannot drop a bomb rn!!!!'
-            )
-          ))
+          if (socket.playerCount == message.playerCount)
+            appendLiveUpdateMessage(
+              RJNA.createNode(
+                RJNA.tag.p(
+                  { class: "live-updates-message" },
+                  {},
+                  {},
+                  "Soz!! you cannot drop a bomb rn!!!!"
+                )
+              )
+            );
       }
     });
   }
@@ -417,8 +397,6 @@ export function runChatroom() {
     messageContainer.scrollTop =
       messageContainer.scrollHeight - messageContainer.clientHeight;
   }
-  let hello = "Hello";
-  console.log("🚀 ~ file: code.js:180 ~ hello:", hello);
 }
 
 function updatePlayerOrbital(userObj) {
@@ -428,6 +406,7 @@ function updatePlayerOrbital(userObj) {
     "power-ups": [],
     speed: globalSettings.speed.normal,
     numOfBombs: 1,
+    immune: false,
   };
   Object.defineProperty(orbital["players"][`${userObj["count"]}`], "lives", {
     get: function () {
@@ -438,10 +417,8 @@ function updatePlayerOrbital(userObj) {
         `#player-${userObj["count"]}-lives`
       );
       this._lives = v; // Update the value of the underlying property _lives
-      console.log(this._lives, "this is lives value for: ", this.name, ' line 436');
       if (playerLives !== undefined && playerLives !== null) {
         const lifeElements = playerLives.children[0].children;
-        console.log(lifeElements);
         if (this._lives < lifeElements.length && lifeElements.length > 0) {
           Array.from(lifeElements).shift().remove();
         } else if (
@@ -456,7 +433,6 @@ function updatePlayerOrbital(userObj) {
         let lives = Array.from(
           document.querySelector(".lives-container").children[0].children
         );
-        console.log(lives);
         if (lives.length > this._lives) {
           lives.shift().remove();
         }
@@ -491,8 +467,8 @@ function appendLiveUpdateMessage(updateMessage) {
     gameUpdatesContainer.insertBefore(
       updateMessage,
       gameUpdatesContainer.firstChild
-    )
+    );
   } else {
-    gameUpdatesContainer.appendChild(updateMessage)
+    gameUpdatesContainer.appendChild(updateMessage);
   }
 }

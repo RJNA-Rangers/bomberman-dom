@@ -3,12 +3,11 @@ import { globalSettings } from "./gameSetting.js";
 
 
 function placeBomb(moving) {
-  console.log({ orbital })
   if (orbital["players"][moving["myPlayerNum"]]["numOfBombs"] > 0) {
     orbital["players"][moving["myPlayerNum"]]["numOfBombs"]--
     return RJNA.tag.div(
       {
-        class: `player-${moving["myPlayerNum"]}-bomb just-dropped-bomb`, style: {
+        class: `player-${moving["myPlayerNum"]}-bomb player-${moving["myPlayerNum"]}-just-dropped-bomb`, style: {
           top: Math.round(moving.row) * globalSettings["bomb"]["height"] + "px",
           left: Math.round(moving.col) * globalSettings["bomb"]["width"] + "px",
           width: `${globalSettings["bomb"]["width"]}px`,
@@ -125,7 +124,7 @@ export async function placeBombAndExplode(moving) {
     }else{
     let bombElement = RJNA.createNode(newBomb);
     setTimeout(() => {
-      bombElement.classList.replace('just-dropped-bomb', 'bomb');
+      bombElement.classList.replace(`player-${moving["myPlayerNum"]}-just-dropped-bomb`, 'bomb');
     }, 1000);
     let gameWrapper = document.querySelector(".game-wrapper");
     gameWrapper.appendChild(bombElement);
@@ -140,7 +139,6 @@ export async function placeBombAndExplode(moving) {
     }, 2000);
     setTimeout(() => {
       res(moving);
-      orbital["players"][moving["myPlayerNum"]]["numOfBombs"]++
     }, 2500);
   }
   });

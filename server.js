@@ -31,7 +31,6 @@ io.on("connection", function (socket) {
 			const connectedSockets = io.sockets.sockets;
 			socket.username = username
 			socket.playerCount = findPlayerCount()
-			// console.log(connectedSockets)
 			userObj = { "username": socket.username, "count": socket.playerCount }
 			socket.broadcast.emit("waiting", userObj);
 
@@ -89,7 +88,6 @@ io.on("connection", function (socket) {
 	});
 
 	socket.on("power-picked-up", function (powerUp) {
-		console.log({ powerUp })
 		io.sockets.emit("remove-power-up", powerUp)
 		io.sockets.emit("game-update", { "event":"power-up", "username": socket.username, "power-up": powerUp.powerUp })
 	});

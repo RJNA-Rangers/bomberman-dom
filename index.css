@@ -813,3 +813,15 @@ body {
   text-align: center;
   font-size: x-large;
 }
+
+.immune {
+  /* Define the animation for the flickering effect */
+  animation: flickerAnimation 0.5s infinite;
+}
+
+@keyframes flickerAnimation {
+  /* Define the keyframes for the flickering effect */
+  0% { opacity: 1; }
+  50% { opacity: 0; }
+  100% { opacity: 1; }
+}

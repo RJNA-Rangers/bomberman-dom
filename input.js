@@ -45,7 +45,6 @@ export function keyUpHandler(e) {
         //active bombs power up
         bombsPressed = true;
     }else if (e.key == "w"){
-        console.log("w pressed...")
         bombDropped = true;
     }
 }

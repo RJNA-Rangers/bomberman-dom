@@ -122,7 +122,6 @@ export function touchPowerUp(count, moving) {
     let powerUpRect = powerUps[i].getBoundingClientRect();
     if (checkCollision(player, powerUpRect)) {
       // Collision detected with a power-up
-      console.log("it is touching a powerUp", moving);
       switch (whichSideCollision(player, powerUpRect)) {
         case "bottom-right":
           console.log("bottom-right");
