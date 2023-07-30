@@ -52,7 +52,7 @@ export function placePlayer(number, character, username) {
 }
 let isTouchingExplosion = false
 export function PlayerMovement(socket) {
-  const moving = {
+  let moving = {
     myPlayerNum: socket.playerCount,
     row: orbital["players"][`${socket.playerCount}`]["row"],
     col: orbital["players"][`${socket.playerCount}`]["col"],
@@ -65,6 +65,7 @@ export function PlayerMovement(socket) {
   if (bombDropped) {
     falseKeyBool("bombs-dropped");
     //send to everyone bomb has been dropped
+    moving = 1
     socket.emit("drop-bomb", moving);
   }
   // move when the button is pressed and the next block is empty
@@ -162,17 +163,19 @@ export function PlayerMovement(socket) {
 
     // Emit the "player-killed" event
     socket.emit("player-killed", touchingExplosion);
-    
-    // reset moving to original position
-    // resetMovingCoords(moving)
 
-    // Reset the flag to false after a delay (e.g., 100 milliseconds)
     setTimeout(() => {
       isTouchingExplosion = false;
     }, 67);
+
+    moving = resetMovingCoords(moving.myPlayerNum);
+    movePlayers();
+    socket.emit("player-movement", moving);
+  } else {
+    // If not touching explosion, continue with normal movement
+    movePlayers();
+    socket.emit("player-movement", moving);
   }
-  movePlayers();
-  socket.emit("player-movement", moving);
 }
 
 export function movePlayers() {
@@ -199,13 +202,15 @@ export const debounce = (func, wait) => {
   }
 }
 
-function resetMovingCoords(moving) {
-  // also reset speed, flames and bombs as well as remove all power ups
-  moving.speed = globalSettings.speed.normal
-  moving.flames = globalSettings.flames.normal
-  moving.bombs = globalSettings.bombs.normal
-  moving.immune = true
-  switch (moving.myPlayerNum) {
+function resetMovingCoords(count) {
+  let moving = {
+    myPlayerNum: count,
+    speed: globalSettings.speed.normal,
+    flames: globalSettings.flames.normal,
+    bombs: globalSettings.bombs.normal,
+    immune: true
+  }
+  switch (count) {
     case 1:
       moving.row = 1;
       moving.col = 1;
@@ -223,4 +228,5 @@ function resetMovingCoords(moving) {
       moving.col = 1;
       break;
   }
+  return moving
 }

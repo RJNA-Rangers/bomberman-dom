@@ -1,13 +1,12 @@
 import RJNA from "../rjna/engine.js";
 import { playerCard } from "../waitingRoom.js";
 import { movePlayers, placePlayer } from "../players.js";
-import { startAnimating } from "../script.js";
+import { changeStopValue, startAnimating } from "../script.js";
 import { createMap, generateLevel } from "../mapTemplate.js";
 import { globalSettings } from "../gameSetting.js";
 import { otherLivesContainer } from "../gameState.js";
 import { placePowerUp } from "../powerUps.js";
 import { placeBombAndExplode } from "../bombs.js";
-import { touchExplosion } from "../collision.js";
 
 export let socket;
 let uname;
@@ -133,9 +132,11 @@ export function runChatroom() {
         {},
         message
       );
-      RJNA.getObjByAttrsAndPropsVal(orbital.obj, "form").setChild(
-        fullLobbyMessage
-      );
+      if (document.querySelector(".full-lobby-message") == null || document.querySelector(".full-lobby-message") == undefined) {
+        RJNA.getObjByAttrsAndPropsVal(orbital.obj, "form").setChild(
+          fullLobbyMessage
+        );
+      }
       socket.emit("exituser", uname);
       socket.close();
     });
@@ -234,19 +235,19 @@ export function runChatroom() {
         let top =
           Math.round(
             powerUp["powerUpCoords"][0] *
-              globalSettings["power-ups"]["height"] *
-              eleTopDp
+            globalSettings["power-ups"]["height"] *
+            eleTopDp
           ) / eleTopDp;
         let left =
           Math.round(
             powerUp["powerUpCoords"][1] *
-              globalSettings["power-ups"]["width"] *
-              eleLeftDp
+            globalSettings["power-ups"]["width"] *
+            eleLeftDp
           ) / eleLeftDp;
         return (
           Math.round(parseFloat(ele.style.top) * eleTopDp) / eleTopDp === top &&
           Math.round(parseFloat(ele.style.left) * eleLeftDp) / eleLeftDp ===
-            left
+          left
         );
       });
 
@@ -304,10 +305,8 @@ export function runChatroom() {
               { class: "live-updates-message" },
               {},
               {},
-              `${message.username} has picked up a ${
-                message["power-up"]
-              } power-up ${
-                globalSettings["power-ups"]["types"][message["power-up"]]
+              `${message.username} has picked up a ${message["power-up"]
+              } power-up ${globalSettings["power-ups"]["types"][message["power-up"]]
               }`
             )
           );
@@ -318,15 +317,13 @@ export function runChatroom() {
             `${orbital["players"][`${playerNumber}`].name} has exploded`,
             `${orbital["players"][`${playerNumber}`].name} GOT MERKED!! MESSOP`,
             `${orbital["players"][`${playerNumber}`].name} has met Allah!!`,
-            `${
-              orbital["players"][`${playerNumber}`].name
+            `${orbital["players"][`${playerNumber}`].name
             } was caught in an explosion`,
             `RIP ${orbital["players"][`${playerNumber}`].name}`,
             `${orbital["players"][`${playerNumber}`].name} sadly passed away`,
           ];
-          let finalDeathMessage = `${
-            orbital["players"][`${playerNumber}`].name
-          } has been ELIMINATED`;
+          let finalDeathMessage = `${orbital["players"][`${playerNumber}`].name
+            } has been ELIMINATED`;
           if (orbital["players"][`${playerNumber}`].lives != 0) {
             updateMessage = RJNA.createNode(
               RJNA.tag.p(
@@ -334,7 +331,7 @@ export function runChatroom() {
                 {},
                 {},
                 deathMessageArr[
-                  Math.floor(Math.random() * deathMessageArr.length)
+                Math.floor(Math.random() * deathMessageArr.length)
                 ]
               )
             );
@@ -348,21 +345,74 @@ export function runChatroom() {
               )
             );
           }
-          appendLiveUpdateMessage(updateMessage);
           break;
         case "cannot-drop-bomb":
           if (socket.playerCount == message.playerCount)
-            appendLiveUpdateMessage(
-              RJNA.createNode(
-                RJNA.tag.p(
-                  { class: "live-updates-message" },
-                  {},
-                  {},
-                  "Soz!! you cannot drop a bomb rn!!!!"
-                )
+            updateMessage = RJNA.createNode(
+              RJNA.tag.p(
+                { class: "live-updates-message" },
+                {},
+                {},
+                "Soz!! you cannot drop a bomb rn!!!!"
               )
             );
       }
+      appendLiveUpdateMessage(updateMessage);
+    });
+
+    socket.on("end-game", function (winner) {
+      function startTimer(duration, display) {
+        var timer = duration, minutes, seconds;
+        setInterval(function () {
+          minutes = parseInt(timer / 60, 10);
+          seconds = parseInt(timer % 60, 10);
+
+          minutes = minutes < 10 ? "0" + minutes : minutes;
+          seconds = seconds < 10 ? "0" + seconds : seconds;
+
+          display.textContent = minutes + ":" + seconds;
+
+          if (--timer < 0) {
+            // for refresh webpage
+            window.location.reload()
+            timer = duration;
+          }
+        }, 1000);
+      }
+      const congratulations = document.querySelector(".congratulations-container")
+      switch (winner.event) {
+        case "draw":
+          congratulations.innerHTML += `
+            <div class="wrapper">
+              <div class="modal modal--congratulations">
+                <div class="modal-top">
+                  <img class="modal-icon u-imgResponsive" src="https://emojiisland.com/cdn/shop/products/Emoji_Icon_-_Sad_Emoji_grande.png?v=1571606093" alt="Trophy" />
+                  <div class="modal-header">Welp Your All Dead</div>
+                  <div class="modal-subheader"> !!Have Fun with That!!!</div>
+                  <div class="modal-subheader">The window will reload in:</div>
+                  <div class="end-timer"></div>
+                </div>
+              </div>
+            </div>`
+          break
+        case "winner":
+          congratulations.innerHTML += `
+            <div class="wrapper">
+              <div class="modal modal--congratulations">
+                <div class="modal-top">
+                  <div class="modal-header">Congratulations ${winner.name} (player-${winner.playerNum})</div>
+                  <img class="modal-icon u-imgResponsive" src="https://static.vecteezy.com/system/resources/previews/009/315/016/original/winner-trophy-in-flat-style-free-png.png" alt="Trophy" />
+                  <div class="modal-subheader"> !!You Are The Last Man Standing!!!</div>
+                  <div class="modal-subheader">The window will reload in:</div>
+                  <div class="end-timer"></div>
+                </div>
+              </div>
+            </div>`
+          break
+      }
+      changeStopValue()
+      congratulations.classList.remove("hidden")
+      startTimer(10, document.querySelector(".end-timer"))
     });
   }
   function renderMessage(type, message) {

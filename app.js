@@ -1,5 +1,5 @@
 import RJNA from "./rjna/engine.js";
-import { layoutContainer, waitingRoom } from "./gameContainer.js";
+import { congratulationsContainer, layoutContainer, waitingRoom } from "./gameContainer.js";
 import { runChatroom } from "./public/code.js";
 
 function openGame() {
@@ -12,6 +12,7 @@ function openGame() {
         const container = layoutContainer()
         rootObj.setChild(waitingRoom);
         rootObj.setChild(container);
+        rootObj.setChild(congratulationsContainer)
         console.log(rootEl);
         resolve("success")
     })

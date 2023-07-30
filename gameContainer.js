@@ -74,6 +74,14 @@ const gameTitle = RJNA.tag.h1({ class: "game-title" }, {}, {}, "BOMBERMAN");
 // -- game container -- //
 const gameContainer = RJNA.tag.div({ class: "game-container" }, {}, {});
 
+// -- Congratulations Container -- //
+export const congratulationsContainer = RJNA.tag.div(
+  { class: "congratulations-container hidden" },
+  {},
+  {},
+);
+// -- //
+
 // -- grid layout -- //
 export const layoutContainer = () => {
   return RJNA.tag.div(

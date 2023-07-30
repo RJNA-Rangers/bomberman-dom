@@ -31,8 +31,8 @@ export function checkWallCollision(direction, playerCount, movingSpeed) {
   let newPlayerDOMRect = {
     x: playerDOMRect.x + globalSettings.players.width * 0.4,
     y: playerDOMRect.y + globalSettings.players.height * 0.2,
-    width: playerDOMRect.width - globalSettings.players.width * 0.4,
-    height: playerDOMRect.height - globalSettings.players.height * 0.4,
+    width: playerDOMRect.width * 0.2,
+    height: playerDOMRect.height - (globalSettings.players.height * 0.4),
   };
   switch (direction) {
     case "left":
@@ -51,7 +51,7 @@ export function checkWallCollision(direction, playerCount, movingSpeed) {
     case "down":
       newPlayerDOMRect.y +=
         movingSpeed * globalSettings.wallHeight +
-        globalSettings.wallHeight * 0.2;
+        globalSettings.wallHeight * 0.1;
       break;
   }
 
@@ -211,11 +211,11 @@ export function touchExplosion(moving) {
   const explosionImage = document.querySelectorAll(
     `.explosion`
   );
-      //bomb cannot touch player if they are immune
-      if (
-        orbital["players"][`${moving["myPlayerNum"]}`].hasOwnProperty("immune") &&
-        orbital["players"][`${moving["myPlayerNum"]}`].immune
-      ) return undefined;
+  //bomb cannot touch player if they are immune
+  if (
+    orbital["players"][`${moving["myPlayerNum"]}`].hasOwnProperty("immune") &&
+    orbital["players"][`${moving["myPlayerNum"]}`].immune
+  ) return undefined;
   for (let i = 0; i < explosionImage.length; i++) {
     let explosionImageRect = explosionImage[i].getBoundingClientRect();
     if (checkCollision(player, explosionImageRect)) {

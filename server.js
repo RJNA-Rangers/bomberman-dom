@@ -22,44 +22,42 @@ let choiceOfMap = []
 io.on("connection", function (socket) {
 	socket.on("newuser", function (username) {
 
-		console.log(io.sockets.sockets.size)
 		if (io.sockets.sockets.size <= 4) {
-			// if (startGameTimer || gameStarted) {
-			// 	socket.emit("connection-limit-reached", "Too Late!! The game has STARTED");
-			// 	socket.disconnect(true);
-			// } else {
-			const connectedSockets = io.sockets.sockets;
-			socket.username = username
-			socket.playerCount = findPlayerCount()
-			userObj = { "username": socket.username, "count": socket.playerCount }
-			socket.broadcast.emit("waiting", userObj);
+			if (startGameTimer || gameStarted) {
+				socket.emit("connection-limit-reached", "Too Late!! The game has STARTED");
+				socket.disconnect(true);
+			} else {
+				const connectedSockets = io.sockets.sockets;
+				socket.username = username
+				socket.playerCount = findPlayerCount()
+				userObj = { "username": socket.username, "count": socket.playerCount }
+				socket.broadcast.emit("waiting", userObj);
 
-			if (io.sockets.sockets.size >= 2 && io.sockets.sockets.size < 4 && !waitingTimer) {
-				// Start countdown when there are two or more connections and countdown is not already running
-				startCountdown();
-			}
-			if (io.sockets.sockets.size === 4 && !startGameTimer) {
-				// Start countdown when there are 4 connections and countdown is not already running
-				startGameCountdown();
-			}
+				if (io.sockets.sockets.size >= 2 && io.sockets.sockets.size < 4 && !waitingTimer) {
+					// Start countdown when there are two or more connections and countdown is not already running
+					startCountdown();
+				}
+				if (io.sockets.sockets.size === 4 && !startGameTimer) {
+					// Start countdown when there are 4 connections and countdown is not already running
+					startGameCountdown();
+				}
 
-			connectedSockets.forEach(connected => {
-				const previouslyJoinedSocket = { "username": connected.username, "count": connected.playerCount }
-				socket.emit("join-lobby", previouslyJoinedSocket)
-			});
-			socket.broadcast.emit("update", username + " joined the conversation");
-			// }
+				connectedSockets.forEach(connected => {
+					const previouslyJoinedSocket = { "username": connected.username, "count": connected.playerCount }
+					socket.emit("join-lobby", previouslyJoinedSocket)
+				});
+				socket.broadcast.emit("update", username + " joined the conversation");
+			}
 		} else {
 			socket.emit("connection-limit-reached", "Lobby is now full! Please Try Again Later");
 			socket.disconnect(true);
 		}
 	});
 	socket.on("exituser", function (username) {
-		console.log("user has closed tab")
+		console.log("user has closed chat")
 		socket.broadcast.emit("update", username + " left the conversation");
 		socket.disconnect(true)
-		// remove player-card from all connected users
-		// socket.broadcast.emit("remove-waiting-player",socket.playerCount)
+		socket.broadcast.emit("remove-waiting-player", socket.playerCount)
 		io.sockets.sockets.delete(socket.id)
 		if (io.sockets.sockets.size < 2 && waitingTimer) {
 			stopCountdown();
@@ -77,7 +75,7 @@ io.on("connection", function (socket) {
 		io.sockets.emit("player-moving", movingObj)
 	});
 
-	socket.on("drop-bomb", async function(movingObj){
+	socket.on("drop-bomb", async function (movingObj) {
 		io.sockets.emit("bomb-dropped", movingObj)
 	});
 	socket.on("chat", function (message) {
@@ -89,25 +87,65 @@ io.on("connection", function (socket) {
 
 	socket.on("power-picked-up", function (powerUp) {
 		io.sockets.emit("remove-power-up", powerUp)
-		io.sockets.emit("game-update", { "event":"power-up", "username": socket.username, "power-up": powerUp.powerUp })
+		io.sockets.emit("game-update", { "event": "power-up", "username": socket.username, "power-up": powerUp.powerUp })
 	});
 
-	socket.on("player-killed", function (playerKilledObj){
-		io.sockets.emit("game-update", { "event":"player-killed", "playerKilled": playerKilledObj.playerKilled })
+	socket.on("player-killed", function (playerKilledObj) {
+		io.sockets.emit("game-update", { "event": "player-killed", "playerKilled": playerKilledObj.playerKilled })
 		io.sockets.emit("player-death", playerKilledObj)
 	})
 
-	socket.on("cannot-drop-bomb", function (count){
-		socket.emit("game-update", { "event":"cannot-drop-bomb","playerCount":count})
+	socket.on("cannot-drop-bomb", function (count) {
+		socket.emit("game-update", { "event": "cannot-drop-bomb", "playerCount": count })
+	})
+
+	socket.on("game-over", function (aliveCount) {
+		if (aliveCount.length == 1 && gameStarted) {
+			// one player remaining
+			io.sockets.emit("end-game", { "event": "winner", "playerNum": aliveCount[0].playerNum, "name": aliveCount[0].name })
+		}
+		if (aliveCount.length == 0 && gameStarted) {
+			// draw no winner
+			io.sockets.emit("end-game", { "event": "draw" })
+		}
+		// game over, last remaining connection display message
+		// after a while force disconnect
+		//re-render the entire game with no connections
 	})
 
 	socket.on("disconnect", function (reason) {
-		console.log({ reason })
-		console.log({ socket })
 		socket.broadcast.emit("update", socket.username + " has left the conversation")
 		socket.broadcast.emit("remove-player", { "username": socket.username, "count": socket.playerCount })
 		// if the length of connections=1, that player wins, send out game over with winner
-	});
+		if (io.sockets.sockets.size < 2 && waitingTimer) {
+			stopCountdown();
+		}
+		if (io.sockets.sockets.size < 2 && startGameTimer) {
+			stopGameCountdown();
+		}
+		if (io.sockets.sockets.size < 2 && !gameStarted) {
+			stopGameCountdown();
+			socket.broadcast.emit("remove-waiting-player", socket.playerCount)
+		}
+
+		if (io.sockets.sockets.size < 2) {
+			stopGameCountdown();
+			socket.broadcast.emit("remove-waiting-player", socket.playerCount)
+		}
+
+		// if (io.sockets.sockets.size == 1 && gameStarted) {
+		// 	const connectedSockets = io.sockets.sockets;
+		// 	connectedSockets.forEach(connected => {
+		// 		if (connectedSockets.username)
+		// 			connected.emit("end-game", { "event": "winner", "playerNum": connectedSockets.playerCount, "name": connectedSockets.username })
+		// 	});
+		// 	io.sockets.emit("end-game", { "event": "winner", "playerNum": socket.playerCount, "name": socket.username })
+		// }
+		if (io.sockets.sockets.size == 0 && gameStarted) {
+			console.log("game restart")
+			gameStarted = false
+		}
+	})
 });
 
 server.listen(port, () => {
@@ -116,7 +154,11 @@ server.listen(port, () => {
 
 function startGameCountdown() {
 	let countdown = 2;
-
+	cells = choiceOfMap[Math.floor(Math.random() * choiceOfMap.length)]
+	let allPlayers = []
+	io.sockets.sockets.forEach(connected => {
+		allPlayers.push({ "username": connected.username, "count": connected.playerCount })
+	});
 	function emitGameCountdown() {
 		io.sockets.emit("start-game-countdown", countdown);
 
@@ -125,13 +167,8 @@ function startGameCountdown() {
 			startGameTimer = setTimeout(emitGameCountdown, 1000);
 		} else {
 			startGameTimer = null;
-			cells = choiceOfMap[Math.floor(Math.random() * choiceOfMap.length)]
-			let allPlayers = []
-			io.sockets.sockets.forEach(connected => {
-				allPlayers.push({ "username": connected.username, "count": connected.playerCount })
-			});
+
 			io.sockets.emit("start-game", { cells, allPlayers });
-			// dropPowerUp(cells)
 			gameStarted = true
 		}
 	}
