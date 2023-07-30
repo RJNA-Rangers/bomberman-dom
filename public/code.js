@@ -312,18 +312,16 @@ export function runChatroom() {
           );
           break;
         case "player-killed":
+          console.log({ message })
           let playerNumber = parseInt(message.playerKilled);
           let deathMessageArr = [
-            `${orbital["players"][`${playerNumber}`].name} has exploded`,
-            `${orbital["players"][`${playerNumber}`].name} GOT MERKED!! MESSOP`,
-            `${orbital["players"][`${playerNumber}`].name} has met Allah!!`,
-            `${orbital["players"][`${playerNumber}`].name
-            } was caught in an explosion`,
-            `RIP ${orbital["players"][`${playerNumber}`].name}`,
-            `${orbital["players"][`${playerNumber}`].name} sadly passed away`,
+            `${orbital["players"][`${playerNumber}`].name} was caught in  ${orbital["players"][`${message.bomber}`].name}'s explosion`,
+            `${orbital["players"][`${playerNumber}`].name} GOT MERKED by ${orbital["players"][`${message.bomber}`].name}`,
+            `${orbital["players"][`${playerNumber}`].name} has met Allah!! Thanks  ${orbital["players"][`${message.bomber}`].name}`,
+            `${orbital["players"][`${message.bomber}`].name} says "RIP ${orbital["players"][`${playerNumber}`].name}"`,
+            `${orbital["players"][`${playerNumber}`].name} sadly passed away- Thanks ${orbital["players"][`${message.bomber}`].name}`,
           ];
-          let finalDeathMessage = `${orbital["players"][`${playerNumber}`].name
-            } has been ELIMINATED`;
+          let finalDeathMessage = `${orbital["players"][`${message.bomber}`].name} has ELIMINATED ${orbital["players"][`${playerNumber}`].name}`;
           if (orbital["players"][`${playerNumber}`].lives != 0) {
             updateMessage = RJNA.createNode(
               RJNA.tag.p(
@@ -380,9 +378,10 @@ export function runChatroom() {
         }, 1000);
       }
       const congratulations = document.querySelector(".congratulations-container")
-      switch (winner.event) {
-        case "draw":
-          congratulations.innerHTML += `
+      if (congratulations.childElementCount < 1)
+        switch (winner.event) {
+          case "draw":
+            congratulations.innerHTML += `
             <div class="wrapper">
               <div class="modal modal--congratulations">
                 <div class="modal-top">
@@ -394,9 +393,9 @@ export function runChatroom() {
                 </div>
               </div>
             </div>`
-          break
-        case "winner":
-          congratulations.innerHTML += `
+            break
+          case "winner":
+            congratulations.innerHTML += `
             <div class="wrapper">
               <div class="modal modal--congratulations">
                 <div class="modal-top">
@@ -408,8 +407,8 @@ export function runChatroom() {
                 </div>
               </div>
             </div>`
-          break
-      }
+            break
+        }
       changeStopValue()
       congratulations.classList.remove("hidden")
       startTimer(10, document.querySelector(".end-timer"))

@@ -56,17 +56,18 @@ export function PlayerMovement(socket) {
     myPlayerNum: socket.playerCount,
     row: orbital["players"][`${socket.playerCount}`]["row"],
     col: orbital["players"][`${socket.playerCount}`]["col"],
-    speed: orbital["players"][`${socket.playerCount}`]["speed"] || 0.05,
-    flames: orbital["players"][`${socket.playerCount}`]["flames"] || 1,
-    bombs: orbital["players"][`${socket.playerCount}`]["bombs"] || 1,
+    speed: orbital["players"][`${socket.playerCount}`]["speed"] || globalSettings.speed.normal,
+    flames: orbital["players"][`${socket.playerCount}`]["flames"] || globalSettings.flames.normal,
+    bombs: orbital["players"][`${socket.playerCount}`]["bombs"] || globalSettings.bombs.normal,
   };
   let playerPowerUpsArr = orbital["players"][moving.myPlayerNum]["power-ups"];
   //drop player's bomb when they press 'w'
   if (bombDropped) {
     falseKeyBool("bombs-dropped");
     //send to everyone bomb has been dropped
-    moving = 1
     socket.emit("drop-bomb", moving);
+    moving.flames = globalSettings.flames.normal
+    moving.bombs = globalSettings.bombs.normal
   }
   // move when the button is pressed and the next block is empty
   if (

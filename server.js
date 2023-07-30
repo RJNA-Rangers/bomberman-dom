@@ -91,7 +91,7 @@ io.on("connection", function (socket) {
 	});
 
 	socket.on("player-killed", function (playerKilledObj) {
-		io.sockets.emit("game-update", { "event": "player-killed", "playerKilled": playerKilledObj.playerKilled })
+		io.sockets.emit("game-update", { "event": "player-killed", "playerKilled": playerKilledObj.playerKilled, "bomber": playerKilledObj.bomber })
 		io.sockets.emit("player-death", playerKilledObj)
 	})
 
