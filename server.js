@@ -155,7 +155,7 @@ server.listen(port, () => {
 });
 
 function startGameCountdown() {
-	let countdown = 2;
+	let countdown = 10;
 	cells = choiceOfMap[Math.floor(Math.random() * choiceOfMap.length)]
 	let allPlayers = []
 	io.sockets.sockets.forEach(connected => {
@@ -183,7 +183,7 @@ function stopGameCountdown() {
 }
 
 function startCountdown() {
-	let countdown = 3;
+	let countdown = 20;
 
 	function emitCountdown() {
 		io.sockets.emit("waiting-countdown", countdown);

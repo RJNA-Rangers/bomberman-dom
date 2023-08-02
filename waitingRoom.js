@@ -249,7 +249,13 @@ export const waitingRoomGrid = RJNA.tag.div(
           },
             {},
             {},
-            " Abd Al-Raheem Khan"),
+            " Abd Al-Raheem Khan,"),
+            RJNA.tag.a({
+              href: "https://github.com/edluis37",
+            },
+              {},
+              {},
+              " Luis Amaya")
         )
       )
     )
