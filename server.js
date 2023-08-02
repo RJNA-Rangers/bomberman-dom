@@ -24,7 +24,7 @@ io.on("connection", function (socket) {
 
 		if (io.sockets.sockets.size <= 4) {
 			if (startGameTimer || gameStarted) {
-				socket.emit("connection-limit-reached", "Too Late!! The game has STARTED");
+				socket.emit("connection-limit-reached", "Game Currently In Session");
 				socket.disconnect(true);
 			} else {
 				const connectedSockets = io.sockets.sockets;
@@ -85,6 +85,10 @@ io.on("connection", function (socket) {
 		cells = updatedCells
 	});
 
+	socket.on("place-power-up", function (powerUp) {
+		io.sockets.emit("drop-power-up", powerUp)
+	});
+
 	socket.on("power-picked-up", function (powerUp) {
 		io.sockets.emit("remove-power-up", powerUp)
 		io.sockets.emit("game-update", { "event": "power-up", "username": socket.username, "power-up": powerUp.powerUp })
@@ -108,9 +112,6 @@ io.on("connection", function (socket) {
 			// draw no winner
 			io.sockets.emit("end-game", { "event": "draw" })
 		}
-		// game over, last remaining connection display message
-		// after a while force disconnect
-		//re-render the entire game with no connections
 	})
 
 	socket.on("disconnect", function (reason) {

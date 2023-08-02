@@ -208,18 +208,11 @@ export function runChatroom() {
     socket.on("receive-cells", function () {
       socket.emit("update-cells", orbital.cells);
     });
-    socket.on("drop-power-up", function (powerUpArr) {
-      for (let powerUpObj of powerUpArr) {
-        orbital.cells[powerUpObj.powerUpCoords[0]][
-          [powerUpObj.powerUpCoords[1]]
-        ] = globalSettings["power-ups"]["types"][powerUpObj.powerUp];
-        let gameContainer = RJNA.getObjByAttrsAndPropsVal(
-          orbital.obj,
-          "game-container"
-        );
-        const gameWrapper = gameContainer.children[0];
-        gameWrapper.setChild(placePowerUp(powerUpObj));
-      }
+    socket.on("drop-power-up", function (powerUpObj) {
+      orbital.cells[powerUpObj.powerUpCoords[0]][
+        [powerUpObj.powerUpCoords[1]]
+      ] = globalSettings["power-ups"]["types"][powerUpObj.powerUp];
+      document.querySelector(".game-wrapper").appendChild(RJNA.createNode(placePowerUp(powerUpObj)));
     });
 
     socket.on("remove-power-up", function (powerUp) {
@@ -278,7 +271,7 @@ export function runChatroom() {
     });
     socket.on("bomb-dropped", async function (moving) {
       //check if a player collided with an explosion
-      placeBombAndExplode(moving)
+      placeBombAndExplode(moving, socket)
         .then((res) => {
           setTimeout(() => {
             Array.from(

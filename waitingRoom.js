@@ -159,7 +159,10 @@ export const waitingRoomGrid = RJNA.tag.div(
           { class: "bombs-text" },
           {},
           {},
-          "A 20s countdown will be initiated once 2 or more players join a lobby - during this time more players can join. Once the countdown has ended or the lobby is full with 4 players, the game will be start after a further 10s countdown. At this point, there is no going back!"
+          `A 20s countdown will be initiated once 2 or more players join a lobby - 
+          during this time more players can join. Once the countdown has ended or the lobby
+           is full with 4 players, the game will be start after a further 10s countdown. 
+           At this point, there is no going back!`
         )
       ),
       RJNA.tag.div({ class: "speed-info" }, {}, {},
@@ -182,7 +185,7 @@ export const waitingRoomGrid = RJNA.tag.div(
           { class: "speed-text" },
           {},
           {},
-          "Temporarily increases movement speed for 10s",
+          "Doubles player movement speed temporarily for 10s",
         )
       ),
       RJNA.tag.div({ class: "flames-info" }, {}, {},
@@ -197,7 +200,7 @@ export const waitingRoomGrid = RJNA.tag.div(
           { class: "flames-text" },
           {},
           {},
-          " Increases explosion range from the bomb in four directions by 1 block",
+          " Increases explosion range from the bomb in four directions by 1 block.",
         )
       ),
       RJNA.tag.div({ class: "bombs-info" }, {}, {},
@@ -212,8 +215,25 @@ export const waitingRoomGrid = RJNA.tag.div(
           { class: "bombs-text" },
           {},
           {},
-          " Increases the amount of bombs dropped at a time by 1",
+          " Increases the amount of bombs dropped at a time by 1.",
         )
+      ),
+      RJNA.tag.div({ class: "speed-info" }, {}, {},
+        RJNA.tag.p(
+          { class: "speed-text" },
+          {},
+          {},
+          `But to use the flames and the bomb power- ups, you must use this power up before dropping your bomb for its effect to take place. 
+        Each of these power-ups, bar speed also have a multiplier effect of 3 levels meaning:`,
+          RJNA.tag.br(),
+          RJNA.tag.ul(
+            { class: "arrow-controls-list" },
+            {},
+            {},
+            RJNA.tag.li({}, {}, {}, "You can increase the range of explosion upto a 4 block radius."),
+            RJNA.tag.li({}, {}, {}, "You can increase the number of bombs dropped to 4."),
+          )
+        ),
       ),
       RJNA.tag.div({ class: "authors-info" }, {}, {},
         RJNA.tag.p(
@@ -250,12 +270,12 @@ export const waitingRoomGrid = RJNA.tag.div(
             {},
             {},
             " Abd Al-Raheem Khan,"),
-            RJNA.tag.a({
-              href: "https://github.com/edluis37",
-            },
-              {},
-              {},
-              " Luis Amaya")
+          RJNA.tag.a({
+            href: "https://github.com/edluis37",
+          },
+            {},
+            {},
+            " Luis Amaya")
         )
       )
     )

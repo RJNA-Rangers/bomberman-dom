@@ -17,7 +17,6 @@ const template = [
 ];
 
 // -- creates an 2d array of map with randomly generated soft walls and empty spaces --// 
-let choiceOfPowerUp = ["speed", "flames", "bombs"]
 export function generateLevel() {
   let cells = [];
 
@@ -35,9 +34,6 @@ export function generateLevel() {
         cells[row][col] = globalSettings.wallTypes.wall;
       } else if (template[row][col] === 'w' || template[row][col] === 'x' || template[row][col] === 'y' || template[row][col] === 'z') {
         cells[row][col] = template[row][col]
-      }
-      if (!cells[row][col] && Math.random() < 0.3) {
-        cells[row][col] = globalSettings["power-ups"]["types"][choiceOfPowerUp[Math.floor(Math.random() * choiceOfPowerUp.length)]];
       }
     }
   }

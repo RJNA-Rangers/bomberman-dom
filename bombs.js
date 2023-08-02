@@ -55,8 +55,9 @@ function placeExplosion(moving) {
       { src: globalSettings["explosion"]["src"] })
   )
 }
-function removeFromCellsAndDom(row, col, querySelectorStatement) {
+function removeFromCellsAndDom(row, col, querySelectorStatement, socket) {
   orbital.cells[row][col] = null;
+  let choiceOfPowerUp = ["speed", "flames", "bombs"]
   const removeDomEle = Array.from(
     //.soft-wall
     document.querySelectorAll(`.${querySelectorStatement}`)
@@ -81,11 +82,17 @@ function removeFromCellsAndDom(row, col, querySelectorStatement) {
   });
   while (removeDomEle.length > 0) {
     removeDomEle.shift().remove();
+    console.log([row, col])
+    if (Math.random() < 0.5) {
+      let powerUp = choiceOfPowerUp[Math.floor(Math.random() * choiceOfPowerUp.length)]
+      let powerUpCoords = [row, col]
+      socket.emit("place-power-up", { powerUp, powerUpCoords })
+    }
   }
 }
 
 // Function to handle explosion propagation in a specific direction
-function propagateExplosion(rowChange, colChange, moving) {
+function propagateExplosion(rowChange, colChange, moving, socket) {
   let tmpMovingObj = JSON.parse(JSON.stringify(moving));
   let gameWrapper = document.querySelector(".game-wrapper");
   for (let r = 0; r < moving.flames; r++) {
@@ -108,7 +115,7 @@ function propagateExplosion(rowChange, colChange, moving) {
       globalSettings.wallTypes.softWall
     ) {
       //destroy the soft wall
-      removeFromCellsAndDom(tmpMovingObj.row, tmpMovingObj.col, "soft-wall");
+      removeFromCellsAndDom(tmpMovingObj.row, tmpMovingObj.col, "soft-wall", socket);
       break;
     }
     // If the cell is not a wall place the explosion at the current position
@@ -116,7 +123,7 @@ function propagateExplosion(rowChange, colChange, moving) {
   }
 }
 
-export async function placeBombAndExplode(moving) {
+export async function placeBombAndExplode(moving, socket) {
   return new Promise((res, reject) => {
     let newBomb = placeBomb(moving)
     if (newBomb == undefined) {
@@ -132,10 +139,10 @@ export async function placeBombAndExplode(moving) {
         bombElement.className = `player-${moving["myPlayerNum"]}-explosion explosion`;
         bombElement.children[0].src = globalSettings.explosion.src;
         // Propagate explosion in all four directions
-        propagateExplosion(0, 1, moving); // Right
-        propagateExplosion(0, -1, moving); // Left
-        propagateExplosion(1, 0, moving); // Down
-        propagateExplosion(-1, 0, moving); // Up
+        propagateExplosion(0, 1, moving, socket); // Right
+        propagateExplosion(0, -1, moving, socket); // Left
+        propagateExplosion(1, 0, moving, socket); // Down
+        propagateExplosion(-1, 0, moving, socket); // Up
       }, 2000);
       setTimeout(() => {
         res(moving);

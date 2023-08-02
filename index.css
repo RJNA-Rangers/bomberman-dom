@@ -926,6 +926,11 @@ body {
   text-align: center
 }
 
+.speed-text>.arrow-controls-list {
+  margin-top: 10px;
+  padding-left: 20px;
+}
+
 .immune {
   /* Define the animation for the flickering effect */
   animation: flickerAnimation 0.5s infinite;
