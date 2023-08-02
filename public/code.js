@@ -378,7 +378,7 @@ export function runChatroom() {
         }, 1000);
       }
       const congratulations = document.querySelector(".congratulations-container")
-      if (congratulations.childElementCount < 1)
+      if (congratulations.childElementCount == 0) {
         switch (winner.event) {
           case "draw":
             congratulations.innerHTML += `
@@ -409,6 +409,7 @@ export function runChatroom() {
             </div>`
             break
         }
+      }
       changeStopValue()
       congratulations.classList.remove("hidden")
       startTimer(10, document.querySelector(".end-timer"))

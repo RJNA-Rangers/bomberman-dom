@@ -114,7 +114,9 @@ io.on("connection", function (socket) {
 	})
 
 	socket.on("disconnect", function (reason) {
-		socket.broadcast.emit("update", socket.username + " has left the conversation")
+		if (socket.username != undefined) {
+			socket.broadcast.emit("update", socket.username + " has left the conversation")
+		}
 		socket.broadcast.emit("remove-player", { "username": socket.username, "count": socket.playerCount })
 		// if the length of connections=1, that player wins, send out game over with winner
 		if (io.sockets.sockets.size < 2 && waitingTimer) {
