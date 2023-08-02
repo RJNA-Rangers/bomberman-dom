@@ -102,6 +102,11 @@ export function runChatroom() {
       updatePlayerOrbital(userObj);
     });
 
+    socket.on("remove-waiting-player", function (count) {
+      delete orbital.players[count]
+      document.querySelector(`.player-${count}-card`).remove()
+    })
+
     // display 20s countdown when 2 or more users have joined the waiting room
     socket.on("waiting-countdown", function (countdown) {
       const waitingCountdown = app.querySelector(".countdown");

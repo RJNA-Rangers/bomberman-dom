@@ -100,6 +100,5 @@ export const layoutContainer = () => {
     powerUpsContainer,
     chatroomContainer,
     gameUpdatesContainer,
-    // otherLivesContainer(3)
   );
 };

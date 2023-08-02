@@ -108,7 +108,7 @@ function propagateExplosion(rowChange, colChange, moving) {
       globalSettings.wallTypes.softWall
     ) {
       //destroy the soft wall
-      removeFromCellsAndDom(tmpMovingObj.row, tmpMovingObj.col, "soft-walls");
+      removeFromCellsAndDom(tmpMovingObj.row, tmpMovingObj.col, "soft-wall");
       break;
     }
     // If the cell is not a wall place the explosion at the current position
@@ -118,28 +118,28 @@ function propagateExplosion(rowChange, colChange, moving) {
 
 export async function placeBombAndExplode(moving) {
   return new Promise((res, reject) => {
-    let newBomb=placeBomb(moving)
-    if (newBomb==undefined){
+    let newBomb = placeBomb(moving)
+    if (newBomb == undefined) {
       reject("placeBomb is undefined")
-    }else{
-    let bombElement = RJNA.createNode(newBomb);
-    setTimeout(() => {
-      bombElement.classList.replace(`player-${moving["myPlayerNum"]}-just-dropped-bomb`, 'bomb');
-    }, 1000);
-    let gameWrapper = document.querySelector(".game-wrapper");
-    gameWrapper.appendChild(bombElement);
-    setTimeout(() => {
-      bombElement.className = `player-${moving["myPlayerNum"]}-explosion explosion`;
-      bombElement.children[0].src = globalSettings.explosion.src;
-      // Propagate explosion in all four directions
-      propagateExplosion(0, 1, moving); // Right
-      propagateExplosion(0, -1, moving); // Left
-      propagateExplosion(1, 0, moving); // Down
-      propagateExplosion(-1, 0, moving); // Up
-    }, 2000);
-    setTimeout(() => {
-      res(moving);
-    }, 2500);
-  }
+    } else {
+      let bombElement = RJNA.createNode(newBomb);
+      setTimeout(() => {
+        bombElement.classList.replace(`player-${moving["myPlayerNum"]}-just-dropped-bomb`, 'bomb');
+      }, 1000);
+      let gameWrapper = document.querySelector(".game-wrapper");
+      gameWrapper.appendChild(bombElement);
+      setTimeout(() => {
+        bombElement.className = `player-${moving["myPlayerNum"]}-explosion explosion`;
+        bombElement.children[0].src = globalSettings.explosion.src;
+        // Propagate explosion in all four directions
+        propagateExplosion(0, 1, moving); // Right
+        propagateExplosion(0, -1, moving); // Left
+        propagateExplosion(1, 0, moving); // Down
+        propagateExplosion(-1, 0, moving); // Up
+      }, 2000);
+      setTimeout(() => {
+        res(moving);
+      }, 2500);
+    }
   });
 }

@@ -117,34 +117,15 @@ io.on("connection", function (socket) {
 		if (socket.username != undefined) {
 			socket.broadcast.emit("update", socket.username + " has left the conversation")
 		}
-		socket.broadcast.emit("remove-player", { "username": socket.username, "count": socket.playerCount })
 		// if the length of connections=1, that player wins, send out game over with winner
 		if (io.sockets.sockets.size < 2 && waitingTimer) {
 			stopCountdown();
-		}
-		if (io.sockets.sockets.size < 2 && startGameTimer) {
+		} else if (io.sockets.sockets.size < 2 && startGameTimer) {
 			stopGameCountdown();
 		}
-		if (io.sockets.sockets.size < 2 && !gameStarted) {
-			stopGameCountdown();
-			socket.broadcast.emit("remove-waiting-player", socket.playerCount)
-		}
+		socket.broadcast.emit("remove-waiting-player", socket.playerCount)
 
-		if (io.sockets.sockets.size < 2) {
-			stopGameCountdown();
-			socket.broadcast.emit("remove-waiting-player", socket.playerCount)
-		}
-
-		// if (io.sockets.sockets.size == 1 && gameStarted) {
-		// 	const connectedSockets = io.sockets.sockets;
-		// 	connectedSockets.forEach(connected => {
-		// 		if (connectedSockets.username)
-		// 			connected.emit("end-game", { "event": "winner", "playerNum": connectedSockets.playerCount, "name": connectedSockets.username })
-		// 	});
-		// 	io.sockets.emit("end-game", { "event": "winner", "playerNum": socket.playerCount, "name": socket.username })
-		// }
 		if (io.sockets.sockets.size == 0 && gameStarted) {
-			console.log("game restart")
 			gameStarted = false
 		}
 	})
@@ -169,7 +150,6 @@ function startGameCountdown() {
 			startGameTimer = setTimeout(emitGameCountdown, 1000);
 		} else {
 			startGameTimer = null;
-
 			io.sockets.emit("start-game", { cells, allPlayers });
 			gameStarted = true
 		}
@@ -180,6 +160,7 @@ function startGameCountdown() {
 function stopGameCountdown() {
 	clearTimeout(startGameTimer);
 	startGameTimer = null;
+	io.sockets.emit("start-game-countdown", 0)
 }
 
 function startCountdown() {
@@ -203,6 +184,7 @@ function startCountdown() {
 function stopCountdown() {
 	clearTimeout(waitingTimer);
 	waitingTimer = null;
+	io.sockets.emit("waiting-countdown", 0);
 }
 
 function findPlayerCount() {
