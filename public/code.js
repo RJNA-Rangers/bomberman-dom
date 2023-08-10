@@ -271,7 +271,7 @@ export function runChatroom() {
     });
     socket.on("bomb-dropped", async function (moving) {
       //check if a player collided with an explosion
-      placeBombAndExplode(moving, socket)
+      placeBombAndExplode(moving)
         .then((res) => {
           setTimeout(() => {
             Array.from(

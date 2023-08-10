@@ -218,7 +218,6 @@ export function touchExplosion(moving) {
   ) return undefined;
   for (let i = 0; i < explosionImage.length; i++) {
     let explosionImageRect = explosionImage[i].getBoundingClientRect();
-    console.log(explosionImage[i].classList.item(0).replace(/\D/g, ""))
     if (checkCollision(player, explosionImageRect)) {
       // Collision detected with a power-up
       switch (whichSideCollision(player, explosionImageRect)) {

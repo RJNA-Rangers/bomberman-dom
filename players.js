@@ -67,7 +67,6 @@ export function PlayerMovement(socket) {
     //send to everyone bomb has been dropped
     socket.emit("drop-bomb", moving);
     moving.flames = globalSettings.flames.normal
-    moving.bombs = globalSettings.bombs.normal
   }
   // move when the button is pressed and the next block is empty
   if (

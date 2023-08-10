@@ -17,6 +17,7 @@ const template = [
 ];
 
 // -- creates an 2d array of map with randomly generated soft walls and empty spaces --// 
+let choiceOfPowerUp = ["speed", "flames", "bombs"]
 export function generateLevel() {
   let cells = [];
 
@@ -25,9 +26,12 @@ export function generateLevel() {
 
     for (let col = 0; col < globalSettings.numOfCols; col++) {
 
-      // 90% chance cells will contain a soft wall
-      if (!template[row][col] && Math.random() < 0.90) {
+      // 85% chance cells will contain a soft wall
+      if (!template[row][col] && Math.random() < 0.85) {
         cells[row][col] = globalSettings.wallTypes.softWall;
+        if (Math.random() < 0.3) {
+          cells[row][col] += globalSettings["power-ups"]["types"][choiceOfPowerUp[Math.floor(Math.random() * choiceOfPowerUp.length)]];
+        }
       }
 
       if (template[row][col] === globalSettings.wallTypes.wall) {
@@ -35,8 +39,10 @@ export function generateLevel() {
       } else if (template[row][col] === 'w' || template[row][col] === 'x' || template[row][col] === 'y' || template[row][col] === 'z') {
         cells[row][col] = template[row][col]
       }
+
     }
   }
+  console.log(cells)
   return cells
 }
 
@@ -118,15 +124,23 @@ export function createMap(map) {
             }
           }, {}, { src: globalSettings.wallSrc.empty }));
           break
-        case globalSettings["power-ups"]["types"]["speed"]:
+        case `1${globalSettings["power-ups"]["types"]["speed"]}`:
           gameWrapper.setChild(RJNA.tag.img({
-            class: "loading-4", style: {
+            class: "dirt-patch", style: {
               top: `${row * globalSettings.wallHeight}px`,
               left: `${col * globalSettings.wallWidth}px`,
               width: `${globalSettings.wallWidth}px`,
               height: `${globalSettings.wallHeight}px`
             }
           }, {}, { src: globalSettings.wallSrc.empty }));
+          gameWrapper.setChild(RJNA.tag.img({
+            class: "soft-wall", style: {
+              top: `${row * globalSettings.wallHeight}px`,
+              left: `${col * globalSettings.wallWidth}px`,
+              width: `${globalSettings.wallWidth}px`,
+              height: `${globalSettings.wallHeight}px`
+            }
+          }, {}, { src: globalSettings.wallSrc.soft }));
           gameWrapper.setChild(RJNA.tag.div(
             {
               class: `power-up speed`, style: {
@@ -149,15 +163,23 @@ export function createMap(map) {
               { src: globalSettings["power-ups"]["speed"] })
           ))
           break
-        case globalSettings["power-ups"]["types"]["flames"]:
+        case `1${globalSettings["power-ups"]["types"]["flames"]}`:
           gameWrapper.setChild(RJNA.tag.img({
-            class: "loading-4", style: {
+            class: "dirt-patch", style: {
               top: `${row * globalSettings.wallHeight}px`,
               left: `${col * globalSettings.wallWidth}px`,
               width: `${globalSettings.wallWidth}px`,
               height: `${globalSettings.wallHeight}px`
             }
           }, {}, { src: globalSettings.wallSrc.empty }));
+          gameWrapper.setChild(RJNA.tag.img({
+            class: "soft-wall", style: {
+              top: `${row * globalSettings.wallHeight}px`,
+              left: `${col * globalSettings.wallWidth}px`,
+              width: `${globalSettings.wallWidth}px`,
+              height: `${globalSettings.wallHeight}px`
+            }
+          }, {}, { src: globalSettings.wallSrc.soft }));
           gameWrapper.setChild(RJNA.tag.div(
             {
               class: `power-up flames`, style: {
@@ -180,15 +202,23 @@ export function createMap(map) {
               { src: globalSettings["power-ups"]["flames"] })
           ))
           break
-        case globalSettings["power-ups"]["types"]["bombs"]:
+        case `1${globalSettings["power-ups"]["types"]["bombs"]}`:
           gameWrapper.setChild(RJNA.tag.img({
-            class: "loading-4", style: {
+            class: "dirt-patch", style: {
               top: `${row * globalSettings.wallHeight}px`,
               left: `${col * globalSettings.wallWidth}px`,
               width: `${globalSettings.wallWidth}px`,
               height: `${globalSettings.wallHeight}px`
             }
           }, {}, { src: globalSettings.wallSrc.empty }));
+          gameWrapper.setChild(RJNA.tag.img({
+            class: "soft-wall", style: {
+              top: `${row * globalSettings.wallHeight}px`,
+              left: `${col * globalSettings.wallWidth}px`,
+              width: `${globalSettings.wallWidth}px`,
+              height: `${globalSettings.wallHeight}px`
+            }
+          }, {}, { src: globalSettings.wallSrc.soft }));
           gameWrapper.setChild(RJNA.tag.div(
             {
               class: `power-up bombs`, style: {

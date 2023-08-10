@@ -55,9 +55,17 @@ function placeExplosion(moving) {
       { src: globalSettings["explosion"]["src"] })
   )
 }
-function removeFromCellsAndDom(row, col, querySelectorStatement, socket) {
-  orbital.cells[row][col] = null;
-  let choiceOfPowerUp = ["speed", "flames", "bombs"]
+function removeFromCellsAndDom(row, col, querySelectorStatement) {
+
+  if (orbital.cells[row][col] == globalSettings.wallTypes.softWall) {
+    orbital.cells[row][col] = null
+  } else if (orbital.cells[row][col] == `1${globalSettings["power-ups"]["types"]["speed"]}`) {
+    orbital.cells[row][col] = globalSettings["power-ups"]["types"]["speeds"]
+  } else if (orbital.cells[row][col] == `1${globalSettings["power-ups"]["types"]["flames"]}`) {
+    orbital.cells[row][col] = globalSettings["power-ups"]["types"]["flames"]
+  } else if (orbital.cells[row][col] == `1${globalSettings["power-ups"]["types"]["bombs"]}`) {
+    orbital.cells[row][col] = globalSettings["power-ups"]["types"]["bombs"]
+  }
   const removeDomEle = Array.from(
     //.soft-wall
     document.querySelectorAll(`.${querySelectorStatement}`)
@@ -83,16 +91,11 @@ function removeFromCellsAndDom(row, col, querySelectorStatement, socket) {
   while (removeDomEle.length > 0) {
     removeDomEle.shift().remove();
     console.log([row, col])
-    if (Math.random() < 0.5) {
-      let powerUp = choiceOfPowerUp[Math.floor(Math.random() * choiceOfPowerUp.length)]
-      let powerUpCoords = [row, col]
-      socket.emit("place-power-up", { powerUp, powerUpCoords })
-    }
   }
 }
 
 // Function to handle explosion propagation in a specific direction
-function propagateExplosion(rowChange, colChange, moving, socket) {
+function propagateExplosion(rowChange, colChange, moving) {
   let tmpMovingObj = JSON.parse(JSON.stringify(moving));
   let gameWrapper = document.querySelector(".game-wrapper");
   for (let r = 0; r < moving.flames; r++) {
@@ -111,11 +114,14 @@ function propagateExplosion(rowChange, colChange, moving, socket) {
 
     // Check if the cell is a soft wall
     if (
-      orbital.cells[tmpMovingObj.row][tmpMovingObj.col] ===
-      globalSettings.wallTypes.softWall
+      orbital.cells[tmpMovingObj.row][tmpMovingObj.col] === globalSettings.wallTypes.softWall ||
+      orbital.cells[tmpMovingObj.row][tmpMovingObj.col] === `1${globalSettings["power-ups"]["types"]["speed"]}` ||
+      orbital.cells[tmpMovingObj.row][tmpMovingObj.col] === `1${globalSettings["power-ups"]["types"]["flames"]}` ||
+      orbital.cells[tmpMovingObj.row][tmpMovingObj.col] === `1${globalSettings["power-ups"]["types"]["bombs"]}`
     ) {
       //destroy the soft wall
-      removeFromCellsAndDom(tmpMovingObj.row, tmpMovingObj.col, "soft-wall", socket);
+      removeFromCellsAndDom(tmpMovingObj.row, tmpMovingObj.col, "soft-wall");
+      console.log(orbital.cells)
       break;
     }
     // If the cell is not a wall place the explosion at the current position
@@ -123,7 +129,7 @@ function propagateExplosion(rowChange, colChange, moving, socket) {
   }
 }
 
-export async function placeBombAndExplode(moving, socket) {
+export async function placeBombAndExplode(moving) {
   return new Promise((res, reject) => {
     let newBomb = placeBomb(moving)
     if (newBomb == undefined) {
@@ -139,10 +145,10 @@ export async function placeBombAndExplode(moving, socket) {
         bombElement.className = `player-${moving["myPlayerNum"]}-explosion explosion`;
         bombElement.children[0].src = globalSettings.explosion.src;
         // Propagate explosion in all four directions
-        propagateExplosion(0, 1, moving, socket); // Right
-        propagateExplosion(0, -1, moving, socket); // Left
-        propagateExplosion(1, 0, moving, socket); // Down
-        propagateExplosion(-1, 0, moving, socket); // Up
+        propagateExplosion(0, 1, moving); // Right
+        propagateExplosion(0, -1, moving); // Left
+        propagateExplosion(1, 0, moving); // Down
+        propagateExplosion(-1, 0, moving); // Up
       }, 2000);
       setTimeout(() => {
         res(moving);
