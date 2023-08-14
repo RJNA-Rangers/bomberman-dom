@@ -38,7 +38,7 @@ io.on("connection", function (socket) {
 					startCountdown();
 				}
 				if (io.sockets.sockets.size === 4 && !startGameTimer) {
-					// Start countdown when there are 4 connections and countdown is not already running
+					stopCountdown()
 					startGameCountdown();
 				}
 
