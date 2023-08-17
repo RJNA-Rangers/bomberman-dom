@@ -13,7 +13,6 @@ function openGame() {
         rootObj.setChild(waitingRoom);
         rootObj.setChild(container);
         rootObj.setChild(congratulationsContainer)
-        console.log(rootEl);
         resolve("success")
     })
 }

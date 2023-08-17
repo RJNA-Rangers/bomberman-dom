@@ -42,7 +42,6 @@ export function generateLevel() {
 
     }
   }
-  console.log(cells)
   return cells
 }
 

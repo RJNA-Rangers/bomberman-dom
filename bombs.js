@@ -90,7 +90,6 @@ function removeFromCellsAndDom(row, col, querySelectorStatement) {
   });
   while (removeDomEle.length > 0) {
     removeDomEle.shift().remove();
-    console.log([row, col])
   }
 }
 
@@ -121,7 +120,6 @@ function propagateExplosion(rowChange, colChange, moving) {
     ) {
       //destroy the soft wall
       removeFromCellsAndDom(tmpMovingObj.row, tmpMovingObj.col, "soft-wall");
-      console.log(orbital.cells)
       break;
     }
     // If the cell is not a wall place the explosion at the current position

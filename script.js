@@ -31,7 +31,7 @@ function animate(newtime) {
 
   // request another frame
 
-  requestAnimationFrame(animate);
+  let frame=requestAnimationFrame(animate);
 
   // calc elapsed time since last loop
 

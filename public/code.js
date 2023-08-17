@@ -74,6 +74,7 @@ export function runChatroom() {
         "players-waiting-container"
       ).setChild(playerCard(userObj));
       updatePlayerOrbital(userObj);
+      document.querySelector('.players-waiting-counter').innerHTML=Object.keys(orbital.players).length
     });
 
     // retrieves and displays all connected users on recently joined user's waiting room
@@ -100,11 +101,13 @@ export function runChatroom() {
       const cells = generateLevel();
       socket.emit("generate-map", cells);
       updatePlayerOrbital(userObj);
+      document.querySelector('.players-waiting-counter').innerHTML=Object.keys(orbital.players).length
     });
 
     socket.on("remove-waiting-player", function (count) {
       delete orbital.players[count]
       document.querySelector(`.player-${count}-card`).remove()
+      document.querySelector('.players-waiting-counter').innerHTML=Object.keys(orbital.players).length
     })
 
     // display 20s countdown when 2 or more users have joined the waiting room
@@ -310,7 +313,6 @@ export function runChatroom() {
           );
           break;
         case "player-killed":
-          console.log({ message })
           let playerNumber = parseInt(message.playerKilled);
           let deathMessageArr = [
             `${orbital["players"][`${playerNumber}`].name} was caught in  ${orbital["players"][`${message.bomber}`].name}'s explosion`,

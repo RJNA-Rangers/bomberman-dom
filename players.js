@@ -17,6 +17,7 @@ import {
   touchPowerUp,
   touchExplosion
 } from "./collision.js";
+import { startAnimating } from "./script.js";
 
 export function placePlayer(number, character, username) {
   let topPosition =

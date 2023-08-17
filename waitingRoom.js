@@ -71,7 +71,10 @@ export const waitingRoomGrid = RJNA.tag.div(
       )
     ),
     RJNA.tag.div({ class: "players-waiting-container" }, {}, {},
-      RJNA.tag.h3({ class: "players-waiting-title" }, {}, {}, "Ready!!"),
+    RJNA.tag.div({ class: "counter-container" }, {}, {},
+      RJNA.tag.h3({ class: "players-waiting-title" }, {}, {}, "Counter:"),
+      RJNA.tag.h3({ class: "players-waiting-counter" }, {}, {},)
+    )
     )
 
   ),

@@ -124,31 +124,26 @@ export function touchPowerUp(count, moving) {
       // Collision detected with a power-up
       switch (whichSideCollision(player, powerUpRect)) {
         case "bottom-right":
-          console.log("bottom-right");
           return {
             powerUp: powerUps[i].classList[1],
             powerUpCoords: [Math.floor(moving.row), Math.floor(moving.col)],
           };
         case "top-right":
-          console.log("top-right");
           return {
             powerUp: powerUps[i].classList[1],
             powerUpCoords: [Math.ceil(moving.row), Math.floor(moving.col)],
           };
         case "bottom-left":
-          console.log("bottom-left");
           return {
             powerUp: powerUps[i].classList[1],
             powerUpCoords: [Math.floor(moving.row), Math.ceil(moving.col)],
           };
         case "top-left":
-          console.log("top-left");
           return {
             powerUp: powerUps[i].classList[1],
             powerUpCoords: [Math.ceil(moving.row), Math.ceil(moving.col)],
           };
         case "bottom":
-          console.log("bottom");
           if (moving.col >= Math.floor(moving.col) + 0.8) {
             return {
               powerUp: powerUps[i].classList[1],
@@ -160,7 +155,6 @@ export function touchPowerUp(count, moving) {
             powerUpCoords: [Math.floor(moving.row), Math.floor(moving.col)],
           };
         case "top":
-          console.log("top");
           if (moving.col >= Math.floor(moving.col) + 0.8) {
             return {
               powerUp: powerUps[i].classList[1],
@@ -172,7 +166,6 @@ export function touchPowerUp(count, moving) {
             powerUpCoords: [Math.ceil(moving.row), Math.floor(moving.col)],
           };
         case "left":
-          console.log("left");
           if (moving.row >= Math.floor(moving.row) + 0.8) {
             return {
               powerUp: powerUps[i].classList[1],
@@ -184,7 +177,6 @@ export function touchPowerUp(count, moving) {
             powerUpCoords: [Math.floor(moving.row), Math.ceil(moving.col)],
           };
         case "right":
-          console.log("right");
           if (moving.row >= Math.floor(moving.row) + 0.8) {
             return {
               powerUp: powerUps[i].classList[1],
@@ -196,7 +188,6 @@ export function touchPowerUp(count, moving) {
             powerUpCoords: [Math.floor(moving.row), Math.floor(moving.col)],
           };
         default:
-          console.log("default");
           return {
             powerUp: powerUps[i].classList[1],
             powerUpCoords: [Math.floor(moving.row), Math.ceil(moving.col)],
@@ -222,7 +213,6 @@ export function touchExplosion(moving) {
       // Collision detected with a power-up
       switch (whichSideCollision(player, explosionImageRect)) {
         case "bottom-right":
-          console.log("bottom-right");
           return {
             bomber: parseInt(explosionImage[i].classList.item(0).replace(/\D/g, "")),
             playerKilled: `${moving["myPlayerNum"]}`,
@@ -232,28 +222,24 @@ export function touchExplosion(moving) {
             ],
           };
         case "top-right":
-          console.log("top-right");
           return {
             bomber: parseInt(explosionImage[i].classList.item(0).replace(/\D/g, "")),
             playerKilled: `${moving["myPlayerNum"]}`,
             playerKilledCoords: [Math.ceil(moving.row), Math.floor(moving.col)],
           };
         case "bottom-left":
-          console.log("bottom-left");
           return {
             bomber: parseInt(explosionImage[i].classList.item(0).replace(/\D/g, "")),
             playerKilled: `${moving["myPlayerNum"]}`,
             playerKilledCoords: [Math.floor(moving.row), Math.ceil(moving.col)],
           };
         case "top-left":
-          console.log("top-left");
           return {
             bomber: parseInt(explosionImage[i].classList.item(0).replace(/\D/g, "")),
             playerKilled: `${moving["myPlayerNum"]}`,
             playerKilledCoords: [Math.ceil(moving.row), Math.ceil(moving.col)],
           };
         case "bottom":
-          console.log("bottom");
           if (moving.col >= Math.floor(moving.col) + 0.8) {
             return {
               bomber: parseInt(explosionImage[i].classList.item(0).replace(/\D/g, "")),
@@ -273,7 +259,6 @@ export function touchExplosion(moving) {
             ],
           };
         case "top":
-          console.log("top");
           if (moving.col >= Math.floor(moving.col) + 0.8) {
             return {
               bomber: parseInt(explosionImage[i].classList.item(0).replace(/\D/g, "")),
@@ -290,7 +275,6 @@ export function touchExplosion(moving) {
             playerKilledCoords: [Math.ceil(moving.row), Math.floor(moving.col)],
           };
         case "left":
-          console.log("left");
           if (moving.row >= Math.floor(moving.row) + 0.8) {
             return {
               bomber: parseInt(explosionImage[i].classList.item(0).replace(/\D/g, "")),
@@ -307,7 +291,6 @@ export function touchExplosion(moving) {
             playerKilledCoords: [Math.floor(moving.row), Math.ceil(moving.col)],
           };
         case "right":
-          console.log("right");
           if (moving.row >= Math.floor(moving.row) + 0.8) {
             return {
               bomber: parseInt(explosionImage[i].classList.item(0).replace(/\D/g, "")),
@@ -327,7 +310,6 @@ export function touchExplosion(moving) {
             ],
           };
         default:
-          console.log("default");
           return {
             bomber: parseInt(explosionImage[i].classList.item(0).replace(/\D/g, "")),
             playerKilled: `${moving["myPlayerNum"]}`,

@@ -618,7 +618,15 @@ body {
   overflow: hidden;
 }
 
-.players-waiting-title {
+.counter-container{
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.players-waiting-title,
+.players-waiting-counter{
   text-align: center;
   margin-top: 5px;
   font-size: xx-large;

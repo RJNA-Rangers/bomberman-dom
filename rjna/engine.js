@@ -318,7 +318,7 @@ function getObjByAttrsAndPropsVal(obj, value) {
           if (prop != "tag") result.push(parent);
         }
       } else if (currentValue === value) {
-        if (prop != "tag") console.log(parent, "omg.");
+        if (prop != "tag");
         result.push(parent);
       }
     }
